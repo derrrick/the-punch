@@ -51,8 +51,8 @@ export default function AboutPage() {
             Who made this
           </p>
           <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
-            Designed and built by [your name]. 
-            A designer who believes typography is the foundation of 
+            Designed and built by Derrick Schippert.
+            A designer who believes typography is the foundation of
             visual culture — and that knowing your sources matters.
           </p>
         </section>
