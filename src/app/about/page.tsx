@@ -1,0 +1,96 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "About",
+  description: "Learn about The Punch — a curated directory of independent type foundries. Discover why knowing your sources matters in typography.",
+  openGraph: {
+    title: "About — The Punch",
+    description: "Learn about The Punch — a curated directory of independent type foundries. Discover why knowing your sources matters in typography.",
+    type: "website",
+  },
+};
+
+export default function AboutPage() {
+  return (
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-[680px] mx-auto px-6 md:px-12 py-32 md:py-40">
+        {/* Headline */}
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-neutral-900 leading-[1.15] mb-20 md:mb-28">
+          Typography, organized by who made it.
+        </h1>
+
+        {/* What this site is */}
+        <section className="mb-16 md:mb-24">
+          <p className="text-sm uppercase tracking-[0.15em] text-neutral-400 mb-4">
+            What this is
+          </p>
+          <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+            A curated directory of independent type foundries. 
+            No algorithms, no affiliate links — just a hand-selected collection 
+            of studios crafting exceptional typography.
+          </p>
+        </section>
+
+        {/* Why foundry-first matters */}
+        <section className="mb-16 md:mb-24">
+          <p className="text-sm uppercase tracking-[0.15em] text-neutral-400 mb-4">
+            Why foundry-first matters
+          </p>
+          <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+            Foundries are the record labels of typography — understanding 
+            who makes the fonts helps you understand the aesthetic DNA 
+            behind the work. Each studio has a point of view, a philosophy, 
+            a sensibility that runs through everything they release.
+          </p>
+        </section>
+
+        {/* Who made it */}
+        <section className="mb-16 md:mb-24">
+          <p className="text-sm uppercase tracking-[0.15em] text-neutral-400 mb-4">
+            Who made this
+          </p>
+          <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+            Designed and built by [your name]. 
+            A designer who believes typography is the foundation of 
+            visual culture — and that knowing your sources matters.
+          </p>
+        </section>
+
+        {/* How to contribute */}
+        <section className="mb-16 md:mb-24">
+          <p className="text-sm uppercase tracking-[0.15em] text-neutral-400 mb-4">
+            How to contribute
+          </p>
+          <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+            Know a foundry that belongs here?{" "}
+            <Link 
+              href="/submit" 
+              className="text-neutral-900 underline underline-offset-4 decoration-neutral-300 hover:decoration-neutral-900 transition-colors"
+            >
+              Submit it
+            </Link>
+            . We're always looking for studios doing exceptional work 
+            — whether they've been around for decades or just launched last month.
+          </p>
+        </section>
+
+        {/* Contact */}
+        <section>
+          <p className="text-sm uppercase tracking-[0.15em] text-neutral-400 mb-4">
+            Get in touch
+          </p>
+          <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+            Questions, feedback, or just want to say hello?{" "}
+            <a 
+              href="mailto:hello@thepunch.studio" 
+              className="text-neutral-900 underline underline-offset-4 decoration-neutral-300 hover:decoration-neutral-900 transition-colors"
+            >
+              hello@thepunch.studio
+            </a>
+          </p>
+        </section>
+      </div>
+    </div>
+  );
+}
