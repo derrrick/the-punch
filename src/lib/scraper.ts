@@ -35,7 +35,7 @@ export async function scrapeFoundryWebsite(url: string): Promise<ScrapedMetadata
     });
 
     // Wait a bit for fonts and images to load
-    await page.waitForTimeout(2000);
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Extract metadata
     const metadata = await page.evaluate(() => {

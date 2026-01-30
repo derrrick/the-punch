@@ -188,6 +188,7 @@ function SubmissionCard({
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [isScraping, setIsScraping] = useState(false);
   const [scrapedData, setScrapedData] = useState(submission.scraped_metadata);
+  const [isAddingToDirectory, setIsAddingToDirectory] = useState(false);
 
   const handleReject = () => {
     if (!rejectionReason.trim()) {
@@ -221,6 +222,35 @@ function SubmissionCard({
       alert(`Failed to scrape: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsScraping(false);
+    }
+  };
+
+  const handleAddToDirectory = async () => {
+    if (!confirm('Add this foundry to the live directory? This will make it visible on the website.')) {
+      return;
+    }
+
+    setIsAddingToDirectory(true);
+    try {
+      const response = await fetch('/api/add-to-directory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ submissionId: submission.id }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to add to directory');
+      }
+
+      alert('Foundry added to directory successfully! Note: You may need to redeploy for changes to appear.');
+      window.location.reload();
+    } catch (error) {
+      console.error('Add to directory error:', error);
+      alert(`Failed to add to directory: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsAddingToDirectory(false);
     }
   };
 
@@ -403,6 +433,22 @@ function SubmissionCard({
             </button>
           )}
           </div>
+        </div>
+      )}
+
+      {/* Add to Directory Button (for approved submissions) */}
+      {submission.status === "approved" && (
+        <div className="mt-6">
+          <button
+            onClick={handleAddToDirectory}
+            disabled={isAddingToDirectory}
+            className="bg-blue-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          >
+            {isAddingToDirectory ? 'Adding...' : '✨ Add to Directory'}
+          </button>
+          <p className="text-xs text-neutral-500 mt-2">
+            This will add the foundry to the live website database
+          </p>
         </div>
       )}
     </div>
