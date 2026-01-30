@@ -39,9 +39,19 @@ export default function SubmitPage() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const normalizeUrl = (url: string) => {
+    // Add https:// if no protocol is specified
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      return `https://${url}`;
+    }
+    return url;
+  };
+
   const isValidUrl = (url: string) => {
     try {
-      new URL(url);
+      // Normalize before validating
+      const normalizedUrl = normalizeUrl(url);
+      new URL(normalizedUrl);
       return true;
     } catch {
       return false;
@@ -62,13 +72,16 @@ export default function SubmitPage() {
     setIsSubmitting(true);
 
     try {
+      // Normalize the URL before submitting
+      const normalizedUrl = normalizeUrl(formData.websiteUrl);
+
       // Save to Supabase
       const { data, error } = await supabase
         .from('foundry_submissions')
         .insert([
           {
             foundry_name: formData.foundryName,
-            website_url: formData.websiteUrl,
+            website_url: normalizedUrl,
             location: formData.location || null,
             submitter_email: formData.email,
             notes: formData.notes || null,
@@ -78,12 +91,11 @@ export default function SubmitPage() {
 
       if (error) {
         console.error('Submission error:', error);
-        setErrors({ form: 'Failed to submit. Please try again.' });
+        setErrors({ form: `Failed to submit: ${error.message}` });
         setIsSubmitting(false);
         return;
       }
 
-      console.log('Submission successful:', data);
       setIsSubmitted(true);
 
       // Clear form
@@ -211,7 +223,7 @@ export default function SubmitPage() {
               Website URL *
             </label>
             <input
-              type="url"
+              type="text"
               id="websiteUrl"
               name="websiteUrl"
               value={formData.websiteUrl}
@@ -221,7 +233,7 @@ export default function SubmitPage() {
                   ? "border-red-400"
                   : "border-neutral-200 focus:border-neutral-400"
               } rounded-none px-4 py-3 text-neutral-900 placeholder-neutral-400 focus:outline-none transition-colors`}
-              placeholder="https://..."
+              placeholder="example.com or www.example.com"
             />
             {errors.websiteUrl && (
               <p className="mt-2 text-sm text-red-500">{errors.websiteUrl}</p>
