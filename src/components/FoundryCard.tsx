@@ -77,7 +77,7 @@ export function FoundryCard({ foundry, index }: FoundryCardProps) {
         </h2>
 
         {/* Location */}
-        <div className="flex items-center gap-2 text-sm text-neutral-500 mb-4">
+        <div className="flex items-center gap-2 text-sm text-neutral-700 mb-4">
           <span>{foundry.location.city}</span>
           <span className="text-neutral-300">·</span>
           <span>{foundry.location.country}</span>
@@ -106,7 +106,7 @@ export function FoundryCard({ foundry, index }: FoundryCardProps) {
           {foundry.notableTypefaces.slice(0, 3).map((typeface) => (
             <div
               key={typeface}
-              className="text-sm text-neutral-400 font-mono"
+              className="text-sm text-neutral-600 font-mono"
             >
               {typeface}
             </div>

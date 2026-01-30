@@ -192,7 +192,7 @@ export default function SubmitPage() {
           <div>
             <label
               htmlFor="foundryName"
-              className="block text-sm uppercase tracking-[0.15em] text-neutral-400 mb-3"
+              className="block text-sm uppercase tracking-[0.15em] text-neutral-600 mb-3"
             >
               Foundry name *
             </label>
@@ -218,7 +218,7 @@ export default function SubmitPage() {
           <div>
             <label
               htmlFor="websiteUrl"
-              className="block text-sm uppercase tracking-[0.15em] text-neutral-400 mb-3"
+              className="block text-sm uppercase tracking-[0.15em] text-neutral-600 mb-3"
             >
               Website URL *
             </label>
@@ -244,7 +244,7 @@ export default function SubmitPage() {
           <div>
             <label
               htmlFor="location"
-              className="block text-sm uppercase tracking-[0.15em] text-neutral-400 mb-3"
+              className="block text-sm uppercase tracking-[0.15em] text-neutral-600 mb-3"
             >
               Location
             </label>
@@ -263,7 +263,7 @@ export default function SubmitPage() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm uppercase tracking-[0.15em] text-neutral-400 mb-3"
+              className="block text-sm uppercase tracking-[0.15em] text-neutral-600 mb-3"
             >
               Your email *
             </label>
@@ -289,7 +289,7 @@ export default function SubmitPage() {
           <div>
             <label
               htmlFor="notes"
-              className="block text-sm uppercase tracking-[0.15em] text-neutral-400 mb-3"
+              className="block text-sm uppercase tracking-[0.15em] text-neutral-600 mb-3"
             >
               Notes
             </label>

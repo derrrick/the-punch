@@ -77,7 +77,7 @@ export default async function FoundryPage({ params }: FoundryPageProps) {
           {/* Back Link */}
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900 transition-colors duration-300 mb-16"
+            className="inline-flex items-center gap-2 text-sm text-neutral-700 hover:text-neutral-900 transition-colors duration-300 mb-16"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +101,7 @@ export default async function FoundryPage({ params }: FoundryPageProps) {
           </h1>
 
           {/* Location */}
-          <div className="flex items-center gap-3 text-lg text-neutral-500 mb-8">
+          <div className="flex items-center gap-3 text-lg text-neutral-700 mb-8">
             <span>{foundry.location.city}</span>
             <span className="text-neutral-300">·</span>
             <span>{foundry.location.country}</span>
@@ -136,7 +136,7 @@ export default async function FoundryPage({ params }: FoundryPageProps) {
               {/* Founded & Founder */}
               <div className="space-y-6">
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-neutral-400 mb-2">
+                  <p className="text-xs uppercase tracking-widest text-neutral-600 mb-2">
                     Founded
                   </p>
                   <p className="text-2xl font-medium text-neutral-900">
@@ -144,7 +144,7 @@ export default async function FoundryPage({ params }: FoundryPageProps) {
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-neutral-400 mb-2">
+                  <p className="text-xs uppercase tracking-widest text-neutral-600 mb-2">
                     Founder
                   </p>
                   <p className="text-2xl font-medium text-neutral-900">
@@ -183,7 +183,7 @@ export default async function FoundryPage({ params }: FoundryPageProps) {
                     href={foundry.contentFeed.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-neutral-500 hover:text-neutral-900 transition-colors duration-300"
+                    className="block text-neutral-700 hover:text-neutral-900 transition-colors duration-300"
                   >
                     <span className="text-lg">Content Feed</span>
                   </a>
@@ -195,7 +195,7 @@ export default async function FoundryPage({ params }: FoundryPageProps) {
             <div className="lg:col-span-7 space-y-16">
               {/* Notable Typefaces */}
               <div>
-                <p className="text-xs uppercase tracking-widest text-neutral-400 mb-6">
+                <p className="text-xs uppercase tracking-widest text-neutral-600 mb-6">
                   Notable Typefaces
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -212,7 +212,7 @@ export default async function FoundryPage({ params }: FoundryPageProps) {
 
               {/* Style Tags */}
               <div>
-                <p className="text-xs uppercase tracking-widest text-neutral-400 mb-6">
+                <p className="text-xs uppercase tracking-widest text-neutral-600 mb-6">
                   Style
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -230,7 +230,7 @@ export default async function FoundryPage({ params }: FoundryPageProps) {
               {/* Notes */}
               {foundry.notes && (
                 <div className="pt-8 border-t border-neutral-200">
-                  <p className="text-xs uppercase tracking-widest text-neutral-400 mb-4">
+                  <p className="text-xs uppercase tracking-widest text-neutral-600 mb-4">
                     Notes
                   </p>
                   <p className="text-lg text-neutral-600 leading-relaxed max-w-xl">

@@ -14,7 +14,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-            className="text-sm uppercase tracking-[0.2em] text-neutral-500 mb-6"
+            className="text-sm uppercase tracking-[0.2em] text-neutral-700 mb-6"
           >
             Type Foundry Index
           </motion.p>
@@ -43,7 +43,7 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.8 }}
-          className="mt-16 flex items-center gap-4 text-sm text-neutral-400"
+          className="mt-16 flex items-center gap-4 text-sm text-neutral-600"
         >
           <span className="font-mono">{meta.totalFoundries} Foundries</span>
           <span className="text-neutral-300">—</span>

@@ -69,7 +69,7 @@ export function FoundryGrid() {
         {/* Filter Status */}
         {activeFilterName && (
           <div id="results" ref={filterStatusRef} className="mb-8 flex items-center gap-3">
-            <span className="text-sm text-neutral-500">
+            <span className="text-sm text-neutral-700">
               Showing {filteredFoundries.length} foundr{filteredFoundries.length === 1 ? "y" : "ies"}
             </span>
             <span className="text-neutral-300">·</span>
@@ -87,7 +87,7 @@ export function FoundryGrid() {
           </div>
         ) : (
           <div className="py-20 text-center">
-            <p className="text-neutral-500 text-lg">
+            <p className="text-neutral-700 text-lg">
               No foundries found for this filter.
             </p>
           </div>

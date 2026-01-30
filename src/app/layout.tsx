@@ -18,14 +18,15 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://thepunch.studio'),
   title: {
     default: "The Punch — Typography, organized by who made it",
     template: "%s — The Punch",
   },
   description: "A curated directory of independent type foundries. Discover the designers behind your favorite fonts.",
   keywords: ["type foundries", "typography", "fonts", "type design", "independent foundries", "font directory"],
-  authors: [{ name: "The Punch" }],
-  creator: "The Punch",
+  authors: [{ name: "Derrick Schippert" }],
+  creator: "Derrick Schippert",
   publisher: "The Punch",
   robots: {
     index: true,
@@ -37,18 +38,12 @@ export const metadata: Metadata = {
     siteName: "The Punch",
     title: "The Punch — Typography, organized by who made it",
     description: "A curated directory of independent type foundries. Discover the designers behind your favorite fonts.",
-    images: [{
-      url: "/og-image.jpg",
-      width: 1200,
-      height: 630,
-      alt: "The Punch — A curated directory of independent type foundries",
-    }],
   },
   twitter: {
     card: "summary_large_image",
     title: "The Punch — Typography, organized by who made it",
     description: "A curated directory of independent type foundries. Discover the designers behind your favorite fonts.",
-    images: ["/og-image.jpg"],
+    creator: "@derrickschippert",
   },
   icons: {
     icon: "/favicon.ico",
