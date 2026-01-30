@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function SubmitPage() {
   const [formData, setFormData] = useState({
@@ -60,21 +61,46 @@ export default function SubmitPage() {
 
     setIsSubmitting(true);
 
-    // Simulate submission delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      // Save to Supabase
+      const { data, error } = await supabase
+        .from('foundry_submissions')
+        .insert([
+          {
+            foundry_name: formData.foundryName,
+            website_url: formData.websiteUrl,
+            location: formData.location || null,
+            submitter_email: formData.email,
+            notes: formData.notes || null,
+          },
+        ])
+        .select();
 
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+      if (error) {
+        console.error('Submission error:', error);
+        setErrors({ form: 'Failed to submit. Please try again.' });
+        setIsSubmitting(false);
+        return;
+      }
 
-    // Clear form
-    setFormData({
-      foundryName: "",
-      websiteUrl: "",
-      location: "",
-      email: "",
-      notes: "",
-    });
-    setErrors({});
+      console.log('Submission successful:', data);
+      setIsSubmitted(true);
+
+      // Clear form
+      setFormData({
+        foundryName: "",
+        websiteUrl: "",
+        location: "",
+        email: "",
+        notes: "",
+      });
+      setErrors({});
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setErrors({ form: 'An unexpected error occurred. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -143,6 +169,13 @@ export default function SubmitPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Form-level error */}
+          {errors.form && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-sm text-red-600">{errors.form}</p>
+            </div>
+          )}
+
           {/* Foundry Name */}
           <div>
             <label
