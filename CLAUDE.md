@@ -113,6 +113,24 @@ Global styles in `src/app/globals.css` define:
 
 - `scripts/generate-favicon.js` - Generates favicon.ico programmatically (simple "P" icon on dark background)
 
+## Admin Panel
+
+Access the admin panel at `/admin` to review foundry submissions.
+
+**Login credentials:**
+- Password: Set via `NEXT_PUBLIC_ADMIN_PASSWORD` environment variable (default: `thepunch2026`)
+
+**Features:**
+- View all submissions with status filter (all/pending/approved/rejected)
+- Approve submissions with one click
+- Reject submissions with required reason
+- View submission details (URL, location, submitter email, notes)
+- Simple password authentication (upgrade to Supabase Auth later)
+
+**Database Tables:**
+- `foundry_submissions` - Stores all form submissions with status tracking
+- `foundries` - Will store approved foundries (currently using JSON)
+
 ## Key Patterns
 
 1. **Client Components**: Components using hooks (`useState`, `useSearchParams`, etc.) are marked with `"use client"`
