@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { getAllFoundries } from "@/lib/foundries";
+import { getAllFoundries } from "@/lib/foundries-db";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://thepunch.studio";
-  const foundries = getAllFoundries();
+  const foundries = await getAllFoundries();
 
   // Static pages
   const staticPages = [

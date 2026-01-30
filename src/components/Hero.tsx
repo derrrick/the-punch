@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { getMeta } from "@/lib/foundries";
 
-export function Hero() {
-  const meta = getMeta();
+interface HeroProps {
+  totalFoundries: number;
+}
+
+export function Hero({ totalFoundries }: HeroProps) {
 
   return (
     <section className="min-h-[60vh] flex flex-col justify-end pb-16 md:pb-24 pt-12 bg-neutral-50">
@@ -45,7 +47,7 @@ export function Hero() {
           transition={{ duration: 1, delay: 0.8 }}
           className="mt-16 flex items-center gap-4 text-sm text-neutral-600"
         >
-          <span className="font-mono">{meta.totalFoundries} Foundries</span>
+          <span className="font-mono">{totalFoundries} Foundries</span>
           <span className="text-neutral-300">—</span>
           <span className="font-mono">Global</span>
         </motion.div>

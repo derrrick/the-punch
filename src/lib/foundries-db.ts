@@ -1,6 +1,55 @@
 import { createClient } from '@supabase/supabase-js';
 import { unstable_cache } from 'next/cache';
-import type { Foundry, FoundriesData } from './foundries';
+
+// Type definitions
+export interface Foundry {
+  id: string;
+  name: string;
+  slug: string;
+  location: {
+    city: string;
+    country: string;
+    countryCode: string;
+  };
+  url: string;
+  contentFeed: {
+    type: string | null;
+    url: string | null;
+    rss: string | null;
+    frequency: string | null;
+  };
+  founder: string;
+  founded: number;
+  notableTypefaces: string[];
+  style: string[];
+  tier: number;
+  socialMedia: {
+    instagram: string | null;
+    twitter: string | null;
+  };
+  notes: string;
+  images: {
+    screenshot: string | null;
+    logo: string | null;
+    specimens: string[];
+  };
+}
+
+export interface FoundriesData {
+  meta: {
+    version: string;
+    lastUpdated: string;
+    totalFoundries: number;
+    description: string;
+  };
+  foundries: Foundry[];
+  styles: string[];
+  countries: {
+    code: string;
+    name: string;
+    count: number;
+  }[];
+}
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

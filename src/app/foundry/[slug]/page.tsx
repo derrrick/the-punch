@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getFoundryBySlug, getAllFoundries } from "@/lib/foundries";
+import { getFoundryBySlug, getAllFoundries } from "@/lib/foundries-db";
 
 interface FoundryPageProps {
   params: Promise<{
@@ -13,7 +13,7 @@ interface FoundryPageProps {
 // Generate metadata for each foundry page
 export async function generateMetadata({ params }: FoundryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const foundry = getFoundryBySlug(slug);
+  const foundry = await getFoundryBySlug(slug);
 
   if (!foundry) {
     return {
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: FoundryPageProps): Promise<Me
 
 // Generate static params for all foundries
 export async function generateStaticParams() {
-  const foundries = getAllFoundries();
+  const foundries = await getAllFoundries();
   return foundries.map((foundry) => ({
     slug: foundry.slug,
   }));
@@ -61,7 +61,7 @@ export async function generateStaticParams() {
 
 export default async function FoundryPage({ params }: FoundryPageProps) {
   const { slug } = await params;
-  const foundry = getFoundryBySlug(slug);
+  const foundry = await getFoundryBySlug(slug);
 
   if (!foundry) {
     notFound();

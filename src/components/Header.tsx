@@ -4,19 +4,21 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { getAllStyles, getAllCountries, getAllFoundries } from "@/lib/foundries";
+import type { Foundry, FoundriesData } from "@/lib/foundries-db";
 
-export function Header() {
+interface HeaderProps {
+  foundries: Foundry[];
+  styles: string[];
+  countries: FoundriesData["countries"];
+}
+
+export function Header({ foundries: allFoundries, styles, countries }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<"style" | "location" | null>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const styles = getAllStyles();
-  const countries = getAllCountries();
-  const allFoundries = getAllFoundries();
 
   useEffect(() => {
     const handleScroll = () => {

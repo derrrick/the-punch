@@ -2,13 +2,16 @@
 
 import { useMemo, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { getAllFoundries, getAllCountries } from "@/lib/foundries";
+import type { Foundry, FoundriesData } from "@/lib/foundries-db";
 import { FoundryCard } from "./FoundryCard";
 
-export function FoundryGrid() {
+interface FoundryGridProps {
+  foundries: Foundry[];
+  countries: FoundriesData["countries"];
+}
+
+export function FoundryGrid({ foundries: allFoundries, countries }: FoundryGridProps) {
   const searchParams = useSearchParams();
-  const allFoundries = getAllFoundries();
-  const countries = getAllCountries();
   const filterStatusRef = useRef<HTMLDivElement>(null);
 
   const styleFilter = searchParams.get("style");
