@@ -70,8 +70,8 @@ export default function AboutPage() {
             >
               Submit it
             </Link>
-            . We're always looking for studios doing exceptional work 
-            — whether they've been around for decades or just launched last month.
+            . We&apos;re always looking for studios doing exceptional work
+            — whether they&apos;ve been around for decades or just launched last month.
           </p>
         </section>
 

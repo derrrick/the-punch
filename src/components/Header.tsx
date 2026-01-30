@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { getAllStyles, getAllCountries } from "@/lib/foundries";
+import { getAllStyles, getAllCountries, getAllFoundries } from "@/lib/foundries";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -16,6 +16,7 @@ export function Header() {
 
   const styles = getAllStyles();
   const countries = getAllCountries();
+  const allFoundries = getAllFoundries();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -175,7 +176,9 @@ export function Header() {
                                 : "text-white/20"
                             }`}
                           >
-                            {getStyleCount(style)}
+                            {allFoundries.filter((f) =>
+                              f.style.some((s) => s.toLowerCase() === style.toLowerCase())
+                            ).length}
                           </span>
                         </motion.button>
                       ))}
@@ -237,11 +240,3 @@ export function Header() {
   );
 }
 
-// Helper function to count foundries per style
-function getStyleCount(style: string): number {
-  const { getAllFoundries } = require("@/lib/foundries");
-  const foundries = getAllFoundries();
-  return foundries.filter((f: { style: string[] }) => 
-    f.style.some((s: string) => s.toLowerCase() === style.toLowerCase())
-  ).length;
-}

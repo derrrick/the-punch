@@ -112,8 +112,8 @@ export default function SubmitPage() {
               Thank you
             </h1>
             <p className="text-lg text-neutral-600 leading-relaxed mb-8">
-              We've received your submission and will review it soon. 
-              If the foundry fits our criteria, we'll add it to the directory.
+              We&apos;ve received your submission and will review it soon.
+              If the foundry fits our criteria, we&apos;ll add it to the directory.
             </p>
             <button
               onClick={() => setIsSubmitted(false)}
@@ -136,8 +136,8 @@ export default function SubmitPage() {
             Submit a foundry
           </h1>
           <p className="text-lg text-neutral-600 leading-relaxed">
-            Know an independent type foundry that belongs here? 
-            Tell us about it and we'll review it for inclusion.
+            Know an independent type foundry that belongs here?
+            Tell us about it and we&apos;ll review it for inclusion.
           </p>
         </div>
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Hero } from "@/components/Hero";
 import { FoundryGrid } from "@/components/FoundryGrid";
 
@@ -16,7 +17,9 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <FoundryGrid />
+      <Suspense fallback={<div className="py-24 text-center">Loading...</div>}>
+        <FoundryGrid />
+      </Suspense>
     </>
   );
 }
