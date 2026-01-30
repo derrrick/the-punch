@@ -284,50 +284,6 @@ function SubmissionCard({
               <p className="text-sm text-red-600">{submission.rejection_reason}</p>
             </div>
           )}
-
-          {/* Scraped Data Display */}
-          {scrapedData && (
-            <div className="mt-4 p-4 bg-blue-50 rounded space-y-3">
-              <p className="text-sm font-medium text-blue-700">Auto-Scraped Data:</p>
-
-              {scrapedData.screenshot && (
-                <div className="mt-2">
-                  <img
-                    src={scrapedData.screenshot}
-                    alt="Website screenshot"
-                    className="w-full rounded border border-blue-200"
-                  />
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                {scrapedData.title && (
-                  <div>
-                    <span className="font-medium text-blue-700">Title:</span>
-                    <p className="text-blue-600">{scrapedData.title}</p>
-                  </div>
-                )}
-                {scrapedData.description && (
-                  <div className="col-span-2">
-                    <span className="font-medium text-blue-700">Description:</span>
-                    <p className="text-blue-600">{scrapedData.description}</p>
-                  </div>
-                )}
-                {scrapedData.socialMedia?.instagram && (
-                  <div>
-                    <span className="font-medium text-blue-700">Instagram:</span>
-                    <p className="text-blue-600">{scrapedData.socialMedia.instagram}</p>
-                  </div>
-                )}
-                {scrapedData.socialMedia?.twitter && (
-                  <div>
-                    <span className="font-medium text-blue-700">Twitter:</span>
-                    <p className="text-blue-600">{scrapedData.socialMedia.twitter}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="flex flex-col gap-2 ml-4">
@@ -341,6 +297,50 @@ function SubmissionCard({
           )}
         </div>
       </div>
+
+      {/* Scraped Data Display */}
+      {scrapedData && (
+        <div className="mt-4 p-4 bg-blue-50 rounded space-y-3">
+          <p className="text-sm font-medium text-blue-700">Auto-Scraped Data:</p>
+
+          {scrapedData.screenshot && (
+            <div className="mt-2">
+              <img
+                src={scrapedData.screenshot}
+                alt="Website screenshot"
+                className="w-full rounded border border-blue-200"
+              />
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            {scrapedData.title && (
+              <div>
+                <span className="font-medium text-blue-700">Title:</span>
+                <p className="text-blue-600">{scrapedData.title}</p>
+              </div>
+            )}
+            {scrapedData.description && (
+              <div className="col-span-2">
+                <span className="font-medium text-blue-700">Description:</span>
+                <p className="text-blue-600">{scrapedData.description}</p>
+              </div>
+            )}
+            {scrapedData.socialMedia?.instagram && (
+              <div>
+                <span className="font-medium text-blue-700">Instagram:</span>
+                <p className="text-blue-600">{scrapedData.socialMedia.instagram}</p>
+              </div>
+            )}
+            {scrapedData.socialMedia?.twitter && (
+              <div>
+                <span className="font-medium text-blue-700">Twitter:</span>
+                <p className="text-blue-600">{scrapedData.socialMedia.twitter}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Actions */}
       {submission.status === "pending" && (
