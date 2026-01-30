@@ -8,7 +8,7 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
-    const { submissionId } = await request.json();
+    const { submissionId } = await request.json() as { submissionId: string };
 
     if (!submissionId) {
       return NextResponse.json({ error: 'Submission ID required' }, { status: 400 });
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       content_feed_frequency: null,
     };
 
-    const { data: newFoundryData, error: insertError } = await supabase
+    const { data, error: insertError } = await supabase
       .from('foundries')
       .insert([newFoundry])
       .select()
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      foundry: newFoundryData,
+      foundry: data,
     });
   } catch (error) {
     console.error('Add to directory error:', error);

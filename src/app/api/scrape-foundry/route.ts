@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { scrapeFoundryWebsite, extractInstagramUsername, extractTwitterUsername } from '@/lib/scraper';
+import { scrapeFoundryWebsite } from '@/lib/scraper';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -9,7 +9,7 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
-    const { submissionId } = await request.json();
+    const { submissionId } = await request.json() as { submissionId: string };
 
     if (!submissionId) {
       return NextResponse.json({ error: 'Submission ID required' }, { status: 400 });

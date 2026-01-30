@@ -84,7 +84,7 @@ export async function scrapeFoundryWebsite(url: string): Promise<ScrapedMetadata
           });
         });
 
-        return [...new Set(listings)].slice(0, 20); // Unique, max 20
+        return Array.from(new Set(listings)).slice(0, 20); // Unique, max 20
       };
 
       return {
@@ -148,7 +148,7 @@ export async function scrapeFoundryWebsite(url: string): Promise<ScrapedMetadata
           return clone.innerText.trim().substring(0, 3000);
         });
       }
-    } catch (error) {
+    } catch {
       console.log('  → Could not scrape About page (non-critical)');
     }
 
@@ -172,18 +172,4 @@ export async function scrapeFoundryWebsite(url: string): Promise<ScrapedMetadata
       description: undefined,
     };
   }
-}
-
-// Helper to extract Instagram username from URL
-export function extractInstagramUsername(url?: string): string | null {
-  if (!url) return null;
-  const match = url.match(/instagram\.com\/([^\/\?]+)/);
-  return match ? match[1] : null;
-}
-
-// Helper to extract Twitter/X username from URL
-export function extractTwitterUsername(url?: string): string | null {
-  if (!url) return null;
-  const match = url.match(/(?:twitter|x)\.com\/([^\/\?]+)/);
-  return match ? match[1] : null;
 }

@@ -9,7 +9,7 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
-    const { submissionId } = await request.json();
+    const { submissionId } = await request.json() as { submissionId: string };
 
     if (!submissionId) {
       return NextResponse.json({ error: 'Submission ID required' }, { status: 400 });

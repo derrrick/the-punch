@@ -76,7 +76,7 @@ export default function SubmitPage() {
       const normalizedUrl = normalizeUrl(formData.websiteUrl);
 
       // Save to Supabase
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('foundry_submissions')
         .insert([
           {

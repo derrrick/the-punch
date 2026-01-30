@@ -7,8 +7,33 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+// Database foundry record type
+interface DbFoundry {
+  id: string;
+  name: string;
+  slug: string;
+  location_city: string;
+  location_country: string;
+  location_country_code: string;
+  url: string;
+  content_feed_type: string | null;
+  content_feed_url: string | null;
+  content_feed_rss: string | null;
+  content_feed_frequency: string | null;
+  founder: string;
+  founded: number;
+  notable_typefaces: string[];
+  style: string[];
+  tier: number;
+  social_instagram: string | null;
+  social_twitter: string | null;
+  notes: string | null;
+  screenshot_url: string | null;
+  logo_url: string | null;
+}
+
 // Transform database record to Foundry interface
-function transformDbFoundry(dbFoundry: any): Foundry {
+function transformDbFoundry(dbFoundry: DbFoundry): Foundry {
   return {
     id: dbFoundry.id,
     name: dbFoundry.name,
