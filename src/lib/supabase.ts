@@ -29,8 +29,22 @@ export interface FoundrySubmission {
     };
     favicon?: string;
     ogImage?: string;
+    homepageContent?: string;
+    aboutContent?: string;
+    typefaceListings?: string[];
   };
   scraped_at?: string;
+  ai_analysis?: {
+    founderName?: string;
+    foundedYear?: number;
+    notableTypefaces: string[];
+    styleTags: string[];
+    positioningNote: string;
+    tier: 1 | 2 | 3 | 4;
+    confidence: 'high' | 'medium' | 'low';
+    reasoning: string;
+  };
+  analyzed_at?: string;
 }
 
 export interface Foundry {

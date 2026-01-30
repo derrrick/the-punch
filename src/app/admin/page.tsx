@@ -189,6 +189,8 @@ function SubmissionCard({
   const [isScraping, setIsScraping] = useState(false);
   const [scrapedData, setScrapedData] = useState(submission.scraped_metadata);
   const [isAddingToDirectory, setIsAddingToDirectory] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [aiAnalysis, setAiAnalysis] = useState(submission.ai_analysis);
 
   const handleReject = () => {
     if (!rejectionReason.trim()) {
@@ -222,6 +224,36 @@ function SubmissionCard({
       alert(`Failed to scrape: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsScraping(false);
+    }
+  };
+
+  const handleAnalyze = async () => {
+    if (!scrapedData) {
+      alert('Please scrape the website first before AI analysis');
+      return;
+    }
+
+    setIsAnalyzing(true);
+    try {
+      const response = await fetch('/api/analyze-foundry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ submissionId: submission.id }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to analyze foundry');
+      }
+
+      setAiAnalysis(data.analysis);
+      alert('AI analysis complete! Review the suggestions below.');
+    } catch (error) {
+      console.error('AI analysis error:', error);
+      alert(`Failed to analyze: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
@@ -368,26 +400,122 @@ function SubmissionCard({
                 <p className="text-blue-600">{scrapedData.socialMedia.twitter}</p>
               </div>
             )}
+            {scrapedData.typefaceListings && scrapedData.typefaceListings.length > 0 && (
+              <div className="col-span-2">
+                <span className="font-medium text-blue-700">Found Typefaces:</span>
+                <p className="text-blue-600">{scrapedData.typefaceListings.slice(0, 10).join(', ')}</p>
+              </div>
+            )}
           </div>
+        </div>
+      )}
+
+      {/* AI Analysis Display */}
+      {aiAnalysis && (
+        <div className="mt-4 p-4 bg-purple-50 rounded space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-purple-700">🤖 AI Analysis</p>
+            <span className={`text-xs px-2 py-1 rounded ${
+              aiAnalysis.confidence === 'high' ? 'bg-green-100 text-green-700' :
+              aiAnalysis.confidence === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+              'bg-red-100 text-red-700'
+            }`}>
+              {aiAnalysis.confidence} confidence
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            {aiAnalysis.founderName && (
+              <div>
+                <span className="font-medium text-purple-700">Founder:</span>
+                <p className="text-purple-600">{aiAnalysis.founderName}</p>
+              </div>
+            )}
+            {aiAnalysis.foundedYear && (
+              <div>
+                <span className="font-medium text-purple-700">Founded:</span>
+                <p className="text-purple-600">{aiAnalysis.foundedYear}</p>
+              </div>
+            )}
+            {aiAnalysis.notableTypefaces.length > 0 && (
+              <div className="col-span-2">
+                <span className="font-medium text-purple-700">Notable Typefaces:</span>
+                <p className="text-purple-600">{aiAnalysis.notableTypefaces.join(', ')}</p>
+              </div>
+            )}
+            {aiAnalysis.styleTags.length > 0 && (
+              <div className="col-span-2">
+                <span className="font-medium text-purple-700">Style Tags:</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {aiAnalysis.styleTags.map(tag => (
+                    <span key={tag} className="px-2 py-0.5 bg-purple-200 text-purple-700 rounded text-xs">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {aiAnalysis.positioningNote && (
+              <div className="col-span-2">
+                <span className="font-medium text-purple-700">Positioning:</span>
+                <p className="text-purple-600">{aiAnalysis.positioningNote}</p>
+              </div>
+            )}
+            <div>
+              <span className="font-medium text-purple-700">Tier:</span>
+              <p className="text-purple-600">{aiAnalysis.tier} ({
+                aiAnalysis.tier === 1 ? 'Legendary' :
+                aiAnalysis.tier === 2 ? 'Major' :
+                aiAnalysis.tier === 3 ? 'Established' :
+                'Emerging'
+              })</p>
+            </div>
+          </div>
+
+          {aiAnalysis.reasoning && (
+            <div className="pt-2 border-t border-purple-200">
+              <span className="font-medium text-purple-700 text-xs">AI Reasoning:</span>
+              <p className="text-purple-600 text-xs mt-1">{aiAnalysis.reasoning}</p>
+            </div>
+          )}
         </div>
       )}
 
       {/* Actions */}
       {submission.status === "pending" && (
         <div className="mt-6 space-y-3">
-          {/* Scrape Button */}
-          <div className="flex gap-3">
-            <button
-              onClick={handleScrape}
-              disabled={isScraping}
-              className="bg-blue-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-blue-700 disabled:opacity-50 transition-colors"
-            >
-              {isScraping ? 'Scraping...' : scrapedData ? 'Re-scrape Website' : 'Scrape Website'}
-            </button>
-            {submission.scraped_at && (
-              <span className="text-xs text-neutral-500 self-center">
-                Last scraped: {new Date(submission.scraped_at).toLocaleDateString()}
-              </span>
+          {/* Scrape & Analyze Buttons */}
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-3">
+              <button
+                onClick={handleScrape}
+                disabled={isScraping}
+                className="bg-blue-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              >
+                {isScraping ? 'Scraping...' : scrapedData ? 'Re-scrape Website' : '1. Scrape Website'}
+              </button>
+              {submission.scraped_at && (
+                <span className="text-xs text-neutral-500 self-center">
+                  Last scraped: {new Date(submission.scraped_at).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+
+            {scrapedData && (
+              <div className="flex gap-3">
+                <button
+                  onClick={handleAnalyze}
+                  disabled={isAnalyzing || !scrapedData}
+                  className="bg-purple-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-purple-700 disabled:opacity-50 transition-colors"
+                >
+                  {isAnalyzing ? 'Analyzing...' : aiAnalysis ? '🤖 Re-analyze with AI' : '2. 🤖 Analyze with AI'}
+                </button>
+                {submission.analyzed_at && (
+                  <span className="text-xs text-neutral-500 self-center">
+                    Last analyzed: {new Date(submission.analyzed_at).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
             )}
           </div>
 

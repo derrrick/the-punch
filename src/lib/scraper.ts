@@ -11,6 +11,9 @@ export interface ScrapedMetadata {
   };
   favicon?: string;
   ogImage?: string;
+  homepageContent?: string;
+  aboutContent?: string;
+  typefaceListings?: string[];
 }
 
 export async function scrapeFoundryWebsite(url: string): Promise<ScrapedMetadata> {
@@ -37,7 +40,7 @@ export async function scrapeFoundryWebsite(url: string): Promise<ScrapedMetadata
     // Wait a bit for fonts and images to load
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Extract metadata
+    // Extract metadata and content
     const metadata = await page.evaluate(() => {
       const getMetaContent = (name: string) => {
         const meta = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
@@ -50,6 +53,40 @@ export async function scrapeFoundryWebsite(url: string): Promise<ScrapedMetadata
         return match?.getAttribute('href') || undefined;
       };
 
+      // Extract readable text content (remove scripts, styles, etc.)
+      const getPageText = () => {
+        const clone = document.body.cloneNode(true) as HTMLElement;
+        // Remove unwanted elements
+        clone.querySelectorAll('script, style, nav, header, footer').forEach(el => el.remove());
+        return clone.innerText.trim().substring(0, 5000); // Limit to 5000 chars
+      };
+
+      // Try to find typeface/font listings
+      const getTypefaceListings = () => {
+        const listings: string[] = [];
+        // Look for common patterns in foundry websites
+        const selectors = [
+          'a[href*="/font"]',
+          'a[href*="/typeface"]',
+          'a[href*="/family"]',
+          '.font-name',
+          '.typeface-name',
+          '[class*="font-card"]',
+          '[class*="typeface-card"]',
+        ];
+
+        selectors.forEach(selector => {
+          document.querySelectorAll(selector).forEach(el => {
+            const text = el.textContent?.trim();
+            if (text && text.length > 2 && text.length < 50) {
+              listings.push(text);
+            }
+          });
+        });
+
+        return [...new Set(listings)].slice(0, 20); // Unique, max 20
+      };
+
       return {
         title: document.title || getMetaContent('og:title'),
         description: getMetaContent('description') || getMetaContent('og:description'),
@@ -60,6 +97,8 @@ export async function scrapeFoundryWebsite(url: string): Promise<ScrapedMetadata
           twitter: findSocialLink(/twitter\.com\/([^\/\?]+)|x\.com\/([^\/\?]+)/),
           facebook: findSocialLink(/facebook\.com\/([^\/\?]+)/),
         },
+        homepageContent: getPageText(),
+        typefaceListings: getTypefaceListings(),
       };
     });
 
@@ -71,11 +110,54 @@ export async function scrapeFoundryWebsite(url: string): Promise<ScrapedMetadata
       quality: 80,
     });
 
+    // Try to find and scrape About page
+    let aboutContent: string | undefined;
+    try {
+      const aboutLink = await page.evaluate(() => {
+        const patterns = [/about/i, /info/i, /studio/i, /us/i];
+        const links = Array.from(document.querySelectorAll('a[href]'));
+
+        for (const pattern of patterns) {
+          const match = links.find(link => {
+            const href = link.getAttribute('href') || '';
+            const text = link.textContent || '';
+            return pattern.test(href) || pattern.test(text);
+          });
+
+          if (match) {
+            return match.getAttribute('href');
+          }
+        }
+        return null;
+      });
+
+      if (aboutLink) {
+        const aboutUrl = new URL(aboutLink, url).href;
+        console.log(`  → Found About page: ${aboutUrl}`);
+
+        await page.goto(aboutUrl, {
+          waitUntil: 'networkidle0',
+          timeout: 15000,
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        aboutContent = await page.evaluate(() => {
+          const clone = document.body.cloneNode(true) as HTMLElement;
+          clone.querySelectorAll('script, style, nav, header, footer').forEach(el => el.remove());
+          return clone.innerText.trim().substring(0, 3000);
+        });
+      }
+    } catch (error) {
+      console.log('  → Could not scrape About page (non-critical)');
+    }
+
     await browser.close();
 
     return {
       ...metadata,
       screenshot: `data:image/jpeg;base64,${screenshot}`,
+      aboutContent,
     };
   } catch (error) {
     console.error('Error scraping website:', error);
