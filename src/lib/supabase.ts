@@ -18,6 +18,19 @@ export interface FoundrySubmission {
   reviewed_at?: string;
   reviewed_by?: string;
   rejection_reason?: string;
+  scraped_metadata?: {
+    title?: string;
+    description?: string;
+    screenshot?: string;
+    socialMedia?: {
+      instagram?: string;
+      twitter?: string;
+      facebook?: string;
+    };
+    favicon?: string;
+    ogImage?: string;
+  };
+  scraped_at?: string;
 }
 
 export interface Foundry {

@@ -186,6 +186,8 @@ function SubmissionCard({
   const [isExpanded, setIsExpanded] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showRejectForm, setShowRejectForm] = useState(false);
+  const [isScraping, setIsScraping] = useState(false);
+  const [scrapedData, setScrapedData] = useState(submission.scraped_metadata);
 
   const handleReject = () => {
     if (!rejectionReason.trim()) {
@@ -195,6 +197,31 @@ function SubmissionCard({
     onStatusUpdate(submission.id, "rejected", rejectionReason);
     setShowRejectForm(false);
     setRejectionReason("");
+  };
+
+  const handleScrape = async () => {
+    setIsScraping(true);
+    try {
+      const response = await fetch('/api/scrape-foundry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ submissionId: submission.id }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to scrape website');
+      }
+
+      setScrapedData(data.metadata);
+      alert('Website scraped successfully!');
+    } catch (error) {
+      console.error('Scraping error:', error);
+      alert(`Failed to scrape: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsScraping(false);
+    }
   };
 
   return (
@@ -257,6 +284,50 @@ function SubmissionCard({
               <p className="text-sm text-red-600">{submission.rejection_reason}</p>
             </div>
           )}
+
+          {/* Scraped Data Display */}
+          {scrapedData && (
+            <div className="mt-4 p-4 bg-blue-50 rounded space-y-3">
+              <p className="text-sm font-medium text-blue-700">Auto-Scraped Data:</p>
+
+              {scrapedData.screenshot && (
+                <div className="mt-2">
+                  <img
+                    src={scrapedData.screenshot}
+                    alt="Website screenshot"
+                    className="w-full rounded border border-blue-200"
+                  />
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {scrapedData.title && (
+                  <div>
+                    <span className="font-medium text-blue-700">Title:</span>
+                    <p className="text-blue-600">{scrapedData.title}</p>
+                  </div>
+                )}
+                {scrapedData.description && (
+                  <div className="col-span-2">
+                    <span className="font-medium text-blue-700">Description:</span>
+                    <p className="text-blue-600">{scrapedData.description}</p>
+                  </div>
+                )}
+                {scrapedData.socialMedia?.instagram && (
+                  <div>
+                    <span className="font-medium text-blue-700">Instagram:</span>
+                    <p className="text-blue-600">{scrapedData.socialMedia.instagram}</p>
+                  </div>
+                )}
+                {scrapedData.socialMedia?.twitter && (
+                  <div>
+                    <span className="font-medium text-blue-700">Twitter:</span>
+                    <p className="text-blue-600">{scrapedData.socialMedia.twitter}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-2 ml-4">
@@ -273,13 +344,31 @@ function SubmissionCard({
 
       {/* Actions */}
       {submission.status === "pending" && (
-        <div className="mt-6 flex gap-3">
-          <button
-            onClick={() => onStatusUpdate(submission.id, "approved")}
-            className="bg-green-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-green-700 transition-colors"
-          >
-            Approve
-          </button>
+        <div className="mt-6 space-y-3">
+          {/* Scrape Button */}
+          <div className="flex gap-3">
+            <button
+              onClick={handleScrape}
+              disabled={isScraping}
+              className="bg-blue-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            >
+              {isScraping ? 'Scraping...' : scrapedData ? 'Re-scrape Website' : 'Scrape Website'}
+            </button>
+            {submission.scraped_at && (
+              <span className="text-xs text-neutral-500 self-center">
+                Last scraped: {new Date(submission.scraped_at).toLocaleDateString()}
+              </span>
+            )}
+          </div>
+
+          {/* Approve/Reject Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => onStatusUpdate(submission.id, "approved")}
+              className="bg-green-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-green-700 transition-colors"
+            >
+              Approve
+            </button>
           {showRejectForm ? (
             <div className="flex gap-2 flex-1">
               <input
@@ -313,6 +402,7 @@ function SubmissionCard({
               Reject
             </button>
           )}
+          </div>
         </div>
       )}
     </div>
