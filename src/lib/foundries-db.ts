@@ -50,9 +50,20 @@ export interface FoundriesData {
   }[];
 }
 
+// Configure Supabase client with fetch options to prevent caching large responses
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    global: {
+      fetch: (url, options = {}) => {
+        return fetch(url, {
+          ...options,
+          cache: 'no-store', // Prevent Next.js from caching responses > 2MB
+        });
+      },
+    },
+  }
 );
 
 // Database foundry record type
