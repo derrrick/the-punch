@@ -1,0 +1,199 @@
+📸 Processing screenshots for 47 foundries
+
+🚀 Starting screenshot capture...
+
+[1/47] HvD Fonts
+  → https://www.hvdfonts.com
+  ✅ Screenshot saved
+
+[2/47] TypeTogether
+  → https://www.type-together.com
+  ✅ Screenshot saved
+
+[3/47] Village
+  → https://vllg.com
+  ✅ Screenshot saved
+
+[4/47] Font Bureau
+  → https://fontbureau.com
+  ✅ Screenshot saved
+
+[5/47] Dalton Maag
+  → https://www.daltonmaag.com
+  ✅ Screenshot saved
+
+[6/47] Luzi Type
+  → https://www.luzi-type.ch
+  ✅ Screenshot saved
+
+[7/47] VJ-Type
+  → https://vj-type.com
+  ✅ Screenshot saved
+
+[8/47] Camelot Typefaces
+  → https://camelot-typefaces.com
+  ✅ Screenshot saved
+
+[9/47] Lift Type
+  → https://www.lift-type.fr
+  ✅ Screenshot saved
+
+[10/47] Family Type
+  → https://familytype.co
+  ✅ Screenshot saved
+
+[11/47] Off Type
+  → https://www.offtype.co
+  ✅ Screenshot saved
+
+[12/47] Monokrom
+  → https://monokrom.no
+  ✅ Screenshot saved
+
+[13/47] Signal Foundry
+  → https://www.signalfoundry.com
+  ✅ Screenshot saved
+
+[14/47] TipoType
+  → https://tipotype.com
+  ✅ Screenshot saved
+
+[15/47] Latinotype
+  → https://www.latinotype.com
+  ⚠️  Screenshot failed: Navigation timeout of 30000 ms exceeded
+  ❌ Failed to capture screenshot
+[16/47] Studio René Bieder
+  → https://www.rfrenebieder.com
+  ⚠️  Screenshot failed: net::ERR_NAME_NOT_RESOLVED at https://www.rfrenebieder.com
+  ❌ Failed to capture screenshot
+[17/47] Kontour Type
+  → https://kontour.com
+  ✅ Screenshot saved
+
+[18/47] RP Digital Type Foundry
+  → https://rpdigitaltype.com
+  ⚠️  Screenshot failed: net::ERR_NAME_NOT_RESOLVED at https://rpdigitaltype.com
+  ❌ Failed to capture screenshot
+[19/47] Underground Foundry
+  → https://undergroundfoundry.com
+  ⚠️  Screenshot failed: net::ERR_NAME_NOT_RESOLVED at https://undergroundfoundry.com
+  ❌ Failed to capture screenshot
+[20/47] The Ivy Foundry
+  → https://www.theivyfoundry.com
+  ✅ Screenshot saved
+
+[21/47] Typerepublic
+  → https://typerepublic.com
+  ✅ Screenshot saved
+
+[22/47] Sudtipos
+  → https://www.sudtipos.com
+  ✅ Screenshot saved
+
+[23/47] Identity Letters
+  → https://identity-letters.com
+  ✅ Screenshot saved
+
+[24/47] P22 Type Foundry
+  → https://p22.com
+  ✅ Screenshot saved
+
+[25/47] Canada Type
+  → https://canadatype.com
+  ✅ Screenshot saved
+
+[26/47] Quintana-Font
+  → https://www.quintana-font.com
+  ⚠️  Screenshot failed: net::ERR_NAME_NOT_RESOLVED at https://www.quintana-font.com
+  ❌ Failed to capture screenshot
+[27/47] Nova Type
+  → https://novatype.co
+  ⚠️  Screenshot failed: net::ERR_NAME_NOT_RESOLVED at https://novatype.co
+  ❌ Failed to capture screenshot
+[28/47] Florian Karsten Typefaces
+  → https://fonts.floriankarsten.com
+  ✅ Screenshot saved
+
+[29/47] Central Type
+  → https://www.centraltype.com
+  ✅ Screenshot saved
+
+[30/47] Atypical
+  → https://atypical.gr
+  ✅ Screenshot saved
+
+[31/47] Fontsmith
+  → https://www.fontsmith.com
+  ✅ Screenshot saved
+
+[32/47] Newlyn
+  → https://newlyn.com
+  ✅ Screenshot saved
+
+[33/47] Type Supply
+  → https://typesupply.com
+  ✅ Screenshot saved
+
+[34/47] Incubator
+  → https://incubatorfonts.com
+  ⚠️  Screenshot failed: net::ERR_NAME_NOT_RESOLVED at https://incubatorfonts.com
+  ❌ Failed to capture screenshot
+[35/47] Blackletra
+  → https://blackletra.com
+  ✅ Screenshot saved
+
+[36/47] Constellation
+  → https://constellation.nyc
+  ✅ Screenshot saved
+
+[37/47] LuxTypo
+  → https://luxtypo.com
+  ✅ Screenshot saved
+
+[38/47] Urtd
+  → https://urtd.net
+  ⚠️  Screenshot failed: Navigation timeout of 30000 ms exceeded
+  ❌ Failed to capture screenshot
+[39/47] Scribble Tone
+  → https://www.scribbletone.com
+  ✅ Screenshot saved
+
+[40/47] Acute Studio
+  → https://www.acutestudio.dk
+  ⚠️  Screenshot failed: net::ERR_NAME_NOT_RESOLVED at https://www.acutestudio.dk
+  ❌ Failed to capture screenshot
+[41/47] Erik Marinovich
+  → https://www.erikmarinovich.com
+  ⚠️  Screenshot failed: net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH at https://www.erikmarinovich.com
+  ❌ Failed to capture screenshot
+[42/47] Inga Plönnigs
+  → https://ingaploennigs.com
+  ✅ Screenshot saved
+
+[43/47] Dave Coleman
+  → https://www.davecoleman.design
+  ⚠️  Screenshot failed: net::ERR_NAME_NOT_RESOLVED at https://www.davecoleman.design
+  ❌ Failed to capture screenshot
+[44/47] Teo Tuominen
+  → https://teotuominen.com
+  ✅ Screenshot saved
+
+[45/47] Jake Fleming
+  → https://jakefleming.co
+  ⚠️  Screenshot failed: net::ERR_NAME_NOT_RESOLVED at https://jakefleming.co
+  ❌ Failed to capture screenshot
+[46/47] JazzMaType
+  → https://jazzmatype.com
+  ⚠️  Screenshot failed: net::ERR_NAME_NOT_RESOLVED at https://jazzmatype.com
+  ❌ Failed to capture screenshot
+[47/47] TypeType
+  → https://typetype.org
+  ✅ Screenshot saved
+
+
+📊 Screenshot Summary:
+   ✅ Success: 34
+   ❌ Failed: 13
+   📝 Total: 47
+
+✨ Screenshot capture complete!

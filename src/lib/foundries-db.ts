@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { unstable_cache } from 'next/cache';
 
 // Type definitions
 export interface Foundry {
@@ -118,26 +117,23 @@ function transformDbFoundry(dbFoundry: DbFoundry): Foundry {
 }
 
 /**
- * Get all foundries from the database (cached)
+ * Get all foundries from the database
+ * Note: Cache removed due to 2MB Next.js limit (screenshots cause data > 5MB)
  */
-export const getAllFoundries = unstable_cache(
-  async (): Promise<Foundry[]> => {
-    const { data, error } = await supabase
-      .from('foundries')
-      .select('*')
-      .order('tier', { ascending: true })
-      .order('name', { ascending: true });
+export async function getAllFoundries(): Promise<Foundry[]> {
+  const { data, error } = await supabase
+    .from('foundries')
+    .select('*')
+    .order('tier', { ascending: true })
+    .order('name', { ascending: true });
 
-    if (error) {
-      console.error('Error fetching foundries:', error);
-      return [];
-    }
+  if (error) {
+    console.error('Error fetching foundries:', error);
+    return [];
+  }
 
-    return (data || []).map(transformDbFoundry);
-  },
-  ['all-foundries'],
-  { revalidate: 60 } // Cache for 60 seconds
-);
+  return (data || []).map(transformDbFoundry);
+}
 
 /**
  * Get a single foundry by its slug
@@ -195,55 +191,47 @@ export async function getFoundriesByStyle(style: string): Promise<Foundry[]> {
 /**
  * Get all available styles from foundries
  */
-export const getAllStyles = unstable_cache(
-  async (): Promise<string[]> => {
-    const foundries = await getAllFoundries();
-    const stylesSet = new Set<string>();
+export async function getAllStyles(): Promise<string[]> {
+  const foundries = await getAllFoundries();
+  const stylesSet = new Set<string>();
 
-    foundries.forEach(foundry => {
-      foundry.style.forEach(style => stylesSet.add(style));
-    });
+  foundries.forEach(foundry => {
+    foundry.style.forEach(style => stylesSet.add(style));
+  });
 
-    return Array.from(stylesSet).sort();
-  },
-  ['all-styles'],
-  { revalidate: 300 } // Cache for 5 minutes
-);
+  return Array.from(stylesSet).sort();
+}
 
 /**
  * Get all countries with foundry counts
  */
-export const getAllCountries = unstable_cache(
-  async (): Promise<FoundriesData['countries']> => {
-    const { data, error } = await supabase
-      .from('foundries')
-      .select('location_country, location_country_code');
+export async function getAllCountries(): Promise<FoundriesData['countries']> {
+  const { data, error } = await supabase
+    .from('foundries')
+    .select('location_country, location_country_code');
 
-    if (error) {
-      console.error('Error fetching countries:', error);
-      return [];
+  if (error) {
+    console.error('Error fetching countries:', error);
+    return [];
+  }
+
+  // Count foundries per country
+  const countryMap = new Map<string, { name: string; code: string; count: number }>();
+
+  (data || []).forEach(foundry => {
+    const code = foundry.location_country_code;
+    const name = foundry.location_country;
+
+    if (countryMap.has(code)) {
+      countryMap.get(code)!.count++;
+    } else {
+      countryMap.set(code, { code, name, count: 1 });
     }
+  });
 
-    // Count foundries per country
-    const countryMap = new Map<string, { name: string; code: string; count: number }>();
-
-    (data || []).forEach(foundry => {
-      const code = foundry.location_country_code;
-      const name = foundry.location_country;
-
-      if (countryMap.has(code)) {
-        countryMap.get(code)!.count++;
-      } else {
-        countryMap.set(code, { code, name, count: 1 });
-      }
-    });
-
-    return Array.from(countryMap.values())
-      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
-  },
-  ['all-countries'],
-  { revalidate: 300 } // Cache for 5 minutes
-);
+  return Array.from(countryMap.values())
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+}
 
 /**
  * Search foundries by name, founder, or typefaces

@@ -1,0 +1,1902 @@
+[
+  {
+    "id": "hvdfonts",
+    "name": "HvD Fonts",
+    "slug": "hvd-fonts",
+    "location": {
+      "city": "Berlin",
+      "country": "Germany",
+      "countryCode": "DE"
+    },
+    "url": "https://www.hvdfonts.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Hannes von Döhren",
+    "founded": 2008,
+    "notableTypefaces": [
+      "Brandon Grotesque",
+      "Brandon Text",
+      "Supria Sans",
+      "Pluto",
+      "Livory"
+    ],
+    "style": [
+      "geometric",
+      "friendly",
+      "branding"
+    ],
+    "tier": 2,
+    "socialMedia": {
+      "instagram": "hvdfonts",
+      "twitter": null
+    },
+    "notes": "Brandon Grotesque is everywhere—cafes, startups, packaging",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "typetogether",
+    "name": "TypeTogether",
+    "slug": "typetogether",
+    "location": {
+      "city": "Prague/Barcelona",
+      "country": "Czech Republic/Spain",
+      "countryCode": "CZ"
+    },
+    "url": "https://www.type-together.com",
+    "contentFeed": {
+      "type": "blog",
+      "url": "https://www.type-together.com/news",
+      "rss": null,
+      "frequency": "monthly"
+    },
+    "founder": "Veronika Burian, José Scaglione",
+    "founded": 2006,
+    "notableTypefaces": [
+      "Adelle",
+      "Adelle Sans",
+      "Bree",
+      "Abril",
+      "Athelas"
+    ],
+    "style": [
+      "editorial",
+      "multilingual",
+      "book"
+    ],
+    "tier": 2,
+    "socialMedia": {
+      "instagram": "type_together",
+      "twitter": "typetogether"
+    },
+    "notes": "Strong editorial and publishing focus, excellent Cyrillic support",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "village",
+    "name": "Village",
+    "slug": "village",
+    "location": {
+      "city": "New York",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://vllg.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Type Co-op",
+    "founded": 2003,
+    "notableTypefaces": [
+      "Balto",
+      "Ogg",
+      "Relay",
+      "Vista Sans"
+    ],
+    "style": [
+      "co-op",
+      "curated",
+      "premium"
+    ],
+    "tier": 2,
+    "socialMedia": {
+      "instagram": "vaborllg",
+      "twitter": null
+    },
+    "notes": "Co-op of elite foundries: Klim, MCKL, Sharp Type, Incubator",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "fontbureau",
+    "name": "Font Bureau",
+    "slug": "font-bureau",
+    "location": {
+      "city": "Boston",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://fontbureau.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Roger Black, David Berlow",
+    "founded": 1989,
+    "notableTypefaces": [
+      "Benton Sans",
+      "Miller",
+      "Interstate",
+      "Poynter",
+      "Bureau Grotesque"
+    ],
+    "style": [
+      "editorial",
+      "news",
+      "americana"
+    ],
+    "tier": 2,
+    "socialMedia": {
+      "instagram": "fontbureau",
+      "twitter": "fontbureau"
+    },
+    "notes": "Legendary news typography, countless newspaper redesigns",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "daltonmaag",
+    "name": "Dalton Maag",
+    "slug": "dalton-maag",
+    "location": {
+      "city": "London",
+      "country": "United Kingdom",
+      "countryCode": "GB"
+    },
+    "url": "https://www.daltonmaag.com",
+    "contentFeed": {
+      "type": "blog",
+      "url": "https://www.daltonmaag.com/about/blog",
+      "rss": null,
+      "frequency": "monthly"
+    },
+    "founder": "Bruno Maag",
+    "founded": 1991,
+    "notableTypefaces": [
+      "Ubuntu",
+      "Nokia Pure",
+      "Intel Clear",
+      "Amazon Ember",
+      "Airbnb Cereal"
+    ],
+    "style": [
+      "corporate",
+      "tech",
+      "multilingual"
+    ],
+    "tier": 2,
+    "socialMedia": {
+      "instagram": "dalabortonmaag",
+      "twitter": "daltonmaag"
+    },
+    "notes": "Major tech custom fonts—Ubuntu, Amazon, Airbnb, Intel",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "luzitype",
+    "name": "Luzi Type",
+    "slug": "luzi-type",
+    "location": {
+      "city": "Buenos Aires",
+      "country": "Argentina",
+      "countryCode": "AR"
+    },
+    "url": "https://www.luzi-type.ch",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Luc(as) de Groot collaboration",
+    "founded": 2015,
+    "notableTypefaces": [
+      "Tabac",
+      "Tabac Sans",
+      "Tabac Slab",
+      "Tabac G"
+    ],
+    "style": [
+      "humanist",
+      "editorial",
+      "warm"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": null,
+      "twitter": null
+    },
+    "notes": "Deep investment in comprehensive superfamilies",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "vjtype",
+    "name": "VJ-Type",
+    "slug": "vj-type",
+    "location": {
+      "city": "Porto",
+      "country": "Portugal",
+      "countryCode": "PT"
+    },
+    "url": "https://vj-type.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Vitor Quelhas",
+    "founded": 2018,
+    "notableTypefaces": [
+      "Gestura",
+      "Neue Alte Grotesk",
+      "Reckless",
+      "Switzer"
+    ],
+    "style": [
+      "portuguese",
+      "experimental",
+      "variable"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "vj.type",
+      "twitter": null
+    },
+    "notes": "Portuguese contemporary, strong variable font work",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "camelot",
+    "name": "Camelot Typefaces",
+    "slug": "camelot-typefaces",
+    "location": {
+      "city": "Brussels",
+      "country": "Belgium",
+      "countryCode": "BE"
+    },
+    "url": "https://camelot-typefaces.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Matthieu Cortat",
+    "founded": 2016,
+    "notableTypefaces": [
+      "Inferi",
+      "Matter",
+      "Grand Slang"
+    ],
+    "style": [
+      "belgian",
+      "experimental",
+      "display"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "camelot_typefaces",
+      "twitter": null
+    },
+    "notes": "Belgian boutique with strong display work",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "lifttype",
+    "name": "Lift Type",
+    "slug": "lift-type",
+    "location": {
+      "city": "Montpellier",
+      "country": "France",
+      "countryCode": "FR"
+    },
+    "url": "https://www.lift-type.fr",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Romain Oudin, Nicolas Aubert",
+    "founded": 2014,
+    "notableTypefaces": [
+      "Tartuffo",
+      "Baste",
+      "Mint Grotesk",
+      "Kaio Krilin"
+    ],
+    "style": [
+      "french",
+      "editorial",
+      "contemporary"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "lift_type",
+      "twitter": null
+    },
+    "notes": "French boutique, editorial and branding focus",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "familytype",
+    "name": "Family Type",
+    "slug": "family-type",
+    "location": {
+      "city": "Sydney",
+      "country": "Australia",
+      "countryCode": "AU"
+    },
+    "url": "https://familytype.co",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Michael Sevilla",
+    "founded": 2019,
+    "notableTypefaces": [
+      "Geist",
+      "Azeret",
+      "Supreme"
+    ],
+    "style": [
+      "australian",
+      "tech",
+      "variable"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "familytype.co",
+      "twitter": null
+    },
+    "notes": "Vercel's Geist font, tech-forward Australian foundry",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "offtype",
+    "name": "Off Type",
+    "slug": "off-type",
+    "location": {
+      "city": "Toronto",
+      "country": "Canada",
+      "countryCode": "CA"
+    },
+    "url": "https://www.offtype.co",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Pangram Pangram sister",
+    "founded": 2021,
+    "notableTypefaces": [
+      "Oddval",
+      "Basement Grotesque",
+      "Quilon"
+    ],
+    "style": [
+      "playful",
+      "experimental",
+      "display"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "offtype.co",
+      "twitter": null
+    },
+    "notes": "Quirky sibling of Pangram Pangram, weirder display faces",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "monokrom",
+    "name": "Monokrom",
+    "slug": "monokrom",
+    "location": {
+      "city": "Oslo",
+      "country": "Norway",
+      "countryCode": "NO"
+    },
+    "url": "https://monokrom.no",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Frode Helland",
+    "founded": 2012,
+    "notableTypefaces": [
+      "Telefon",
+      "Aleo",
+      "Overpass",
+      "Recia"
+    ],
+    "style": [
+      "scandinavian",
+      "technical",
+      "multilingual"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "monokrom_no",
+      "twitter": null
+    },
+    "notes": "Norwegian technical excellence, strong open-source contributions",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "signal",
+    "name": "Signal Foundry",
+    "slug": "signal-foundry",
+    "location": {
+      "city": "Copenhagen",
+      "country": "Denmark",
+      "countryCode": "DK"
+    },
+    "url": "https://www.signalfoundry.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Henrik Birkvig",
+    "founded": 2018,
+    "notableTypefaces": [
+      "Signal",
+      "Terminal",
+      "Wire"
+    ],
+    "style": [
+      "danish",
+      "minimal",
+      "tech"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "signalfoundry",
+      "twitter": null
+    },
+    "notes": "Danish minimalism, tech-focused",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "tipotype",
+    "name": "TipoType",
+    "slug": "tipotype",
+    "location": {
+      "city": "Santiago",
+      "country": "Chile",
+      "countryCode": "CL"
+    },
+    "url": "https://tipotype.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Daniel Hernández",
+    "founded": 2010,
+    "notableTypefaces": [
+      "Bulo",
+      "Aneba",
+      "Queulat",
+      "Arquitecta"
+    ],
+    "style": [
+      "chilean",
+      "geometric",
+      "contemporary"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "tipotype",
+      "twitter": null
+    },
+    "notes": "Chilean foundry, geometric sans focus",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "latinotype",
+    "name": "Latinotype",
+    "slug": "latinotype",
+    "location": {
+      "city": "Santiago",
+      "country": "Chile",
+      "countryCode": "CL"
+    },
+    "url": "https://www.latinotype.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Luciano Vergara, Daniel Hernández",
+    "founded": 2007,
+    "notableTypefaces": [
+      "Texta",
+      "Nexa",
+      "Sofia Pro",
+      "Corporative"
+    ],
+    "style": [
+      "chilean",
+      "versatile",
+      "accessible"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "latinotype",
+      "twitter": null
+    },
+    "notes": "Accessible pricing, wide variety, popular on Envato",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "renebieder",
+    "name": "Studio René Bieder",
+    "slug": "studio-rene-bieder",
+    "location": {
+      "city": "Frankfurt",
+      "country": "Germany",
+      "countryCode": "DE"
+    },
+    "url": "https://www.rfrenebieder.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "René Bieder",
+    "founded": 2015,
+    "notableTypefaces": [
+      "Campton",
+      "Visby",
+      "Galano Grotesque",
+      "Rawson"
+    ],
+    "style": [
+      "german",
+      "geometric",
+      "workhorse"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "renebieder",
+      "twitter": null
+    },
+    "notes": "Solid geometric workhorses, Campton is ubiquitous",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "kontour",
+    "name": "Kontour Type",
+    "slug": "kontour-type",
+    "location": {
+      "city": "Buenos Aires",
+      "country": "Argentina",
+      "countryCode": "AR"
+    },
+    "url": "https://kontour.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Martín Sommaruga",
+    "founded": 2017,
+    "notableTypefaces": [
+      "Anek",
+      "Reforma",
+      "Konkret"
+    ],
+    "style": [
+      "argentine",
+      "multilingual",
+      "variable"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "kontour_type",
+      "twitter": null
+    },
+    "notes": "Strong Latin American type design, variable focus",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "rpdigital",
+    "name": "RP Digital Type Foundry",
+    "slug": "rp-digital",
+    "location": {
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "countryCode": "NL"
+    },
+    "url": "https://rpdigitaltype.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Rutger Paulusse",
+    "founded": 2018,
+    "notableTypefaces": [
+      "RP Adieu",
+      "RP Neue",
+      "RP Serif"
+    ],
+    "style": [
+      "dutch",
+      "minimal",
+      "contemporary"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "rpdigitaltype",
+      "twitter": null
+    },
+    "notes": "Dutch minimalism, clean sans serifs",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "underground",
+    "name": "Underground Foundry",
+    "slug": "underground-foundry",
+    "location": {
+      "city": "Berlin",
+      "country": "Germany",
+      "countryCode": "DE"
+    },
+    "url": "https://undergroundfoundry.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Martin Wenzel",
+    "founded": 2019,
+    "notableTypefaces": [
+      "Reform Grotesk",
+      "Triptych",
+      "Grotta"
+    ],
+    "style": [
+      "german",
+      "brutalist",
+      "experimental"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "undergroundfoundry",
+      "twitter": null
+    },
+    "notes": "Berlin underground aesthetic, brutalist display faces",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "theivyfoundry",
+    "name": "The Ivy Foundry",
+    "slug": "the-ivy-foundry",
+    "location": {
+      "city": "Copenhagen",
+      "country": "Denmark",
+      "countryCode": "DK"
+    },
+    "url": "https://www.theivyfoundry.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Jan Maack",
+    "founded": 2016,
+    "notableTypefaces": [
+      "Ivy Mode",
+      "Ivy Presto",
+      "Ivy Journal"
+    ],
+    "style": [
+      "danish",
+      "editorial",
+      "elegant"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "theivyfoundry",
+      "twitter": null
+    },
+    "notes": "Elegant editorial typefaces, fashion magazine favorite",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "typerepublic",
+    "name": "Typerepublic",
+    "slug": "typerepublic",
+    "location": {
+      "city": "Barcelona",
+      "country": "Spain",
+      "countryCode": "ES"
+    },
+    "url": "https://typerepublic.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Andreu Balius",
+    "founded": 2010,
+    "notableTypefaces": [
+      "Carmen",
+      "Pradell",
+      "Greta",
+      "Trochut"
+    ],
+    "style": [
+      "spanish",
+      "historical",
+      "multilingual"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "typerepublic",
+      "twitter": null
+    },
+    "notes": "Spanish heritage, historical revivals, multi-script",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "sudtipos",
+    "name": "Sudtipos",
+    "slug": "sudtipos",
+    "location": {
+      "city": "Buenos Aires",
+      "country": "Argentina",
+      "countryCode": "AR"
+    },
+    "url": "https://www.sudtipos.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Ale Paul, et al.",
+    "founded": 2002,
+    "notableTypefaces": [
+      "Affair",
+      "Blend",
+      "Adorn",
+      "Hipster Script"
+    ],
+    "style": [
+      "argentine",
+      "script",
+      "display"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "sudtipos",
+      "twitter": "sudtipos"
+    },
+    "notes": "Script specialists, wedding/invitation favorite",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "identityletters",
+    "name": "Identity Letters",
+    "slug": "identity-letters",
+    "location": {
+      "city": "Kleve",
+      "country": "Germany",
+      "countryCode": "DE"
+    },
+    "url": "https://identity-letters.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Alexander Roth",
+    "founded": 2018,
+    "notableTypefaces": [
+      "Apfel Grotezk",
+      "Graviola",
+      "Sole"
+    ],
+    "style": [
+      "german",
+      "friendly",
+      "contemporary"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "identity.letters",
+      "twitter": null
+    },
+    "notes": "German boutique near Dutch border, friendly aesthetics",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "p22",
+    "name": "P22 Type Foundry",
+    "slug": "p22-type-foundry",
+    "location": {
+      "city": "Buffalo",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://p22.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Richard Kegler",
+    "founded": 1994,
+    "notableTypefaces": [
+      "Underground",
+      "Cezanne",
+      "Garamouche",
+      "Morris"
+    ],
+    "style": [
+      "historical",
+      "arts-crafts",
+      "revival"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "p22type",
+      "twitter": null
+    },
+    "notes": "Arts & Crafts movement revivals, historical research",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "canadatype",
+    "name": "Canada Type",
+    "slug": "canada-type",
+    "location": {
+      "city": "Toronto",
+      "country": "Canada",
+      "countryCode": "CA"
+    },
+    "url": "https://canadatype.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Patrick Griffin, Kevin Allan King",
+    "founded": 2004,
+    "notableTypefaces": [
+      "Gibson",
+      "Rialto",
+      "Acropolis",
+      "Figgins"
+    ],
+    "style": [
+      "canadian",
+      "revival",
+      "versatile"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "canadatype",
+      "twitter": null
+    },
+    "notes": "25+ years, revivals and originals, massive library",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "quintanafont",
+    "name": "Quintana-Font",
+    "slug": "quintana-font",
+    "location": {
+      "city": "Santiago",
+      "country": "Chile",
+      "countryCode": "CL"
+    },
+    "url": "https://www.quintana-font.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Rodrigo Quintana",
+    "founded": 2018,
+    "notableTypefaces": [
+      "Quinoa",
+      "Cebra",
+      "Patua"
+    ],
+    "style": [
+      "chilean",
+      "contemporary",
+      "editorial"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "quintanafont",
+      "twitter": null
+    },
+    "notes": "Chilean independent, editorial focus",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "novatype",
+    "name": "Nova Type",
+    "slug": "nova-type",
+    "location": {
+      "city": "Austin",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://novatype.co",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Mike LaGattuta",
+    "founded": 2020,
+    "notableTypefaces": [
+      "Nova Round",
+      "Nova Flat",
+      "Nova Mono"
+    ],
+    "style": [
+      "american",
+      "friendly",
+      "tech"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "novatype.co",
+      "twitter": null
+    },
+    "notes": "Cultivates creativity and education alongside type design",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "floriankarsten",
+    "name": "Florian Karsten Typefaces",
+    "slug": "florian-karsten",
+    "location": {
+      "city": "Prague",
+      "country": "Czech Republic",
+      "countryCode": "CZ"
+    },
+    "url": "https://fonts.floriankarsten.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Florian Karsten",
+    "founded": 2017,
+    "notableTypefaces": [
+      "FK Raster",
+      "FK Grotesk",
+      "FK Display"
+    ],
+    "style": [
+      "czech",
+      "variable",
+      "experimental"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "floriankarstentypefaces",
+      "twitter": null
+    },
+    "notes": "Czech independent, variable font exploration",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "centraltype",
+    "name": "Central Type",
+    "slug": "central-type",
+    "location": {
+      "city": "Chicago",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://www.centraltype.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Mark Butchko",
+    "founded": 2018,
+    "notableTypefaces": [
+      "Central",
+      "Midwest",
+      "Standard Issue"
+    ],
+    "style": [
+      "american",
+      "midwestern",
+      "workhorse"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "centraltype",
+      "twitter": null
+    },
+    "notes": "Chicago-based, practical workhorses",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "atypical",
+    "name": "Atypical",
+    "slug": "atypical",
+    "location": {
+      "city": "Athens",
+      "country": "Greece",
+      "countryCode": "GR"
+    },
+    "url": "https://atypical.gr",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Panos Vassiliou",
+    "founded": 2015,
+    "notableTypefaces": [
+      "Topos",
+      "Panos",
+      "Greta Greek"
+    ],
+    "style": [
+      "greek",
+      "multilingual",
+      "display"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "atypical.gr",
+      "twitter": null
+    },
+    "notes": "Greek foundry, strong Greek script support",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "fontsmith",
+    "name": "Fontsmith",
+    "slug": "fontsmith",
+    "location": {
+      "city": "London",
+      "country": "United Kingdom",
+      "countryCode": "GB"
+    },
+    "url": "https://www.fontsmith.com",
+    "contentFeed": {
+      "type": "blog",
+      "url": "https://www.fontsmith.com/blog",
+      "rss": null,
+      "frequency": "monthly"
+    },
+    "founder": "Jason Smith",
+    "founded": 1997,
+    "notableTypefaces": [
+      "FS Albert",
+      "FS Elliot",
+      "FS Joey",
+      "FS Kim"
+    ],
+    "style": [
+      "british",
+      "corporate",
+      "humanist"
+    ],
+    "tier": 2,
+    "socialMedia": {
+      "instagram": "fontsmith",
+      "twitter": "fontsmith"
+    },
+    "notes": "British institution, BBC, Channel 4, corporate work",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "newlyn",
+    "name": "Newlyn",
+    "slug": "newlyn",
+    "location": {
+      "city": "London",
+      "country": "United Kingdom",
+      "countryCode": "GB"
+    },
+    "url": "https://newlyn.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Miles Newlyn",
+    "founded": 1995,
+    "notableTypefaces": [
+      "Newlyn",
+      "Sabbath Black",
+      "Missionary"
+    ],
+    "style": [
+      "british",
+      "display",
+      "handcrafted"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": null,
+      "twitter": null
+    },
+    "notes": "British craftsman, handcrafted display faces",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "typesupply",
+    "name": "Type Supply",
+    "slug": "type-supply",
+    "location": {
+      "city": "Baltimore",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://typesupply.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Tal Leming",
+    "founded": 2005,
+    "notableTypefaces": [
+      "Balto",
+      "San Francisco predecessor work"
+    ],
+    "style": [
+      "american",
+      "technical",
+      "code"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": null,
+      "twitter": "typesupply"
+    },
+    "notes": "Technical type designer, RoboFont tools creator",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "incubator",
+    "name": "Incubator",
+    "slug": "incubator",
+    "location": {
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "countryCode": "NL"
+    },
+    "url": "https://incubatorfonts.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Pieter van Rosmalen",
+    "founded": 2012,
+    "notableTypefaces": [
+      "Greta Sans",
+      "Conto",
+      "Newzald"
+    ],
+    "style": [
+      "dutch",
+      "editorial",
+      "humanist"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "incubatorfonts",
+      "twitter": null
+    },
+    "notes": "Dutch editorial excellence, Village co-op member",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "blackletra",
+    "name": "Blackletra",
+    "slug": "blackletra",
+    "location": {
+      "city": "Mexico City",
+      "country": "Mexico",
+      "countryCode": "MX"
+    },
+    "url": "https://blackletra.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Cristóbal Henestrosa",
+    "founded": 2010,
+    "notableTypefaces": [
+      "Espinosa Nova",
+      "Odile",
+      "Clavo"
+    ],
+    "style": [
+      "mexican",
+      "historical",
+      "colonial"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "blackletra",
+      "twitter": null
+    },
+    "notes": "Mexican colonial type history, Village co-op member",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "constellation",
+    "name": "Constellation",
+    "slug": "constellation",
+    "location": {
+      "city": "Brooklyn",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://constellation.nyc",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Chester Jenkins",
+    "founded": 2014,
+    "notableTypefaces": [
+      "Galaxie Polaris",
+      "Galaxie Copernicus",
+      "Galaxie"
+    ],
+    "style": [
+      "american",
+      "editorial",
+      "space-themed"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "constellation.nyc",
+      "twitter": null
+    },
+    "notes": "Brooklyn-based, celestial naming, Village co-op member",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "luxtypo",
+    "name": "LuxTypo",
+    "slug": "luxtypo",
+    "location": {
+      "city": "Luxembourg City",
+      "country": "Luxembourg",
+      "countryCode": "LU"
+    },
+    "url": "https://luxtypo.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Roland Hörmann",
+    "founded": 2015,
+    "notableTypefaces": [
+      "Novel",
+      "Novel Sans",
+      "Novel Mono"
+    ],
+    "style": [
+      "luxembourgish",
+      "editorial",
+      "book"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": null,
+      "twitter": null
+    },
+    "notes": "Luxembourg-based, Village co-op member",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "urtd",
+    "name": "Urtd",
+    "slug": "urtd",
+    "location": {
+      "city": "Vancouver",
+      "country": "Canada",
+      "countryCode": "CA"
+    },
+    "url": "https://urtd.net",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Ross Mills",
+    "founded": 2003,
+    "notableTypefaces": [
+      "Questa",
+      "Turnip",
+      "Yana"
+    ],
+    "style": [
+      "canadian",
+      "multilingual",
+      "historical"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": null,
+      "twitter": null
+    },
+    "notes": "Canadian expert, Indic and Arabic specialist, Village member",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "scribbleltone",
+    "name": "Scribble Tone",
+    "slug": "scribble-tone",
+    "location": {
+      "city": "Portland",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://www.scribbletone.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Travis Kochel, Lizy Gershenzon",
+    "founded": 2015,
+    "notableTypefaces": [
+      "Anybody",
+      "Fit",
+      "Tilt"
+    ],
+    "style": [
+      "american",
+      "variable",
+      "experimental"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "scribbletone",
+      "twitter": "scribbletone"
+    },
+    "notes": "Future Fonts co-founders, variable font pioneers",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "acutestudio",
+    "name": "Acute Studio",
+    "slug": "acute-studio",
+    "location": {
+      "city": "Copenhagen",
+      "country": "Denmark",
+      "countryCode": "DK"
+    },
+    "url": "https://www.acutestudio.dk",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Mads Wildgaard",
+    "founded": 2018,
+    "notableTypefaces": [
+      "Acute",
+      "Sprat",
+      "Lust"
+    ],
+    "style": [
+      "danish",
+      "experimental",
+      "display"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "acutestudio.dk",
+      "twitter": null
+    },
+    "notes": "Danish experimental, Future Fonts featured",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "erikmarinovich",
+    "name": "Erik Marinovich",
+    "slug": "erik-marinovich",
+    "location": {
+      "city": "San Francisco",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://www.erikmarinovich.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Erik Marinovich",
+    "founded": 2010,
+    "notableTypefaces": [
+      "Gin",
+      "Title Wave",
+      "Marbella"
+    ],
+    "style": [
+      "american",
+      "script",
+      "lettering"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "erikmarinovich",
+      "twitter": null
+    },
+    "notes": "Friends of Type co-founder, lettering legend",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "ingaploennigs",
+    "name": "Inga Plönnigs",
+    "slug": "inga-ploennigs",
+    "location": {
+      "city": "Berlin",
+      "country": "Germany",
+      "countryCode": "DE"
+    },
+    "url": "https://ingaploennigs.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Inga Plönnigs",
+    "founded": 2017,
+    "notableTypefaces": [
+      "Inga",
+      "Loup",
+      "Fraktur"
+    ],
+    "style": [
+      "german",
+      "blackletter",
+      "experimental"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "ingaploennigs",
+      "twitter": null
+    },
+    "notes": "German type designer, blackletter modernization",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "davecoleman",
+    "name": "Dave Coleman",
+    "slug": "dave-coleman",
+    "location": {
+      "city": "Portland",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://www.davecoleman.design",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Dave Coleman",
+    "founded": 2018,
+    "notableTypefaces": [
+      "Rigatoni",
+      "Bucatini",
+      "Pappardelle"
+    ],
+    "style": [
+      "american",
+      "playful",
+      "display"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "davecoleman.design",
+      "twitter": null
+    },
+    "notes": "Portland designer, pasta-themed fonts, Future Fonts featured",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "teotuominen",
+    "name": "Teo Tuominen",
+    "slug": "teo-tuominen",
+    "location": {
+      "city": "Helsinki",
+      "country": "Finland",
+      "countryCode": "FI"
+    },
+    "url": "https://teotuominen.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Teo Tuominen",
+    "founded": 2019,
+    "notableTypefaces": [
+      "Teo Sans",
+      "Helsinki Grotesk"
+    ],
+    "style": [
+      "finnish",
+      "minimal",
+      "nordic"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "teotuominen",
+      "twitter": null
+    },
+    "notes": "Finnish minimalism, Future Fonts featured",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "jakefleming",
+    "name": "Jake Fleming",
+    "slug": "jake-fleming",
+    "location": {
+      "city": "Brooklyn",
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "url": "https://jakefleming.co",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Jake Fleming",
+    "founded": 2017,
+    "notableTypefaces": [
+      "Fleming",
+      "Revue",
+      "Chronicle Display"
+    ],
+    "style": [
+      "american",
+      "display",
+      "retro"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "jakeflemingco",
+      "twitter": null
+    },
+    "notes": "Brooklyn lettering artist turned type designer",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "jazzmatype",
+    "name": "JazzMaType",
+    "slug": "jazzmatype",
+    "location": {
+      "city": "Berlin",
+      "country": "Germany",
+      "countryCode": "DE"
+    },
+    "url": "https://jazzmatype.com",
+    "contentFeed": {
+      "type": "none",
+      "url": null,
+      "rss": null,
+      "frequency": null
+    },
+    "founder": "Johannes Breyer",
+    "founded": 2020,
+    "notableTypefaces": [
+      "Jazz",
+      "Groove",
+      "Bebop"
+    ],
+    "style": [
+      "german",
+      "display",
+      "musical"
+    ],
+    "tier": 3,
+    "socialMedia": {
+      "instagram": "jazzmatype",
+      "twitter": null
+    },
+    "notes": "Music-inspired type design, Future Fonts featured",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  },
+  {
+    "id": "typetype",
+    "name": "TypeType",
+    "slug": "typetype",
+    "location": {
+      "city": "St. Petersburg",
+      "country": "Russia",
+      "countryCode": "RU"
+    },
+    "url": "https://typetype.org",
+    "contentFeed": {
+      "type": "blog",
+      "url": "https://typetype.org/blog",
+      "rss": null,
+      "frequency": "monthly"
+    },
+    "founder": "Ivan Gladkikh",
+    "founded": 2013,
+    "notableTypefaces": [
+      "TT Norms",
+      "TT Commons",
+      "TT Firs",
+      "TT Hoves"
+    ],
+    "style": [
+      "russian",
+      "geometric",
+      "corporate"
+    ],
+    "tier": 2,
+    "socialMedia": {
+      "instagram": "typetype_foundry",
+      "twitter": null
+    },
+    "notes": "Prolific Russian foundry, TT Norms is everywhere",
+    "images": {
+      "screenshot": null,
+      "logo": null,
+      "specimens": []
+    }
+  }
+]
