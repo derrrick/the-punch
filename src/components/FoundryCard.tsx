@@ -34,6 +34,20 @@ export function FoundryCard({ foundry, index }: FoundryCardProps) {
     router.push(`/?style=${encodeURIComponent(style)}#results`);
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Trigger transition before navigation
+    const event = new CustomEvent('foundryTransitionStart', { 
+      detail: { slug: foundry.slug }
+    });
+    window.dispatchEvent(event);
+    
+    // Navigate after curtains have fully covered the screen
+    setTimeout(() => {
+      router.push(`/foundry/${foundry.slug}`);
+    }, 600);
+  };
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 40 }}
@@ -47,6 +61,7 @@ export function FoundryCard({ foundry, index }: FoundryCardProps) {
     >
       <Link
         href={`/foundry/${foundry.slug}`}
+        onClick={handleClick}
         className="group block border-t border-neutral-200 pt-6 pb-8 transition-colors duration-300 hover:border-neutral-400"
       >
         {/* Screenshot or Gradient Placeholder */}

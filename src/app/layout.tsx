@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
-import { getAllFoundries, getAllStyles, getAllCountries } from "@/lib/foundries-db";
+import { FoundryTransitionProvider } from "@/components/FoundryTransition";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -52,29 +52,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch data server-side for Header
-  const foundries = await getAllFoundries();
-  const styles = await getAllStyles();
-  const countries = await getAllCountries();
-
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
-        <ScrollProgress />
-        <Suspense fallback={<div className="h-16" />}>
-          <Header foundries={foundries} styles={styles} countries={countries} />
-        </Suspense>
-        <main className="flex-1 pt-16">
-          {children}
-        </main>
-        <Footer />
+        <FoundryTransitionProvider>
+          <ScrollProgress />
+          <Suspense fallback={<div className="h-16" />}>
+            <Header />
+          </Suspense>
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </FoundryTransitionProvider>
       </body>
     </html>
   );
