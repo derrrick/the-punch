@@ -32,6 +32,8 @@ export interface Foundry {
     logo: string | null;
     specimens: string[];
   };
+  created_at: string;
+  updated_at: string;
 }
 
 export interface FoundriesData {
@@ -89,6 +91,8 @@ interface DbFoundry {
   notes: string | null;
   screenshot_url: string | null;
   logo_url: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // Transform database record to Foundry interface
@@ -124,6 +128,8 @@ function transformDbFoundry(dbFoundry: DbFoundry): Foundry {
       logo: dbFoundry.logo_url,
       specimens: [], // Not storing specimens yet
     },
+    created_at: dbFoundry.created_at,
+    updated_at: dbFoundry.updated_at,
   };
 }
 

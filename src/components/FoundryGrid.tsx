@@ -16,36 +16,57 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
   const styleFilter = searchParams.get("style");
   const locationFilter = searchParams.get("location");
   const searchFilter = searchParams.get("search");
+  const sortFilter = searchParams.get("sort");
+  const typeFilter = searchParams.get("filter");
 
   const filteredFoundries = useMemo(() => {
-    if (!styleFilter && !locationFilter && !searchFilter) {
-      return allFoundries;
+    let results = allFoundries;
+
+    // Apply type filters (recent, classic, established)
+    if (typeFilter === 'recent') {
+      // Show foundries founded in the last 6 years (2020 or later)
+      const currentYear = new Date().getFullYear();
+      const recentThreshold = currentYear - 6;
+      results = results.filter(f => f.founded && f.founded >= recentThreshold);
+    } else if (typeFilter === 'classic') {
+      // Show foundries founded before 2000
+      results = results.filter(f => f.founded && f.founded < 2000);
+    } else if (typeFilter === 'established') {
+      // Show foundries founded between 2000-2020
+      results = results.filter(f => f.founded && f.founded >= 2000 && f.founded < 2020);
     }
 
-    return allFoundries.filter((foundry) => {
-      if (styleFilter) {
-        return foundry.style.some(
-          (s) => s.toLowerCase() === styleFilter.toLowerCase()
-        );
-      }
-      if (locationFilter) {
-        return foundry.location.countryCode.toLowerCase() === locationFilter.toLowerCase();
-      }
-      if (searchFilter) {
-        const query = searchFilter.toLowerCase();
-        return (
-          foundry.name.toLowerCase().includes(query) ||
-          foundry.founder.toLowerCase().includes(query) ||
-          foundry.location.city.toLowerCase().includes(query) ||
-          foundry.location.country.toLowerCase().includes(query) ||
-          foundry.notableTypefaces.some((t) => t.toLowerCase().includes(query)) ||
-          foundry.style.some((s) => s.toLowerCase().includes(query)) ||
-          foundry.notes.toLowerCase().includes(query)
-        );
-      }
-      return true;
-    });
-  }, [allFoundries, styleFilter, locationFilter, searchFilter]);
+    // Apply existing filters (style, location, search)
+    if (styleFilter) {
+      results = results.filter(f =>
+        f.style.some(s => s.toLowerCase() === styleFilter.toLowerCase())
+      );
+    }
+    if (locationFilter) {
+      results = results.filter(f =>
+        f.location.countryCode.toLowerCase() === locationFilter.toLowerCase()
+      );
+    }
+    if (searchFilter) {
+      const query = searchFilter.toLowerCase();
+      results = results.filter(f =>
+        f.name.toLowerCase().includes(query) ||
+        f.founder.toLowerCase().includes(query) ||
+        f.location.city.toLowerCase().includes(query) ||
+        f.location.country.toLowerCase().includes(query) ||
+        f.notableTypefaces.some(t => t.toLowerCase().includes(query)) ||
+        f.style.some(s => s.toLowerCase().includes(query)) ||
+        f.notes.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply sorting (must be after filtering)
+    if (sortFilter === 'popular') {
+      results = [...results].sort((a, b) => a.tier - b.tier);
+    }
+
+    return results;
+  }, [allFoundries, styleFilter, locationFilter, searchFilter, sortFilter, typeFilter]);
 
   return (
     <section className="py-16 md:py-24 bg-white">
