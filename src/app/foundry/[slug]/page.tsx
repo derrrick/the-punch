@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
 import { getFoundryBySlug, getAllFoundries } from "@/lib/foundries-db";
 import { FoundryPageClient } from "./FoundryPageClient";
 
@@ -67,8 +65,6 @@ export default async function FoundryPage({ params }: FoundryPageProps) {
   if (!foundry) {
     notFound();
   }
-
-  const hasScreenshot = foundry.images?.screenshot;
 
   return <FoundryPageClient foundry={foundry} />;
 }

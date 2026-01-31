@@ -24,7 +24,9 @@ export default async function Home() {
   return (
     <>
       <Hero totalFoundries={foundries.length} />
-      <FilterBar foundries={foundries} styles={styles} countries={countries} />
+      <Suspense fallback={<div className="h-16" />}>
+        <FilterBar foundries={foundries} styles={styles} countries={countries} />
+      </Suspense>
       <Suspense fallback={<div className="py-24 text-center">Loading...</div>}>
         <FoundryGrid foundries={foundries} countries={countries} />
       </Suspense>

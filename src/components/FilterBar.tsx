@@ -46,7 +46,6 @@ interface FilterBarProps {
 
 export function FilterBar({ foundries: allFoundries, styles, countries }: FilterBarProps) {
   const [activeDropdown, setActiveDropdown] = useState<"style" | "location" | null>(null);
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("Classification");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -414,8 +413,6 @@ export function FilterBar({ foundries: allFoundries, styles, countries }: Filter
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.15, delay: index * 0.01 }}
                             onClick={() => handleStyleClick(matchingStyle)}
-                            onMouseEnter={() => setHoveredItem(style)}
-                            onMouseLeave={() => setHoveredItem(null)}
                             className={`text-left py-2.5 px-3 -mx-3 rounded-lg group flex items-center justify-between transition-all duration-150 ${
                               isActive 
                                 ? "bg-neutral-100" 
@@ -471,8 +468,6 @@ export function FilterBar({ foundries: allFoundries, styles, countries }: Filter
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.15, delay: index * 0.008 }}
                           onClick={() => handleLocationClick(country.code)}
-                          onMouseEnter={() => setHoveredItem(country.code)}
-                          onMouseLeave={() => setHoveredItem(null)}
                           className={`text-left py-2.5 px-3 -mx-3 rounded-lg group flex items-center justify-between transition-all duration-150 ${
                             isActive 
                               ? "bg-neutral-100" 
