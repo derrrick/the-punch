@@ -1,4 +1,6 @@
 import { ImageResponse } from 'next/og';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export const runtime = 'edge';
 export const alt = 'The Punch — A curated directory of independent type foundries';
@@ -9,6 +11,12 @@ export const size = {
 export const contentType = 'image/png';
 
 export default async function Image() {
+  // Read the logo SVG file
+  const logoSvg = readFileSync(join(process.cwd(), 'public', 'logo.svg'), 'utf8');
+  
+  // Convert SVG to data URL
+  const logoDataUrl = `data:image/svg+xml;base64,${Buffer.from(logoSvg).toString('base64')}`;
+
   return new ImageResponse(
     (
       <div
@@ -16,47 +24,20 @@ export default async function Image() {
           height: '100%',
           width: '100%',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#171717',
-          padding: '80px',
+          backgroundColor: '#FFFFFF',
         }}
       >
-        <div
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={logoDataUrl}
+          alt="The Punch"
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
+            width: '50%',
+            height: 'auto',
           }}
-        >
-          <h1
-            style={{
-              fontSize: '80px',
-              fontWeight: 500,
-              color: '#EDEDED',
-              letterSpacing: '-0.02em',
-              lineHeight: 1.1,
-              marginBottom: '24px',
-            }}
-          >
-            The Punch
-          </h1>
-          <p
-            style={{
-              fontSize: '36px',
-              fontWeight: 400,
-              color: '#EDEDED',
-              opacity: 0.6,
-              lineHeight: 1.4,
-              maxWidth: '800px',
-            }}
-          >
-            A curated directory of independent type foundries
-          </p>
-        </div>
+        />
       </div>
     ),
     {
