@@ -17,7 +17,7 @@ export default function AboutPage() {
       <div className="max-w-[680px] mx-auto px-6 md:px-12 py-32 md:py-40">
         {/* Headline */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-neutral-900 leading-[1.15] mb-20 md:mb-28">
-          Typography, organized by who made it.
+          Typography, organized by the experts who made them.
         </h1>
 
         {/* What this site is */}
@@ -26,7 +26,10 @@ export default function AboutPage() {
             What this is
           </p>
           <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
-            A curated directory of independent type foundries. 
+          A punch is the steel tool used to cut an original letterform — the first physical act of making a typeface. We built this site to help punch back at an industry that wants to buy them, bundle them, and resell their work at a margin.
+          <br />
+          <br />
+          This website is a curated directory of independent type foundries. 
             No algorithms, no affiliate links — just a hand-selected collection 
             of studios crafting exceptional typography.
           </p>
@@ -51,9 +54,17 @@ export default function AboutPage() {
             Who made this
           </p>
           <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
-            Designed and built by Derrick Schippert.
-            A designer who believes typography is the foundation of
-            visual culture — and that knowing your sources matters.
+          A growing collective of designers, typographers, and type nerds who believe you should know exactly who made the fonts you buy, and that your money should go directly to them.
+          </p>
+          <br />
+          <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
+            Want to join us? We're always looking for new members to help contribute to the site.{" "}
+            <a 
+              href="mailto:hello@thepunch.studio" 
+              className="text-neutral-900 underline underline-offset-4 decoration-neutral-300 hover:decoration-neutral-900 transition-colors"
+            >
+              hello@thepunch.studio
+            </a>
           </p>
         </section>
 

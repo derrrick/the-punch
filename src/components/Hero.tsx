@@ -18,7 +18,7 @@ export function Hero({ totalFoundries }: HeroProps) {
             transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
             className="text-sm uppercase tracking-[0.2em] text-neutral-700 mb-6"
           >
-            Type Foundry Index
+            Independent Foundry Index
           </motion.p>
           
           <motion.h1
@@ -27,7 +27,7 @@ export function Hero({ totalFoundries }: HeroProps) {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight text-neutral-900 leading-[1.1] mb-8"
           >
-            Type Foundries Shaping the Future of Design
+            Typography has an ownership problem
           </motion.h1>
           
           <motion.p
@@ -36,8 +36,10 @@ export function Hero({ totalFoundries }: HeroProps) {
             transition={{ duration: 0.8, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
             className="text-lg md:text-xl text-neutral-600 max-w-2xl leading-relaxed"
           >
-            From Swiss precision to experimental expression — discover the studios 
-            crafting the fonts that define modern visual culture.
+            <span style={{ display: "inline-block", width: "calc(100% - 15%)" }}>
+              Buy direct from the designers who actually draw the
+              letters. No Monotype. No conglomerates. No middlemen.
+            </span>
           </motion.p>
         </div>
         
