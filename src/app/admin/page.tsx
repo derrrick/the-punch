@@ -17,7 +17,7 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
+    if (password.trim() === ADMIN_PASSWORD.trim()) {
       setIsAuthenticated(true);
       setError("");
       loadSubmissions();

@@ -52,7 +52,8 @@ export interface FoundriesData {
   }[];
 }
 
-// Configure Supabase client with fetch options to prevent caching large responses
+// Configure Supabase client with fetch options for ISR (Incremental Static Regeneration)
+// Using revalidate instead of no-store to allow static generation at build time
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -61,7 +62,7 @@ const supabase = createClient(
       fetch: (url, options = {}) => {
         return fetch(url, {
           ...options,
-          cache: 'no-store', // Prevent Next.js from caching responses > 2MB
+          next: { revalidate: 60 }, // Revalidate every 60 seconds
         });
       },
     },
