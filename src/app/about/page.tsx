@@ -58,7 +58,7 @@ export default function AboutPage() {
           </p>
           <br />
           <p className="text-lg md:text-xl text-neutral-700 leading-relaxed">
-            Want to join us? We're always looking for new members to help contribute to the site.{" "}
+            Want to join us? We&apos;re always looking for new members to help contribute to the site.{" "}
             <a 
               href="mailto:hello@thepunch.studio" 
               className="text-neutral-900 underline underline-offset-4 decoration-neutral-300 hover:decoration-neutral-900 transition-colors"
