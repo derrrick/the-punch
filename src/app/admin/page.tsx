@@ -176,6 +176,19 @@ export default function AdminPage() {
 }
 
 // Submission card component
+// Editable foundry data form interface
+interface EditableFoundryData {
+  founder: string;
+  foundedYear: string;
+  city: string;
+  country: string;
+  countryCode: string;
+  notableTypefaces: string;
+  styleTags: string;
+  tier: string;
+  notes: string;
+}
+
 function SubmissionCard({
   submission,
   onStatusUpdate,
@@ -191,6 +204,79 @@ function SubmissionCard({
   const [isAddingToDirectory, setIsAddingToDirectory] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState(submission.ai_analysis);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [editData, setEditData] = useState<EditableFoundryData>({
+    founder: '',
+    foundedYear: '',
+    city: '',
+    country: '',
+    countryCode: '',
+    notableTypefaces: '',
+    styleTags: '',
+    tier: '3',
+    notes: '',
+  });
+
+  // Initialize edit form with AI analysis data when entering edit mode
+  const startEditing = () => {
+    const loc = submission.location?.split(',').map(s => s.trim()) || [];
+    setEditData({
+      founder: aiAnalysis?.founderName || '',
+      foundedYear: aiAnalysis?.foundedYear?.toString() || '',
+      city: aiAnalysis?.location?.city || loc[0] || '',
+      country: aiAnalysis?.location?.country || loc[1] || '',
+      countryCode: aiAnalysis?.location?.countryCode || '',
+      notableTypefaces: (aiAnalysis?.notableTypefaces || []).join(', '),
+      styleTags: (aiAnalysis?.styleTags || []).join(', '),
+      tier: (aiAnalysis?.tier || 3).toString(),
+      notes: aiAnalysis?.positioningNote || submission.notes || '',
+    });
+    setIsEditing(true);
+  };
+
+  // Save edited data back to submission
+  const handleSaveEdit = async () => {
+    setIsSaving(true);
+    try {
+      const updatedAnalysis = {
+        ...aiAnalysis,
+        founderName: editData.founder || undefined,
+        foundedYear: editData.foundedYear ? parseInt(editData.foundedYear) : undefined,
+        location: {
+          city: editData.city || undefined,
+          country: editData.country || undefined,
+          countryCode: editData.countryCode || undefined,
+        },
+        notableTypefaces: editData.notableTypefaces.split(',').map(s => s.trim()).filter(Boolean),
+        styleTags: editData.styleTags.split(',').map(s => s.trim().toLowerCase()).filter(Boolean),
+        tier: parseInt(editData.tier) as 1 | 2 | 3 | 4,
+        positioningNote: editData.notes,
+      };
+
+      const response = await fetch('/api/update-submission', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          submissionId: submission.id,
+          aiAnalysis: updatedAnalysis,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save changes');
+      }
+
+      setAiAnalysis(updatedAnalysis);
+      setIsEditing(false);
+      alert('Changes saved successfully!');
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('Failed to save changes');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleReject = () => {
     if (!rejectionReason.trim()) {
@@ -437,13 +523,22 @@ function SubmissionCard({
                 <p className="text-purple-600">{aiAnalysis.foundedYear}</p>
               </div>
             )}
-            {aiAnalysis.notableTypefaces.length > 0 && (
+            {aiAnalysis.location && (aiAnalysis.location.city || aiAnalysis.location.country) && (
+              <div className="col-span-2">
+                <span className="font-medium text-purple-700">Location:</span>
+                <p className="text-purple-600">
+                  {[aiAnalysis.location.city, aiAnalysis.location.country].filter(Boolean).join(', ')}
+                  {aiAnalysis.location.countryCode && ` (${aiAnalysis.location.countryCode})`}
+                </p>
+              </div>
+            )}
+            {aiAnalysis.notableTypefaces && aiAnalysis.notableTypefaces.length > 0 && (
               <div className="col-span-2">
                 <span className="font-medium text-purple-700">Notable Typefaces:</span>
                 <p className="text-purple-600">{aiAnalysis.notableTypefaces.join(', ')}</p>
               </div>
             )}
-            {aiAnalysis.styleTags.length > 0 && (
+            {aiAnalysis.styleTags && aiAnalysis.styleTags.length > 0 && (
               <div className="col-span-2">
                 <span className="font-medium text-purple-700">Style Tags:</span>
                 <div className="flex flex-wrap gap-1 mt-1">
@@ -564,18 +659,144 @@ function SubmissionCard({
         </div>
       )}
 
-      {/* Add to Directory Button (for approved submissions) */}
+      {/* Edit & Add to Directory (for approved submissions) */}
       {submission.status === "approved" && (
-        <div className="mt-6">
-          <button
-            onClick={handleAddToDirectory}
-            disabled={isAddingToDirectory}
-            className="bg-blue-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-blue-700 disabled:opacity-50 transition-colors"
-          >
-            {isAddingToDirectory ? 'Adding...' : '✨ Add to Directory'}
-          </button>
-          <p className="text-xs text-neutral-500 mt-2">
-            This will add the foundry to the live website database
+        <div className="mt-6 space-y-4">
+          {isEditing ? (
+            <div className="p-4 bg-amber-50 rounded border border-amber-200">
+              <h4 className="text-sm font-medium text-amber-800 mb-4">Edit Foundry Data</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Founder</label>
+                  <input
+                    type="text"
+                    value={editData.founder}
+                    onChange={(e) => setEditData({ ...editData, founder: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="Founder name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Founded Year</label>
+                  <input
+                    type="number"
+                    value={editData.foundedYear}
+                    onChange={(e) => setEditData({ ...editData, foundedYear: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="YYYY"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">City</label>
+                  <input
+                    type="text"
+                    value={editData.city}
+                    onChange={(e) => setEditData({ ...editData, city: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="City"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Country</label>
+                  <input
+                    type="text"
+                    value={editData.country}
+                    onChange={(e) => setEditData({ ...editData, country: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="Country"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Country Code</label>
+                  <input
+                    type="text"
+                    value={editData.countryCode}
+                    onChange={(e) => setEditData({ ...editData, countryCode: e.target.value.toUpperCase() })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="US, GB, DE, etc."
+                    maxLength={2}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Tier (1-4)</label>
+                  <select
+                    value={editData.tier}
+                    onChange={(e) => setEditData({ ...editData, tier: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                  >
+                    <option value="1">1 - Legendary (Hoefler&Co)</option>
+                    <option value="2">2 - Major (Grilli Type)</option>
+                    <option value="3">3 - Established Indie</option>
+                    <option value="4">4 - Emerging</option>
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Notable Typefaces (comma-separated)</label>
+                  <input
+                    type="text"
+                    value={editData.notableTypefaces}
+                    onChange={(e) => setEditData({ ...editData, notableTypefaces: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="Typeface 1, Typeface 2, Typeface 3"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Style Tags (comma-separated)</label>
+                  <input
+                    type="text"
+                    value={editData.styleTags}
+                    onChange={(e) => setEditData({ ...editData, styleTags: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="swiss, geometric, minimal"
+                  />
+                  <p className="text-xs text-amber-600 mt-1">Available: swiss, geometric, humanist, editorial, contemporary, modernist, brutalist, experimental, variable, display, playful, expressive, multilingual, minimal, grotesk, serif, etc.</p>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Positioning Note</label>
+                  <textarea
+                    value={editData.notes}
+                    onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    rows={2}
+                    placeholder="What makes this foundry unique..."
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-4">
+                <button
+                  onClick={handleSaveEdit}
+                  disabled={isSaving}
+                  className="bg-amber-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-amber-700 disabled:opacity-50 transition-colors"
+                >
+                  {isSaving ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="bg-neutral-200 text-neutral-700 px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-neutral-300 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              <button
+                onClick={startEditing}
+                className="bg-amber-500 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-amber-600 transition-colors"
+              >
+                Edit Data
+              </button>
+              <button
+                onClick={handleAddToDirectory}
+                disabled={isAddingToDirectory}
+                className="bg-blue-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              >
+                {isAddingToDirectory ? 'Adding...' : '✨ Add to Directory'}
+              </button>
+            </div>
+          )}
+          <p className="text-xs text-neutral-500">
+            Review and edit data before adding to directory. Changes will be saved to the submission.
           </p>
         </div>
       )}

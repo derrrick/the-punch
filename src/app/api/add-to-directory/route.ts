@@ -46,12 +46,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Foundry already exists in directory' }, { status: 400 });
     }
 
-    // Parse location if provided
+    // Get AI analysis data (if available)
+    const aiAnalysis = submission.ai_analysis || {};
+
+    // Parse location - prefer AI-extracted location over user-submitted
     let city = '';
     let country = '';
     let countryCode = '';
 
-    if (submission.location) {
+    // First try AI-extracted location
+    if (aiAnalysis.location?.city) {
+      city = aiAnalysis.location.city;
+      country = aiAnalysis.location.country || '';
+      countryCode = aiAnalysis.location.countryCode || '';
+    }
+    // Fall back to user-submitted location
+    else if (submission.location) {
       const parts = submission.location.split(',').map((s: string) => s.trim());
       if (parts.length >= 2) {
         city = parts[0];
@@ -84,7 +94,7 @@ export async function POST(request: NextRequest) {
     const instagram = submission.scraped_metadata?.socialMedia?.instagram || null;
     const twitter = submission.scraped_metadata?.socialMedia?.twitter || null;
 
-    // Create foundry record
+    // Create foundry record using AI analysis data when available
     const newFoundry = {
       name: submission.foundry_name,
       slug,
@@ -92,15 +102,14 @@ export async function POST(request: NextRequest) {
       location_country: country || 'Unknown',
       location_country_code: countryCode || 'XX',
       url: submission.website_url,
-      founder: 'Unknown', // TODO: Add founder field to submission form
-      founded: new Date().getFullYear(), // TODO: Add founded field
-      notable_typefaces: [],
- // TODO: Add typefaces field
-      style: [], // TODO: Add style tags
-      tier: 3, // Default tier
+      founder: aiAnalysis.founderName || 'Unknown',
+      founded: aiAnalysis.foundedYear || new Date().getFullYear(),
+      notable_typefaces: aiAnalysis.notableTypefaces || [],
+      style: aiAnalysis.styleTags || [],
+      tier: aiAnalysis.tier || 3,
       social_instagram: instagram,
       social_twitter: twitter,
-      notes: submission.notes || null,
+      notes: aiAnalysis.positioningNote || submission.notes || null,
       screenshot_url: submission.scraped_metadata?.screenshot || null,
       logo_url: submission.scraped_metadata?.favicon || null,
       content_feed_type: null,

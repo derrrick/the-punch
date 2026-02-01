@@ -62,6 +62,11 @@ const STYLE_TAGS = [
 export interface FoundryAnalysis {
   founderName?: string;
   foundedYear?: number;
+  location?: {
+    city?: string;
+    country?: string;
+    countryCode?: string;
+  };
   notableTypefaces: string[];
   styleTags: string[];
   positioningNote: string;
@@ -99,15 +104,21 @@ Please analyze this foundry and provide:
 
 1. **Founder Name**: Who founded this foundry? (full name)
 2. **Founded Year**: What year was it established? (YYYY format)
-3. **Notable Typefaces**: List 3-5 of their most important/popular typefaces (exact names as they appear)
-4. **Style Tags**: Choose 3-5 tags from this list that best describe their aesthetic: ${STYLE_TAGS.join(', ')}
-5. **Positioning Note**: Write ONE sentence (max 15 words) describing what makes this foundry unique
-6. **Tier**: Rate prominence (1=legendary like Hoefler&Co, 2=major like Grilli Type, 3=established indie, 4=emerging)
+3. **Location**: Where is this foundry based? Extract city and country if mentioned. Use ISO 3166-1 alpha-2 country codes (US, GB, DE, FR, NL, CH, etc.)
+4. **Notable Typefaces**: List 3-5 of their most important/popular typefaces (exact names as they appear)
+5. **Style Tags**: Choose 3-5 tags from this list that best describe their aesthetic: ${STYLE_TAGS.join(', ')}
+6. **Positioning Note**: Write ONE sentence (max 15 words) describing what makes this foundry unique
+7. **Tier**: Rate prominence (1=legendary like Hoefler&Co, 2=major like Grilli Type, 3=established indie, 4=emerging)
 
 Respond in JSON format:
 {
   "founderName": "string or null",
   "foundedYear": number or null,
+  "location": {
+    "city": "string or null",
+    "country": "string or null",
+    "countryCode": "XX (ISO 3166-1 alpha-2) or null"
+  },
   "notableTypefaces": ["typeface1", "typeface2", ...],
   "styleTags": ["tag1", "tag2", ...],
   "positioningNote": "string",
@@ -148,6 +159,11 @@ Be concise. If information isn't clearly stated, return null and set confidence 
     return {
       founderName: analysis.founderName || undefined,
       foundedYear: analysis.foundedYear || undefined,
+      location: analysis.location ? {
+        city: analysis.location.city || undefined,
+        country: analysis.location.country || undefined,
+        countryCode: analysis.location.countryCode || undefined,
+      } : undefined,
       notableTypefaces: (analysis.notableTypefaces || []).slice(0, 5),
       styleTags: (analysis.styleTags || [])
         .filter((tag) => STYLE_TAGS.includes(tag.toLowerCase()))

@@ -37,12 +37,17 @@ export interface FoundrySubmission {
   ai_analysis?: {
     founderName?: string;
     foundedYear?: number;
-    notableTypefaces: string[];
-    styleTags: string[];
-    positioningNote: string;
-    tier: 1 | 2 | 3 | 4;
-    confidence: 'high' | 'medium' | 'low';
-    reasoning: string;
+    location?: {
+      city?: string;
+      country?: string;
+      countryCode?: string;
+    };
+    notableTypefaces?: string[];
+    styleTags?: string[];
+    positioningNote?: string;
+    tier?: 1 | 2 | 3 | 4;
+    confidence?: 'high' | 'medium' | 'low';
+    reasoning?: string;
   };
   analyzed_at?: string;
 }
