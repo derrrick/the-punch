@@ -2,7 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import type { Foundry } from "@/lib/foundries-db";
+
+// Raw foundry data from Supabase (before transformation)
+interface RawFoundry {
+  id: string;
+  name: string;
+  slug: string;
+  location_city: string;
+  location_country: string;
+  location_country_code: string;
+  notable_typefaces: string[];
+  style: string[];
+  tier: number;
+  notes: string | null;
+  screenshot_url: string | null;
+}
 
 interface NewsletterFormData {
   issueNumber: string;
@@ -18,6 +32,13 @@ interface NewsletterFormData {
 interface SubscriberStats {
   total: number;
   active: number;
+}
+
+interface AIGeneratedContent {
+  subjectLines: string[];
+  introHeadline: string;
+  introBody: string;
+  themeSuggestion: string | null;
 }
 
 const INITIAL_FORM_DATA: NewsletterFormData = {
@@ -37,7 +58,7 @@ const INITIAL_FORM_DATA: NewsletterFormData = {
 export default function NewsletterAdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
-  const [foundries, setFoundries] = useState<Foundry[]>([]);
+  const [foundries, setFoundries] = useState<RawFoundry[]>([]);
   const [formData, setFormData] = useState<NewsletterFormData>(INITIAL_FORM_DATA);
   const [previewHtml, setPreviewHtml] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -45,6 +66,9 @@ export default function NewsletterAdminPage() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [subscriberStats, setSubscriberStats] = useState<SubscriberStats>({ total: 0, active: 0 });
   const [activeTab, setActiveTab] = useState<"compose" | "preview" | "send">("compose");
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [aiContent, setAIContent] = useState<AIGeneratedContent | null>(null);
+  const [aiTheme, setAITheme] = useState("");
 
   const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "thepunch2026";
 
@@ -228,6 +252,44 @@ export default function NewsletterAdminPage() {
     }));
   };
 
+  const generateWithAI = async () => {
+    if (formData.selectedFoundries.length === 0) {
+      setMessage({ type: "error", text: "Please select at least one foundry first" });
+      return;
+    }
+
+    setIsGeneratingAI(true);
+    setAIContent(null);
+
+    try {
+      const response = await fetch("/api/newsletter/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          selectedFoundries: formData.selectedFoundries,
+          theme: aiTheme || undefined,
+          tone: "editorial",
+          issueNumber: formData.issueNumber,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+
+      setAIContent(data.content);
+      setMessage({ type: "success", text: "Content generated! Select options below." });
+    } catch (err) {
+      console.error("AI generation error:", err);
+      setMessage({ type: "error", text: "Failed to generate content" });
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  };
+
+  const applyAIContent = (field: "subject" | "introHeadline" | "introBody", value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
@@ -372,6 +434,151 @@ export default function NewsletterAdminPage() {
                 </div>
               </section>
 
+              {/* AI Content Generator */}
+              <section className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg p-6 border border-purple-200">
+                <div className="flex items-center gap-2 mb-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-purple-600"
+                  >
+                    <path d="M12 3v18" />
+                    <rect width="16" height="12" x="4" y="6" rx="2" />
+                    <path d="M2 12h4" />
+                    <path d="M18 12h4" />
+                  </svg>
+                  <h2 className="text-lg font-medium text-purple-900">AI Content Assistant</h2>
+                </div>
+
+                <p className="text-sm text-purple-700 mb-4">
+                  Select foundries first, then generate subject lines and intro copy based on what connects them.
+                </p>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-medium text-purple-700 mb-1">
+                      Theme or angle (optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={aiTheme}
+                      onChange={(e) => setAITheme(e.target.value)}
+                      placeholder="e.g., Swiss design, variable fonts, emerging foundries..."
+                      className="w-full bg-white border border-purple-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-purple-400"
+                    />
+                  </div>
+
+                  <button
+                    onClick={generateWithAI}
+                    disabled={isGeneratingAI || formData.selectedFoundries.length === 0}
+                    className="w-full py-3 bg-purple-600 text-white font-medium rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  >
+                    {isGeneratingAI ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        Generate Content
+                        <span className="text-purple-300">({formData.selectedFoundries.length} foundries)</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Generated Content Options */}
+                {aiContent && (
+                  <div className="mt-4 space-y-4 pt-4 border-t border-purple-200">
+                    {/* Subject Lines */}
+                    <div>
+                      <label className="block text-xs font-medium text-purple-700 mb-2">
+                        Subject Line Options
+                      </label>
+                      <div className="space-y-2">
+                        {aiContent.subjectLines.map((subject, i) => (
+                          <button
+                            key={i}
+                            onClick={() => applyAIContent("subject", subject)}
+                            className={`w-full text-left px-3 py-2 text-sm rounded-md border transition-colors ${
+                              formData.subject === subject
+                                ? "bg-purple-100 border-purple-400 text-purple-900"
+                                : "bg-white border-purple-200 text-purple-800 hover:border-purple-300"
+                            }`}
+                          >
+                            {subject}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Headline */}
+                    <div>
+                      <label className="block text-xs font-medium text-purple-700 mb-2">
+                        Intro Headline
+                      </label>
+                      <button
+                        onClick={() => applyAIContent("introHeadline", aiContent.introHeadline)}
+                        className={`w-full text-left px-3 py-2 text-sm rounded-md border transition-colors ${
+                          formData.introHeadline === aiContent.introHeadline
+                            ? "bg-purple-100 border-purple-400 text-purple-900"
+                            : "bg-white border-purple-200 text-purple-800 hover:border-purple-300"
+                        }`}
+                      >
+                        {aiContent.introHeadline}
+                      </button>
+                    </div>
+
+                    {/* Body */}
+                    <div>
+                      <label className="block text-xs font-medium text-purple-700 mb-2">
+                        Intro Body
+                      </label>
+                      <button
+                        onClick={() => applyAIContent("introBody", aiContent.introBody)}
+                        className={`w-full text-left px-3 py-2 text-sm rounded-md border transition-colors ${
+                          formData.introBody === aiContent.introBody
+                            ? "bg-purple-100 border-purple-400 text-purple-900"
+                            : "bg-white border-purple-200 text-purple-800 hover:border-purple-300"
+                        }`}
+                      >
+                        {aiContent.introBody}
+                      </button>
+                    </div>
+
+                    {/* Theme Suggestion */}
+                    {aiContent.themeSuggestion && (
+                      <div className="p-3 bg-purple-100 rounded-md">
+                        <p className="text-xs font-medium text-purple-700 mb-1">Suggested theme:</p>
+                        <p className="text-sm text-purple-900">{aiContent.themeSuggestion}</p>
+                      </div>
+                    )}
+
+                    {/* Apply All Button */}
+                    <button
+                      onClick={() => {
+                        if (aiContent.subjectLines[0]) applyAIContent("subject", aiContent.subjectLines[0]);
+                        applyAIContent("introHeadline", aiContent.introHeadline);
+                        applyAIContent("introBody", aiContent.introBody);
+                      }}
+                      className="w-full py-2 text-sm font-medium text-purple-700 border border-purple-300 rounded-md hover:bg-purple-50 transition-colors"
+                    >
+                      Apply All Suggestions
+                    </button>
+                  </div>
+                )}
+              </section>
+
               <section className="bg-white rounded-lg p-6 border border-neutral-200">
                 <h2 className="text-lg font-medium mb-4">Introduction</h2>
                 <div className="space-y-4">
@@ -498,7 +705,7 @@ export default function NewsletterAdminPage() {
                           {foundry.name}
                         </p>
                         <p className="text-sm text-neutral-500">
-                          {foundry.location.city}, {foundry.location.country}
+                          {foundry.location_city}, {foundry.location_country}
                         </p>
                         <p className="text-xs text-neutral-400 mt-1">
                           {foundry.style.slice(0, 3).join(" · ")}
