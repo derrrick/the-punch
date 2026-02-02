@@ -186,6 +186,7 @@ interface EditableFoundryData {
   notableTypefaces: string;
   styleTags: string;
   tier: string;
+  positioningNote: string;
   notes: string;
 }
 
@@ -215,6 +216,7 @@ function SubmissionCard({
     notableTypefaces: '',
     styleTags: '',
     tier: '3',
+    positioningNote: '',
     notes: '',
   });
 
@@ -230,7 +232,8 @@ function SubmissionCard({
       notableTypefaces: (aiAnalysis?.notableTypefaces || []).join(', '),
       styleTags: (aiAnalysis?.styleTags || []).join(', '),
       tier: (aiAnalysis?.tier || 3).toString(),
-      notes: aiAnalysis?.positioningNote || submission.notes || '',
+      positioningNote: aiAnalysis?.positioningNote || '',
+      notes: aiAnalysis?.notes || submission.notes || '',
     });
     setIsEditing(true);
   };
@@ -251,7 +254,8 @@ function SubmissionCard({
         notableTypefaces: editData.notableTypefaces.split(',').map(s => s.trim()).filter(Boolean),
         styleTags: editData.styleTags.split(',').map(s => s.trim().toLowerCase()).filter(Boolean),
         tier: parseInt(editData.tier) as 1 | 2 | 3 | 4,
-        positioningNote: editData.notes,
+        positioningNote: editData.positioningNote,
+        notes: editData.notes,
       };
 
       const response = await fetch('/api/update-submission', {
@@ -556,6 +560,12 @@ function SubmissionCard({
                 <p className="text-purple-600">{aiAnalysis.positioningNote}</p>
               </div>
             )}
+            {aiAnalysis.notes && (
+              <div className="col-span-2">
+                <span className="font-medium text-purple-700">Notes:</span>
+                <p className="text-purple-600">{aiAnalysis.notes}</p>
+              </div>
+            )}
             <div>
               <span className="font-medium text-purple-700">Tier:</span>
               <p className="text-purple-600">{aiAnalysis.tier} ({
@@ -752,13 +762,23 @@ function SubmissionCard({
                   <p className="text-xs text-amber-600 mt-1">Available: swiss, geometric, humanist, editorial, contemporary, modernist, brutalist, experimental, variable, display, playful, expressive, multilingual, minimal, grotesk, serif, etc.</p>
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-xs font-medium text-amber-700 mb-1">Positioning Note</label>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Positioning (1-liner, max 15 words)</label>
+                  <input
+                    type="text"
+                    value={editData.positioningNote}
+                    onChange={(e) => setEditData({ ...editData, positioningNote: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="What makes this foundry unique in one sentence..."
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Notes (detailed background)</label>
                   <textarea
                     value={editData.notes}
                     onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
                     className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
-                    rows={2}
-                    placeholder="What makes this foundry unique..."
+                    rows={3}
+                    placeholder="Founder background, notable clients, unique business model, awards..."
                   />
                 </div>
               </div>

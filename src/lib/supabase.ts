@@ -45,6 +45,7 @@ export interface FoundrySubmission {
     notableTypefaces?: string[];
     styleTags?: string[];
     positioningNote?: string;
+    notes?: string;
     tier?: 1 | 2 | 3 | 4;
     confidence?: 'high' | 'medium' | 'low';
     reasoning?: string;

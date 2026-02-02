@@ -70,6 +70,7 @@ export interface FoundryAnalysis {
   notableTypefaces: string[];
   styleTags: string[];
   positioningNote: string;
+  notes: string;
   tier: 1 | 2 | 3 | 4;
   confidence: 'high' | 'medium' | 'low';
   reasoning: string;
@@ -108,7 +109,8 @@ Please analyze this foundry and provide:
 4. **Notable Typefaces**: List 3-5 of their most important/popular typefaces (exact names as they appear)
 5. **Style Tags**: Choose 3-5 tags from this list that best describe their aesthetic: ${STYLE_TAGS.join(', ')}
 6. **Positioning Note**: Write ONE sentence (max 15 words) describing what makes this foundry unique
-7. **Tier**: Rate prominence (1=legendary like Hoefler&Co, 2=major like Grilli Type, 3=established indie, 4=emerging)
+7. **Notes**: Write 2-3 sentences of interesting background info. Include details like: founder's background/education, notable clients or projects, unique business model, awards, teaching positions, distribution channels, or what makes them special in the type world. Be specific and factual.
+8. **Tier**: Rate prominence (1=legendary like Hoefler&Co, 2=major like Grilli Type, 3=established indie, 4=emerging)
 
 Respond in JSON format:
 {
@@ -121,13 +123,14 @@ Respond in JSON format:
   },
   "notableTypefaces": ["typeface1", "typeface2", ...],
   "styleTags": ["tag1", "tag2", ...],
-  "positioningNote": "string",
+  "positioningNote": "string (max 15 words)",
+  "notes": "string (2-3 sentences of interesting background)",
   "tier": 1-4,
   "confidence": "high|medium|low",
   "reasoning": "Brief explanation of your analysis"
 }
 
-Be concise. If information isn't clearly stated, return null and set confidence to "low" or "medium".`;
+Be factual. If information isn't clearly stated, return null and set confidence to "low" or "medium".`;
 
   try {
     const message = await anthropic.messages.create({
@@ -169,6 +172,7 @@ Be concise. If information isn't clearly stated, return null and set confidence 
         .filter((tag) => STYLE_TAGS.includes(tag.toLowerCase()))
         .slice(0, 5),
       positioningNote: analysis.positioningNote || '',
+      notes: analysis.notes || '',
       tier: analysis.tier || 3,
       confidence: analysis.confidence || 'medium',
       reasoning: analysis.reasoning || '',

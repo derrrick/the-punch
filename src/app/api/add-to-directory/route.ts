@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       tier: aiAnalysis.tier || 3,
       social_instagram: instagram,
       social_twitter: twitter,
-      notes: aiAnalysis.positioningNote || submission.notes || null,
+      notes: aiAnalysis.notes || submission.notes || null,
       screenshot_url: submission.scraped_metadata?.screenshot || null,
       logo_url: submission.scraped_metadata?.favicon || null,
       content_feed_type: null,
