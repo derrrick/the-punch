@@ -105,20 +105,15 @@ export default function NewsletterAdminPage() {
       if (foundriesError) throw foundriesError;
       setFoundries(foundriesData || []);
 
-      // Load subscriber stats
-      const { count: totalCount } = await supabase
-        .from("newsletter_subscribers")
-        .select("*", { count: "exact", head: true });
-
-      const { count: activeCount } = await supabase
-        .from("newsletter_subscribers")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "active");
-
-      setSubscriberStats({
-        total: totalCount || 0,
-        active: activeCount || 0,
-      });
+      // Load subscriber stats via API (uses service role key for RLS bypass)
+      const statsResponse = await fetch("/api/newsletter/stats");
+      if (statsResponse.ok) {
+        const stats = await statsResponse.json();
+        setSubscriberStats({
+          total: stats.total || 0,
+          active: stats.active || 0,
+        });
+      }
 
       // Generate next issue number
       const { data: issuesData } = await supabase
