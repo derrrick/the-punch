@@ -73,7 +73,7 @@ function UnsubscribeContent() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="mailto:hello@thepunch.xyz"
+                href="mailto:hello@thepunch.studio"
                 className="inline-block bg-neutral-200 text-neutral-700 px-8 py-3 text-sm uppercase tracking-[0.1em] hover:bg-neutral-300 transition-colors"
               >
                 Contact Support

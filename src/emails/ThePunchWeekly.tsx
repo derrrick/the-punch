@@ -140,7 +140,7 @@ ThePunchWeekly.defaultProps = {
         "Grilli Type has established itself as one of the most influential independent foundries of the past decade. Their GT America seamlessly bridges the gap between grotesque and geometric sans-serifs, while GT Super brings warmth to the serif category with its sharp, calligraphic details.",
       typefaces: ["GT America", "GT Super", "GT Alpina", "GT Walsheim"],
       imageUrl: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=300&fit=crop",
-      url: "https://thepunch.xyz/foundry/grilli-type",
+      url: "https://thepunch.studio/foundry/grilli-type",
       styleTags: ["Swiss", "Grotesk", "Contemporary"],
     },
     {
@@ -152,7 +152,7 @@ ThePunchWeekly.defaultProps = {
         "Optimo's approach to type design is deeply rooted in Swiss graphic design history, yet never feels retro. Their typefaces like Theinhardt and Plain speak a clear, functional language while offering surprising nuances that reveal themselves at larger sizes.",
       typefaces: ["Theinhardt", "Plain", "Lineal", "Cargo"],
       imageUrl: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=600&h=300&fit=crop",
-      url: "https://thepunch.xyz/foundry/optimo",
+      url: "https://thepunch.studio/foundry/optimo",
       styleTags: ["Swiss", "Modernist", "Clean"],
     },
   ],
@@ -161,17 +161,17 @@ ThePunchWeekly.defaultProps = {
     links: [
       {
         title: "The Complete Guide to Swiss Typography",
-        url: "https://thepunch.xyz/guide/swiss-typography",
+        url: "https://thepunch.studio/guide/swiss-typography",
         description: "From Müller-Brockmann to the present day",
       },
       {
         title: "Variable Fonts Database",
-        url: "https://thepunch.xyz/variable-fonts",
+        url: "https://thepunch.studio/variable-fonts",
         description: "Discover the latest in responsive type",
       },
       {
         title: "Submit Your Foundry",
-        url: "https://thepunch.xyz/submit",
+        url: "https://thepunch.studio/submit",
         description: "Join our growing directory",
       },
     ],

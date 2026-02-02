@@ -122,18 +122,57 @@ export default function AdminPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-neutral-900">
-            Foundry Submissions
+            Admin Dashboard
           </h1>
           <button
             onClick={() => {
               setIsAuthenticated(false);
               setPassword("");
+              sessionStorage.removeItem("admin_auth");
             }}
             className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
           >
             Logout
           </button>
         </div>
+
+        {/* Navigation Cards */}
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
+          <a
+            href="/admin/newsletter"
+            className="group bg-white border border-neutral-200 rounded-lg p-6 hover:border-neutral-400 transition-colors"
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="text-xl font-medium mb-2 group-hover:text-neutral-700">
+                  Newsletter
+                </h2>
+                <p className="text-sm text-neutral-500">
+                  Compose, preview, and send The Punch Weekly to subscribers
+                </p>
+              </div>
+              <span className="text-2xl">✉️</span>
+            </div>
+          </a>
+
+          <div className="bg-white border border-neutral-200 rounded-lg p-6 opacity-60">
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="text-xl font-medium mb-2">
+                  Foundry Submissions
+                </h2>
+                <p className="text-sm text-neutral-500">
+                  Review and manage foundry submissions
+                </p>
+              </div>
+              <span className="text-2xl">📋</span>
+            </div>
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-medium tracking-tight text-neutral-900 mb-6">
+          Foundry Submissions
+        </h2>
 
         {/* Filter tabs */}
         <div className="flex gap-4 mb-8 border-b border-neutral-200">

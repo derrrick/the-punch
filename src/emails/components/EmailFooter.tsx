@@ -44,7 +44,7 @@ export function EmailFooter({ unsubscribeUrl = "#" }: EmailFooterProps) {
             <tr>
               <td style={{ paddingRight: "16px" }}>
                 <Link
-                  href="https://thepunch.xyz"
+                  href="https://thepunch.studio"
                   style={{
                     fontSize: "12px",
                     textTransform: "uppercase",
@@ -58,7 +58,7 @@ export function EmailFooter({ unsubscribeUrl = "#" }: EmailFooterProps) {
               </td>
               <td style={{ paddingRight: "16px" }}>
                 <Link
-                  href="https://thepunch.xyz/submit"
+                  href="https://thepunch.studio/submit"
                   style={{
                     fontSize: "12px",
                     textTransform: "uppercase",
@@ -95,7 +95,7 @@ export function EmailFooter({ unsubscribeUrl = "#" }: EmailFooterProps) {
             </Link>
             {" "}&middot;{" "}
             <Link
-              href="https://thepunch.xyz"
+              href="https://thepunch.studio"
               style={{
                 color: "#737373",
                 textDecoration: "underline",

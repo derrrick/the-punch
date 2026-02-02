@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       description: foundry.notes?.substring(0, 300) || `${foundry.name} is an independent type foundry based in ${foundry.location_city}, ${foundry.location_country}.`,
       typefaces: foundry.notable_typefaces || [],
       imageUrl: foundry.screenshot_url,
-      url: `https://thepunch.xyz/foundry/${foundry.slug}`,
+      url: `https://thepunch.studio/foundry/${foundry.slug}`,
       styleTags: foundry.style || [],
     })) || [];
 

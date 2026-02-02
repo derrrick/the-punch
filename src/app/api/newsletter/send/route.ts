@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       description: foundry.notes?.substring(0, 300) || `${foundry.name} is an independent type foundry based in ${foundry.location_city}, ${foundry.location_country}.`,
       typefaces: foundry.notable_typefaces || [],
       imageUrl: foundry.screenshot_url,
-      url: `https://thepunch.xyz/foundry/${foundry.slug}`,
+      url: `https://thepunch.studio/foundry/${foundry.slug}`,
       styleTags: foundry.style || [],
     })) || [];
 
@@ -86,11 +86,11 @@ export async function POST(request: NextRequest) {
       const html = await render(ThePunchWeekly(newsletterData));
 
       const { data: sendData, error: sendError } = await resend.emails.send({
-        from: "The Punch <newsletter@thepunch.xyz>",
+        from: "The Punch <newsletter@thepunch.studio>",
         to: [testEmail],
         subject: `[TEST] ${subject}`,
         html,
-        replyTo: "hello@thepunch.xyz",
+        replyTo: "hello@thepunch.studio",
       });
 
       if (sendError) {
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
         const sendPromises = batch.map(async (subscriber) => {
           // Generate unsubscribe token
           const unsubscribeToken = Buffer.from(`${subscriber.id}:${Date.now()}`).toString("base64");
-          const unsubscribeUrl = `https://thepunch.xyz/api/newsletter/unsubscribe?token=${encodeURIComponent(unsubscribeToken)}`;
+          const unsubscribeUrl = `https://thepunch.studio/api/newsletter/unsubscribe?token=${encodeURIComponent(unsubscribeToken)}`;
 
           const newsletterData: NewsletterData = {
             issueNumber,
@@ -183,11 +183,11 @@ export async function POST(request: NextRequest) {
 
           try {
             const { error: sendError } = await resend.emails.send({
-              from: "The Punch <newsletter@thepunch.xyz>",
+              from: "The Punch <newsletter@thepunch.studio>",
               to: [subscriber.email],
               subject,
               html,
-              replyTo: "hello@thepunch.xyz",
+              replyTo: "hello@thepunch.studio",
               headers: {
                 "List-Unsubscribe": `<${unsubscribeUrl}>`,
                 "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
