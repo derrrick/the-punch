@@ -4,7 +4,6 @@ import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { FoundryGrid } from "@/components/FoundryGrid";
 import { FilterBar } from "@/components/FilterBar";
-import { FoundrySpotlight } from "@/components/FoundrySpotlight";
 import { HeroSpotlight } from "@/components/HeroSpotlight";
 import { getAllFoundries, getAllCountries, getAllStyles } from "@/lib/foundries-db";
 import { getSpotlightSettings, getSpotlightFoundries } from "@/lib/spotlight";
@@ -48,16 +47,7 @@ export default async function Home() {
           spotlightFoundries={spotlightFoundries.slice(0, spotlightSettings?.max_spotlights || 4)}
         />
       ) : (
-        // Normal Hero only
         <Hero totalFoundries={foundries.length} />
-      )}
-      
-      {/* Regular Spotlight section (only when hero is normal) */}
-      {!showSpotlight && (
-        <FoundrySpotlight
-          foundries={spotlightFoundries.slice(0, spotlightSettings?.max_spotlights || 4)}
-          variant={spotlightSettings?.variant}
-        />
       )}
       
       <Suspense fallback={<div className="h-16" />}>
