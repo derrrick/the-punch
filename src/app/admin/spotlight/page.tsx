@@ -260,20 +260,23 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
 
   const toggleSpotlight = async (foundry: RawFoundry, isSpotlight: boolean) => {
     try {
-      const { error } = await supabase
-        .from("foundries")
-        .update({
-          is_spotlight: isSpotlight,
-          spotlight_description: foundry.spotlight_description,
-          spotlight_quote: foundry.spotlight_quote,
-          spotlight_order: isSpotlight ? getNextSpotlightOrder() : 0,
-        })
-        .eq("id", foundry.id);
+      const response = await fetch("/api/spotlight/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          foundryId: foundry.id,
+          isSpotlight,
+          spotlightOrder: isSpotlight ? getNextSpotlightOrder() : 0,
+          spotlightDescription: foundry.spotlight_description,
+          spotlightQuote: foundry.spotlight_quote,
+        }),
+      });
 
-      if (error) throw error;
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
 
-      setFoundries(foundries.map(f => 
-        f.id === foundry.id 
+      setFoundries(foundries.map(f =>
+        f.id === foundry.id
           ? { ...f, is_spotlight: isSpotlight }
           : f
       ));
@@ -287,14 +290,19 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
 
   const updateSpotlightData = async (foundryId: string, data: Partial<RawFoundry>) => {
     try {
-      const { error } = await supabase
-        .from("foundries")
-        .update(data)
-        .eq("id", foundryId);
+      const response = await fetch("/api/spotlight/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          foundryId,
+          ...data,
+        }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
 
-      setFoundries(foundries.map(f => 
+      setFoundries(foundries.map(f =>
         f.id === foundryId ? { ...f, ...data } : f
       ));
     } catch (err) {
