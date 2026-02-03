@@ -63,13 +63,13 @@ export function HeroSpotlightLight({
   if (!currentFoundry || sortedFoundries.length === 0) return null;
 
   return (
-    <section className="min-h-screen bg-[#F5F5F3] flex flex-col justify-center py-12 md:py-20 px-4 md:px-8 lg:px-16">
+    <section className="max-h-[900px] bg-[#F5F5F3] flex flex-col justify-center py-8 md:py-12 px-4 md:px-8 lg:px-16">
       {/* Headline */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="text-center mb-8 md:mb-12"
+        className="text-center mb-6 md:mb-8"
       >
         <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-neutral-900 tracking-tight leading-[1.1]">
           A showcase of the web&apos;s
@@ -85,7 +85,7 @@ export function HeroSpotlightLight({
           {currentIndex > 0 && (
             <button
               onClick={() => paginate(-1)}
-              className="hidden lg:block relative w-24 xl:w-32 h-[300px] xl:h-[400px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm"
+              className="hidden lg:block relative w-24 xl:w-32 h-[250px] xl:h-[320px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm"
             >
               <img
                 src={sortedFoundries[currentIndex - 1].images?.screenshot || ""}
@@ -107,9 +107,9 @@ export function HeroSpotlightLight({
               className="relative w-full max-w-4xl"
             >
               {/* Rectangle container with 3 sections */}
-              <div className="flex gap-2 md:gap-3 lg:gap-4">
+              <div className="flex gap-2 md:gap-3 lg:gap-4 max-h-[500px]">
                 {/* Left rectangle */}
-                <div className="relative w-1/3 aspect-[3/4] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
+                <div className="relative w-1/3 h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
                   <img
                     src={currentFoundry.images?.screenshot || ""}
                     alt={currentFoundry.name}
@@ -120,7 +120,7 @@ export function HeroSpotlightLight({
                 </div>
 
                 {/* Center rectangle - Featured */}
-                <div className="relative w-1/3 aspect-[3/4] overflow-hidden bg-neutral-200 shadow-xl rounded-sm">
+                <div className="relative w-1/3 h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden bg-neutral-200 shadow-xl rounded-sm">
                   <img
                     src={currentFoundry.images?.screenshot || ""}
                     alt={currentFoundry.name}
@@ -131,7 +131,7 @@ export function HeroSpotlightLight({
                 </div>
 
                 {/* Right rectangle */}
-                <div className="relative w-1/3 aspect-[3/4] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
+                <div className="relative w-1/3 h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
                   <img
                     src={currentFoundry.images?.screenshot || ""}
                     alt={currentFoundry.name}
@@ -148,7 +148,7 @@ export function HeroSpotlightLight({
           {currentIndex < totalFoundries - 1 && (
             <button
               onClick={() => paginate(1)}
-              className="hidden lg:block relative w-24 xl:w-32 h-[300px] xl:h-[400px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm"
+              className="hidden lg:block relative w-24 xl:w-32 h-[250px] xl:h-[320px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm"
             >
               <img
                 src={sortedFoundries[currentIndex + 1].images?.screenshot || ""}
@@ -161,7 +161,7 @@ export function HeroSpotlightLight({
       </div>
 
       {/* Bottom Controls */}
-      <div className="mt-8 md:mt-12 flex flex-col md:flex-row items-center justify-between max-w-4xl mx-auto w-full gap-6">
+      <div className="mt-6 md:mt-8 flex flex-col md:flex-row items-center justify-between max-w-4xl mx-auto w-full gap-4">
         {/* Pagination Dots */}
         <div className="flex items-center gap-2">
           {sortedFoundries.map((_, index) => (
@@ -235,7 +235,7 @@ export function HeroSpotlightLight({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="mt-8 text-center max-w-2xl mx-auto"
+        className="mt-4 text-center max-w-2xl mx-auto"
       >
         <p className="text-neutral-500 text-sm mb-2">
           {currentFoundry.location.city}, {currentFoundry.location.country}
