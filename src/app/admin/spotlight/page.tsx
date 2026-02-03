@@ -28,6 +28,7 @@ interface SpotlightSettings {
   is_enabled: boolean;
   variant: "hero" | "grid";
   max_spotlights: number;
+  theme: "dark" | "light";
 }
 
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "thepunch2026";
@@ -139,6 +140,10 @@ ADD COLUMN IF NOT EXISTS spotlight_quote TEXT,
 ADD COLUMN IF NOT EXISTS spotlight_order INTEGER DEFAULT 0,
 ADD COLUMN IF NOT EXISTS spotlight_is_primary BOOLEAN DEFAULT false;
 
+-- Add theme column to spotlight_settings
+ALTER TABLE spotlight_settings 
+ADD COLUMN IF NOT EXISTS theme TEXT DEFAULT 'dark' CHECK (theme IN ('dark', 'light'));
+
 -- Enable RLS
 ALTER TABLE spotlight_settings ENABLE ROW LEVEL SECURITY;
 
@@ -169,6 +174,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
           is_enabled: false,
           variant: "hero" as const,
           max_spotlights: 4,
+          theme: "dark" as const,
         };
         const { data: newSettings, error: createError } = await supabase
           .from("spotlight_settings")
@@ -223,54 +229,86 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
 
   const toggleSpotlight = async (foundry: RawFoundry, isSpotlight: boolean) => {
     try {
-      // If this is the first spotlight, make it primary
-      const shouldBePrimary = isSpotlight && spotlightFoundries.length === 0;
+      // Build update data based on action
+      let updateData: Partial<RawFoundry>;
       
-      const { error } = await supabase
-        .from("foundries")
-        .update({
-          is_spotlight: isSpotlight,
-          spotlight_order: isSpotlight ? getNextSpotlightOrder() : 0,
+      if (isSpotlight) {
+        // Adding to spotlight
+        const shouldBePrimary = spotlightFoundries.length === 0;
+        updateData = {
+          is_spotlight: true,
+          spotlight_order: getNextSpotlightOrder(),
           spotlight_is_primary: shouldBePrimary,
-        })
-        .eq("id", foundry.id);
+        };
+      } else {
+        // Removing from spotlight - just set is_spotlight to false
+        updateData = {
+          is_spotlight: false,
+        };
+      }
+      
+      // Use API to bypass RLS
+      const response = await fetch("/api/admin/foundries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: ADMIN_PASSWORD,
+          foundryId: foundry.id,
+          data: updateData,
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        console.error("API error:", result);
+        throw new Error(result.error || "Failed to update");
+      }
 
-      if (error) throw error;
-
+      // Update local state
       setFoundries(prev => prev.map(f => 
         f.id === foundry.id ? { 
           ...f, 
-          is_spotlight: isSpotlight, 
-          spotlight_order: isSpotlight ? getNextSpotlightOrder() : 0,
-          spotlight_is_primary: shouldBePrimary,
+          ...updateData,
         } : f
       ));
 
       setMessage({ type: "success", text: isSpotlight ? "Added to spotlight" : "Removed from spotlight" });
     } catch (err) {
       console.error("Error updating spotlight:", err);
-      setMessage({ type: "error", text: "Failed to update" });
+      setMessage({ type: "error", text: "Failed to update: " + (err instanceof Error ? err.message : "Unknown error") });
     }
   };
 
   const togglePrimary = async (foundryId: string) => {
     try {
-      // First, unset any existing primary
-      const { error: unsetError } = await supabase
-        .from("foundries")
-        .update({ spotlight_is_primary: false })
-        .eq("is_spotlight", true)
-        .neq("id", foundryId);
+      // First, unset any existing primary via API
+      const currentPrimary = spotlightFoundries.find(f => f.spotlight_is_primary);
+      if (currentPrimary) {
+        const response1 = await fetch("/api/admin/foundries", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            password: ADMIN_PASSWORD,
+            foundryId: currentPrimary.id,
+            data: { spotlight_is_primary: false },
+          }),
+        });
+        if (!response1.ok) throw new Error("Failed to unset current primary");
+      }
+
+      // Set the new primary via API
+      const response2 = await fetch("/api/admin/foundries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: ADMIN_PASSWORD,
+          foundryId: foundryId,
+          data: { spotlight_is_primary: true },
+        }),
+      });
       
-      if (unsetError) throw unsetError;
-
-      // Set the new primary
-      const { error } = await supabase
-        .from("foundries")
-        .update({ spotlight_is_primary: true })
-        .eq("id", foundryId);
-
-      if (error) throw error;
+      if (!response2.ok) throw new Error("Failed to set new primary");
 
       // Update local state
       setFoundries(prev => prev.map(f => ({
@@ -287,12 +325,21 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
 
   const updateSpotlightData = async (foundryId: string, data: Partial<RawFoundry>) => {
     try {
-      const { error } = await supabase
-        .from("foundries")
-        .update(data)
-        .eq("id", foundryId);
-
-      if (error) throw error;
+      const response = await fetch("/api/admin/foundries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: ADMIN_PASSWORD,
+          foundryId: foundryId,
+          data: data,
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to update");
+      }
 
       setFoundries(prev => prev.map(f => f.id === foundryId ? { ...f, ...data } : f));
     } catch (err) {
@@ -315,12 +362,19 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
         return updated;
       });
 
-      // Save to database
+      // Save to database via API
       for (let i = 0; i < newOrder.length; i++) {
-        await supabase
-          .from("foundries")
-          .update({ spotlight_order: i + 1 })
-          .eq("id", newOrder[i].id);
+        const response = await fetch("/api/admin/foundries", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            password: ADMIN_PASSWORD,
+            foundryId: newOrder[i].id,
+            data: { spotlight_order: i + 1 },
+          }),
+        });
+        
+        if (!response.ok) throw new Error("Failed to update order");
       }
 
       setMessage({ type: "success", text: "Order updated" });
@@ -676,6 +730,68 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                 </select>
               </div>
 
+              {/* Theme Toggle with Auto-save */}
+              <button
+                onClick={async () => {
+                  if (!formState || !settings) return;
+                  const newTheme = formState.theme === "dark" ? "light" : "dark";
+                  
+                  // Optimistically update UI
+                  setFormState(prev => prev ? { ...prev, theme: newTheme } : null);
+                  
+                  // Save via API
+                  try {
+                    const response = await fetch("/api/admin/spotlight", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        password: ADMIN_PASSWORD,
+                        settings: { ...formState, theme: newTheme },
+                      }),
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                      throw new Error(result.error || "Failed to save");
+                    }
+                    
+                    // Update saved settings state
+                    setSettings({ ...settings, theme: newTheme });
+                    localStorage.removeItem("spotlight_draft");
+                    setHasDraft(false);
+                    setMessage({ type: "success", text: `Theme changed to ${newTheme}` });
+                  } catch (err) {
+                    console.error("Error saving:", err);
+                    // Revert on error
+                    setFormState(prev => prev ? { ...prev, theme: settings.theme } : null);
+                    setMessage({ type: "error", text: "Failed to save theme. Please try again." });
+                  }
+                }}
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                  formState?.theme === "light"
+                    ? "bg-amber-100 text-amber-700 hover:bg-amber-200"
+                    : "bg-neutral-800 text-white hover:bg-neutral-700"
+                }`}
+              >
+                {formState?.theme === "light" ? (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="5" />
+                      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                    </svg>
+                    Light
+                  </>
+                ) : (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                    </svg>
+                    Dark
+                  </>
+                )}
+              </button>
+
               {/* Selection Count */}
               <div className="ml-auto flex items-center gap-2 text-sm">
                 <span className="text-neutral-500">Selected:</span>
@@ -752,7 +868,13 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                           {/* Primary Toggle */}
                           {!foundry.spotlight_is_primary && (
                             <button
-                              onClick={() => togglePrimary(foundry.id)}
+                              type="button"
+                              draggable={false}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                togglePrimary(foundry.id);
+                              }}
                               className="text-xs px-2 py-1 bg-white border border-neutral-300 rounded hover:border-orange-500 hover:text-orange-600 transition-colors"
                               title="Make primary featured foundry"
                             >
@@ -760,7 +882,14 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                             </button>
                           )}
                           <button
-                            onClick={() => toggleSpotlight(foundry, false)}
+                            type="button"
+                            draggable={false}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              console.log("Remove clicked for:", foundry.id, foundry.name);
+                              toggleSpotlight(foundry, false);
+                            }}
                             className="text-sm text-red-600 hover:text-red-700"
                           >
                             Remove
@@ -807,7 +936,11 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                         </div>
                       </div>
                       <button
-                        onClick={() => toggleSpotlight(foundry, true)}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSpotlight(foundry, true);
+                        }}
                         disabled={spotlightFoundries.length >= MAX_SPOTLIGHTS}
                         className="px-3 py-1.5 bg-neutral-900 text-white text-sm rounded hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >

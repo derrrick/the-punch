@@ -39,12 +39,13 @@ export default async function Home() {
   return (
     <>
       <Suspense fallback={<div className="h-[72px]" />}>
-        <Header darkMode={showSpotlight} isHomePage />
+        <Header darkMode={showSpotlight && spotlightSettings?.theme !== "light"} isHomePage />
       </Suspense>
       
       {showSpotlight ? (
         <HeroSpotlight
           spotlightFoundries={spotlightFoundries.slice(0, spotlightSettings?.max_spotlights || 4)}
+          theme={spotlightSettings?.theme}
         />
       ) : (
         <Hero totalFoundries={foundries.length} />

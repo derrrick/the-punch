@@ -96,7 +96,7 @@ export function NewsletterBanner() {
                 ))}
               </div>
               <p className="text-sm text-white/50">
-                Join <span className="text-white font-medium">1,200+</span> typography lovers
+                Join a community of typography lovers
               </p>
             </div>
           </motion.div>

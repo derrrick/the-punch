@@ -19,12 +19,14 @@ export interface SpotlightSettings {
   is_enabled: boolean;
   variant: "hero" | "grid";
   max_spotlights: number;
+  theme: "dark" | "light";
 }
 
 export interface SpotlightFoundry extends Foundry {
   spotlightDescription?: string;
   spotlightQuote?: string;
   spotlightIsPrimary?: boolean;
+  spotlight_order?: number;
 }
 
 export async function getSpotlightSettings(): Promise<SpotlightSettings | null> {
@@ -49,6 +51,7 @@ export async function getSpotlightSettings(): Promise<SpotlightSettings | null> 
       is_enabled: data.is_enabled,
       variant: data.variant,
       max_spotlights: data.max_spotlights,
+      theme: data.theme || "dark",
     };
   } catch (err) {
     console.error("Exception fetching spotlight settings:", err);
@@ -112,6 +115,7 @@ export async function getSpotlightFoundries(): Promise<SpotlightFoundry[]> {
       spotlightDescription: f.spotlight_description,
       spotlightQuote: f.spotlight_quote,
       spotlightIsPrimary: f.spotlight_is_primary,
+      spotlight_order: f.spotlight_order,
     }));
   } catch (err) {
     console.error("Exception fetching spotlight foundries:", err);

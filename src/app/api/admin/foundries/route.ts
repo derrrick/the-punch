@@ -15,40 +15,30 @@ const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "thepunch2026";
 
 export async function POST(request: NextRequest) {
   try {
-    // Check admin password
     const body = await request.json();
-    const { password, settings } = body;
+    const { password, foundryId, data } = body;
     
     if (password !== ADMIN_PASSWORD) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     
-    if (!settings || !settings.id) {
-      return NextResponse.json({ error: "Missing settings or id" }, { status: 400 });
+    if (!foundryId || !data) {
+      return NextResponse.json({ error: "Missing foundryId or data" }, { status: 400 });
     }
     
-    // Update settings using service role key
-    const { data, error } = await supabase
-      .from("spotlight_settings")
-      .update({
-        is_enabled: settings.is_enabled,
-        variant: settings.variant,
-        max_spotlights: settings.max_spotlights,
-        theme: settings.theme,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", settings.id)
-      .select()
-      .single();
+    const { error } = await supabase
+      .from("foundries")
+      .update(data)
+      .eq("id", foundryId);
     
     if (error) {
-      console.error("Error updating spotlight settings:", error);
+      console.error("Error updating foundry:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
     
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Exception in spotlight API:", err);
+    console.error("Exception in foundries API:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
