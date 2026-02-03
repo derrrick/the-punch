@@ -105,20 +105,6 @@ export default function SpotlightAdminPage() {
     } else {
       setLoading(false);
     }
-
-    // Load draft from localStorage
-    const savedDraft = localStorage.getItem("spotlight_draft");
-    if (savedDraft) {
-      try {
-        const draft = JSON.parse(savedDraft);
-        if (draft.formState) {
-          setFormState(draft.formState);
-          setHasDraft(true);
-        }
-      } catch {
-        // Invalid draft, ignore
-      }
-    }
   }, []);
 
   const handleLogin = (e: React.FormEvent) => {
@@ -201,7 +187,23 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
 
       if (settingsData) {
         setSettings(settingsData);
-        setFormState(settingsData);
+        // Only set formState if no draft exists
+        const savedDraft = localStorage.getItem("spotlight_draft");
+        if (savedDraft) {
+          try {
+            const draft = JSON.parse(savedDraft);
+            if (draft.formState) {
+              setFormState(draft.formState);
+              setHasDraft(true);
+            } else {
+              setFormState(settingsData);
+            }
+          } catch {
+            setFormState(settingsData);
+          }
+        } else {
+          setFormState(settingsData);
+        }
       } else {
         // Create default settings
         const defaultSettings = {
