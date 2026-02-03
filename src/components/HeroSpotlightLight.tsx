@@ -63,29 +63,29 @@ export function HeroSpotlightLight({
   if (!currentFoundry || sortedFoundries.length === 0) return null;
 
   return (
-    <section className="h-[70vh] max-h-[800px] bg-[#F5F5F3] flex flex-col justify-center py-6 md:py-8 px-4 md:px-8 lg:px-16">
+    <section className="min-h-[650px] max-h-[85vh] bg-[#F5F5F3] flex flex-col justify-center py-6 md:py-10 lg:py-12 lg:[@media(max-height:900px)]:py-8 xl:[@media(max-height:900px)]:py-6 px-4 md:px-8 lg:px-16 overflow-hidden">
       {/* Headline */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="text-center mb-6 md:mb-8"
+        className="text-center mb-6 md:mb-6 lg:mb-8 lg:[@media(max-height:900px)]:mb-4 xl:[@media(max-height:900px)]:mb-3 shrink-0"
       >
-        <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-neutral-900 tracking-tight leading-[1.1]">
-          A showcase of the web&apos;s
+        <h1 className="text-3xl md:text-4xl lg:text-5xl lg:[@media(max-height:900px)]:text-4xl xl:[@media(max-height:900px)]:text-4xl font-light text-neutral-900 tracking-tight leading-[1.1]">
+          Discovering the web&apos;s
           <br />
           finest independent type
         </h1>
       </motion.div>
 
-      {/* Main Showcase - Arched Windows */}
-      <div className="relative max-w-7xl mx-auto w-full">
-        <div className="flex justify-center items-end gap-3 md:gap-4 lg:gap-6">
-          {/* Previous arches (peek) */}
+      {/* Main Showcase - Rectangles */}
+      <div className="relative max-w-7xl mx-auto w-full shrink-0">
+        <div className="flex justify-center items-center gap-3 md:gap-4 lg:gap-6">
+          {/* Previous rectangles (peek) */}
           {currentIndex > 0 && (
             <button
               onClick={() => paginate(-1)}
-              className="hidden lg:block relative w-20 xl:w-28 h-[180px] xl:h-[240px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm"
+              className="hidden lg:block relative w-16 xl:w-24 h-[160px] lg:[@media(max-height:900px)]:h-[120px] xl:h-[200px] xl:[@media(max-height:900px)]:h-[140px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm shrink-0"
             >
               <img
                 src={sortedFoundries[currentIndex - 1].images?.screenshot || ""}
@@ -109,7 +109,7 @@ export function HeroSpotlightLight({
               {/* Rectangle container with 3 sections */}
               <div className="flex gap-2 md:gap-3 lg:gap-4">
                 {/* Left rectangle */}
-                <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
+                <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] lg:[@media(max-height:900px)]:h-[280px] xl:[@media(max-height:900px)]:h-[240px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
                   <img
                     src={currentFoundry.images?.screenshot || ""}
                     alt={currentFoundry.name}
@@ -120,7 +120,7 @@ export function HeroSpotlightLight({
                 </div>
 
                 {/* Center rectangle - Featured */}
-                <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] overflow-hidden bg-neutral-200 shadow-xl rounded-sm">
+                <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] lg:[@media(max-height:900px)]:h-[280px] xl:[@media(max-height:900px)]:h-[240px] overflow-hidden bg-neutral-200 shadow-xl rounded-sm">
                   <img
                     src={currentFoundry.images?.screenshot || ""}
                     alt={currentFoundry.name}
@@ -131,7 +131,7 @@ export function HeroSpotlightLight({
                 </div>
 
                 {/* Right rectangle */}
-                <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
+                <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] lg:[@media(max-height:900px)]:h-[280px] xl:[@media(max-height:900px)]:h-[240px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
                   <img
                     src={currentFoundry.images?.screenshot || ""}
                     alt={currentFoundry.name}
@@ -144,11 +144,11 @@ export function HeroSpotlightLight({
             </motion.div>
           </AnimatePresence>
 
-          {/* Next arches (peek) */}
+          {/* Next rectangles (peek) */}
           {currentIndex < totalFoundries - 1 && (
             <button
               onClick={() => paginate(1)}
-              className="hidden lg:block relative w-20 xl:w-28 h-[180px] xl:h-[240px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm"
+              className="hidden lg:block relative w-16 xl:w-24 h-[160px] lg:[@media(max-height:900px)]:h-[120px] xl:h-[200px] xl:[@media(max-height:900px)]:h-[140px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm shrink-0"
             >
               <img
                 src={sortedFoundries[currentIndex + 1].images?.screenshot || ""}
@@ -161,7 +161,7 @@ export function HeroSpotlightLight({
       </div>
 
       {/* Bottom Controls */}
-      <div className="mt-6 md:mt-8 flex flex-col md:flex-row items-center justify-between max-w-4xl mx-auto w-full gap-4">
+      <div className="mt-4 md:mt-6 lg:mt-8 lg:[@media(max-height:900px)]:mt-4 xl:[@media(max-height:900px)]:mt-3 flex flex-col md:flex-row items-center justify-between max-w-4xl mx-auto w-full gap-4 shrink-0">
         {/* Pagination Dots */}
         <div className="flex items-center gap-2">
           {sortedFoundries.map((_, index) => (
@@ -235,7 +235,7 @@ export function HeroSpotlightLight({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="mt-4 text-center max-w-2xl mx-auto"
+        className="mt-2 md:mt-4 lg:[@media(max-height:900px)]:mt-1 text-center max-w-2xl mx-auto shrink-0 pb-2 lg:[@media(max-height:900px)]:pb-0"
       >
         <p className="text-neutral-500 text-sm mb-2">
           {currentFoundry.location.city}, {currentFoundry.location.country}
