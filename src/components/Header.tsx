@@ -6,9 +6,10 @@ import { AnimatedLogo } from "./AnimatedLogo";
 
 interface HeaderProps {
   darkMode?: boolean;
+  isHomePage?: boolean;
 }
 
-export function Header({ darkMode = false }: HeaderProps) {
+export function Header({ darkMode = false, isHomePage = false }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
@@ -66,8 +67,8 @@ export function Header({ darkMode = false }: HeaderProps) {
             >
               Submit
             </Link>
-            <a
-              href="#newsletter"
+            <Link
+              href={isHomePage ? "#newsletter" : "/#newsletter"}
               className={`text-sm transition-colors underline underline-offset-4 ${
                 isDark 
                   ? 'text-white/60 hover:text-white decoration-white/30 hover:decoration-white' 
@@ -75,7 +76,7 @@ export function Header({ darkMode = false }: HeaderProps) {
               }`}
             >
               Subscribe
-            </a>
+            </Link>
           </nav>
         </div>
       </header>
@@ -110,12 +111,12 @@ export function Header({ darkMode = false }: HeaderProps) {
           >
             Submit
           </Link>
-          <a
-            href="#newsletter"
+          <Link
+            href={isHomePage ? "#newsletter" : "/#newsletter"}
             className="text-foreground/60 text-sm hover:text-foreground transition-colors underline underline-offset-4 decoration-foreground/30 hover:decoration-foreground"
           >
             Subscribe
-          </a>
+          </Link>
         </nav>
       </div>
     </header>

@@ -39,7 +39,7 @@ export default async function Home() {
   return (
     <>
       <Suspense fallback={<div className="h-[72px]" />}>
-        <Header darkMode={showSpotlight} />
+        <Header darkMode={showSpotlight} isHomePage />
       </Suspense>
       
       {showSpotlight ? (
