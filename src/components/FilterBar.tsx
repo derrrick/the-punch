@@ -219,7 +219,7 @@ export function FilterBar({ foundries: allFoundries, styles, countries }: Filter
       <div
         ref={filterBarRef}
         data-filter-bar
-        className="sticky top-16 z-40 bg-white border-b border-neutral-100"
+        className="sticky top-[72px] z-40 bg-white border-b border-neutral-100"
       >
         <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-12">
           {/* Desktop Layout */}

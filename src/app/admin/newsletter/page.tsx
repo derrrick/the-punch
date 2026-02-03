@@ -38,6 +38,7 @@ interface AIGeneratedContent {
   subjectLines: string[];
   introHeadline: string;
   introBody: string;
+  quickLinks: { title: string; url: string; description: string }[];
   themeSuggestion: string | null;
 }
 
@@ -69,15 +70,28 @@ export default function NewsletterAdminPage() {
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [aiContent, setAIContent] = useState<AIGeneratedContent | null>(null);
   const [aiTheme, setAITheme] = useState("");
+  const [hasDraft, setHasDraft] = useState(false);
 
   const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "thepunch2026";
 
-  // Check for existing auth on mount
+  // Check for existing auth and load draft on mount
   useEffect(() => {
     const auth = sessionStorage.getItem("admin_auth");
     if (auth === "true") {
       setIsAuthenticated(true);
       loadData();
+    }
+
+    // Load saved draft from localStorage
+    const savedDraft = localStorage.getItem("newsletter_draft");
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setFormData((prev) => ({ ...prev, ...draft }));
+        setHasDraft(true);
+      } catch {
+        // Invalid draft, ignore
+      }
     }
   }, []);
 
@@ -149,12 +163,33 @@ export default function NewsletterAdminPage() {
 
       setPreviewHtml(data.html);
       setActiveTab("preview");
+
+      // Save draft to localStorage
+      saveDraft();
     } catch (err) {
       console.error("Preview error:", err);
       setMessage({ type: "error", text: "Failed to generate preview" });
     } finally {
       setIsPreviewLoading(false);
     }
+  };
+
+  const saveDraft = () => {
+    const draft = {
+      ...formData,
+      testEmail: "", // Don't save test email in draft
+    };
+    localStorage.setItem("newsletter_draft", JSON.stringify(draft));
+    setHasDraft(true);
+  };
+
+  const clearDraft = () => {
+    localStorage.removeItem("newsletter_draft");
+    setFormData(INITIAL_FORM_DATA);
+    setPreviewHtml("");
+    setAIContent(null);
+    setHasDraft(false);
+    setMessage({ type: "success", text: "Draft cleared" });
   };
 
   const sendTest = async () => {
@@ -167,7 +202,10 @@ export default function NewsletterAdminPage() {
     try {
       const response = await fetch("/api/newsletter/send", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${ADMIN_PASSWORD}`,
+        },
         body: JSON.stringify({
           ...formData,
           mode: "test",
@@ -196,7 +234,10 @@ export default function NewsletterAdminPage() {
     try {
       const response = await fetch("/api/newsletter/send", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${ADMIN_PASSWORD}`,
+        },
         body: JSON.stringify({
           ...formData,
           mode: "production",
@@ -207,6 +248,9 @@ export default function NewsletterAdminPage() {
       if (!response.ok) throw new Error(data.error);
 
       setMessage({ type: "success", text: `Newsletter sent successfully to ${data.sent} subscribers` });
+
+      // Clear draft after successful send
+      localStorage.removeItem("newsletter_draft");
     } catch (err) {
       console.error("Send error:", err);
       setMessage({ type: "error", text: "Failed to send newsletter" });
@@ -273,6 +317,9 @@ export default function NewsletterAdminPage() {
 
       setAIContent(data.content);
       setMessage({ type: "success", text: "Content generated! Select options below." });
+
+      // Auto-save draft after AI generation
+      saveDraft();
     } catch (err) {
       console.error("AI generation error:", err);
       setMessage({ type: "error", text: "Failed to generate content" });
@@ -283,6 +330,10 @@ export default function NewsletterAdminPage() {
 
   const applyAIContent = (field: "subject" | "introHeadline" | "introBody", value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const applyAIQuickLinks = (links: { title: string; url: string; description: string }[]) => {
+    setFormData((prev) => ({ ...prev, quickLinks: links }));
   };
 
   if (!isAuthenticated) {
@@ -344,6 +395,20 @@ export default function NewsletterAdminPage() {
             >
               ← Back to Admin
             </a>
+            {hasDraft && (
+              <span className="text-xs text-green-600 flex items-center gap-1">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+                Draft saved
+              </span>
+            )}
+            <button
+              onClick={clearDraft}
+              className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
+            >
+              Clear Draft
+            </button>
             <button
               onClick={() => {
                 sessionStorage.removeItem("admin_auth");
@@ -551,6 +616,35 @@ export default function NewsletterAdminPage() {
                       </button>
                     </div>
 
+                    {/* Quick Links */}
+                    {aiContent.quickLinks && aiContent.quickLinks.length > 0 && (
+                      <div>
+                        <label className="block text-xs font-medium text-purple-700 mb-2">
+                          Quick Links Suggestions
+                        </label>
+                        <div className="space-y-2 mb-2">
+                          {aiContent.quickLinks.map((link, i) => (
+                            <div
+                              key={i}
+                              className="px-3 py-2 text-sm rounded-md border bg-white border-purple-200 text-purple-800"
+                            >
+                              <p className="font-medium">{link.title}</p>
+                              <p className="text-xs text-purple-600 truncate">{link.url}</p>
+                              {link.description && (
+                                <p className="text-xs text-purple-500 mt-1">{link.description}</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => applyAIQuickLinks(aiContent.quickLinks)}
+                          className="w-full py-2 text-sm font-medium text-purple-700 border border-purple-300 rounded-md hover:bg-purple-50 transition-colors"
+                        >
+                          Apply Quick Links
+                        </button>
+                      </div>
+                    )}
+
                     {/* Theme Suggestion */}
                     {aiContent.themeSuggestion && (
                       <div className="p-3 bg-purple-100 rounded-md">
@@ -565,6 +659,7 @@ export default function NewsletterAdminPage() {
                         if (aiContent.subjectLines[0]) applyAIContent("subject", aiContent.subjectLines[0]);
                         applyAIContent("introHeadline", aiContent.introHeadline);
                         applyAIContent("introBody", aiContent.introBody);
+                        if (aiContent.quickLinks?.length > 0) applyAIQuickLinks(aiContent.quickLinks);
                       }}
                       className="w-full py-2 text-sm font-medium text-purple-700 border border-purple-300 rounded-md hover:bg-purple-50 transition-colors"
                     >
@@ -711,14 +806,22 @@ export default function NewsletterAdminPage() {
                 </div>
               </section>
 
-              {/* Preview Button */}
-              <button
-                onClick={generatePreview}
-                disabled={isPreviewLoading || !formData.subject || !formData.introBody}
-                className="w-full bg-neutral-900 text-white py-4 rounded-lg font-medium hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isPreviewLoading ? "Generating Preview..." : "Generate Preview →"}
-              </button>
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={saveDraft}
+                  className="px-6 py-4 border border-neutral-300 text-neutral-700 rounded-lg font-medium hover:bg-neutral-50 transition-colors"
+                >
+                  Save Draft
+                </button>
+                <button
+                  onClick={generatePreview}
+                  disabled={isPreviewLoading || !formData.subject || !formData.introBody}
+                  className="flex-1 bg-neutral-900 text-white py-4 rounded-lg font-medium hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isPreviewLoading ? "Generating Preview..." : "Generate Preview →"}
+                </button>
+              </div>
             </div>
           </div>
         )}

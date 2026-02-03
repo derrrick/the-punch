@@ -36,18 +36,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Transform foundry data for email
-    const featuredFoundries = foundriesData?.map((foundry) => ({
-      id: foundry.id,
-      name: foundry.name,
-      slug: foundry.slug,
-      location: `${foundry.location_city}, ${foundry.location_country}`,
-      description: foundry.notes?.substring(0, 300) || `${foundry.name} is an independent type foundry based in ${foundry.location_city}, ${foundry.location_country}.`,
-      typefaces: foundry.notable_typefaces || [],
-      imageUrl: foundry.screenshot_url,
-      url: `https://thepunch.studio/foundry/${foundry.slug}`,
-      styleTags: foundry.style || [],
-    })) || [];
+    // Transform foundry data for email (only include images with valid hosted URLs)
+    const featuredFoundries = foundriesData?.map((foundry) => {
+      const screenshotUrl = foundry.screenshot_url;
+      const isHostedImage = screenshotUrl && screenshotUrl.startsWith("https://");
+      return {
+        id: foundry.id,
+        name: foundry.name,
+        slug: foundry.slug,
+        location: `${foundry.location_city}, ${foundry.location_country}`,
+        description: foundry.notes?.substring(0, 300) || `${foundry.name} is an independent type foundry based in ${foundry.location_city}, ${foundry.location_country}.`,
+        typefaces: foundry.notable_typefaces || [],
+        imageUrl: isHostedImage ? screenshotUrl : undefined,
+        url: `https://thepunch.studio/foundry/${foundry.slug}`,
+        styleTags: foundry.style || [],
+      };
+    }) || [];
 
     // Prepare newsletter data
     const newsletterData: NewsletterData = {

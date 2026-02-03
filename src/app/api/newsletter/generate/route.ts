@@ -85,13 +85,19 @@ Generate newsletter content with these requirements:
    - Create anticipation for what the reader will discover
    - Sound like a knowledgeable friend sharing cool finds, not marketing copy
 
-4. **Theme Suggestion**: If no theme was provided, suggest what ties these foundries together (1 sentence).
+4. **Quick Links**: Generate 2-3 interesting typography-related links for the "More to Explore" section. These should be:
+   - Relevant to the featured foundries or typography in general
+   - Real, useful resources (type specimen archives, typography articles, design tools, other foundries not featured)
+   - Each with a catchy title and brief description (under 10 words)
+
+5. **Theme Suggestion**: If no theme was provided, suggest what ties these foundries together (1 sentence).
 
 Respond in JSON format:
 {
   "subjectLines": ["option 1", "option 2", "option 3"],
   "introHeadline": "string",
   "introBody": "string",
+  "quickLinks": [{"title": "string", "url": "https://...", "description": "string"}],
   "themeSuggestion": "string or null if theme was provided"
 }
 
@@ -127,6 +133,7 @@ Be specific about the foundries. Reference actual typeface names or design appro
         subjectLines: generated.subjectLines || [],
         introHeadline: generated.introHeadline || "",
         introBody: generated.introBody || "",
+        quickLinks: generated.quickLinks || [],
         themeSuggestion: generated.themeSuggestion || null,
       },
       context: {

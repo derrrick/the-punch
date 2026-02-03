@@ -44,7 +44,7 @@ export function Header() {
           : "bg-background/80 backdrop-blur-md border-b border-transparent"
       }`}
     >
-      <div className="max-w-[1800px] mx-auto px-6 md:px-12 py-6 flex justify-between items-center">
+      <div className="max-w-[1800px] mx-auto px-6 md:px-12 h-[72px] flex justify-between items-center">
         <Link
           href="/"
           className="hover:opacity-60 transition-opacity"
@@ -52,7 +52,7 @@ export function Header() {
           <AnimatedLogo className="h-5 w-auto" />
         </Link>
 
-        <nav className="flex items-center gap-8 md:gap-12">
+        <nav className="flex items-center gap-6 md:gap-8">
           <Link
             href="/about"
             className="text-foreground/60 text-sm hover:text-foreground transition-colors"
@@ -65,6 +65,12 @@ export function Header() {
           >
             Submit
           </Link>
+          <a
+            href="#newsletter"
+            className="text-sm font-medium bg-neutral-900 text-white px-4 py-1.5 rounded-lg hover:bg-neutral-700 transition-colors"
+          >
+            Get weekly updates
+          </a>
         </nav>
       </div>
     </header>

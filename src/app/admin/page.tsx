@@ -137,7 +137,24 @@ export default function AdminPage() {
         </div>
 
         {/* Navigation Cards */}
-        <div className="grid md:grid-cols-2 gap-6 mb-12">
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <a
+            href="/admin/spotlight"
+            className="group bg-white border border-neutral-200 rounded-lg p-6 hover:border-orange-400 transition-colors"
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="text-xl font-medium mb-2 group-hover:text-orange-600">
+                  Spotlight
+                </h2>
+                <p className="text-sm text-neutral-500">
+                  Feature exceptional foundries on the homepage
+                </p>
+              </div>
+              <span className="text-2xl">⭐</span>
+            </div>
+          </a>
+
           <a
             href="/admin/newsletter"
             className="group bg-white border border-neutral-200 rounded-lg p-6 hover:border-neutral-400 transition-colors"
@@ -148,18 +165,18 @@ export default function AdminPage() {
                   Newsletter
                 </h2>
                 <p className="text-sm text-neutral-500">
-                  Compose, preview, and send The Punch Weekly to subscribers
+                  Compose, preview, and send The Punch Weekly
                 </p>
               </div>
               <span className="text-2xl">✉️</span>
             </div>
           </a>
 
-          <div className="bg-white border border-neutral-200 rounded-lg p-6 opacity-60">
+          <div className="bg-white border border-neutral-200 rounded-lg p-6">
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-xl font-medium mb-2">
-                  Foundry Submissions
+                  Submissions
                 </h2>
                 <p className="text-sm text-neutral-500">
                   Review and manage foundry submissions

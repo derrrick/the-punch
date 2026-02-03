@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Foundry, FoundriesData } from "@/lib/foundries-db";
 import { FoundryCard } from "./FoundryCard";
+import { NewsletterBanner } from "./NewsletterBanner";
 
 interface FoundryGridProps {
   foundries: Foundry[];
@@ -68,18 +69,44 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
     return results;
   }, [allFoundries, styleFilter, locationFilter, searchFilter, sortFilter, typeFilter]);
 
+  // Split foundries for banner insertion after 8 tiles
+  const firstBatch = filteredFoundries.slice(0, 8);
+  const secondBatch = filteredFoundries.slice(8);
+  const showBanner = filteredFoundries.length > 8;
+
   return (
     <section className="py-16 md:py-24 bg-white">
       <div className="max-w-[1800px] mx-auto px-6 md:px-12">
 
         {filteredFoundries.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
-            {filteredFoundries.map((foundry, index) => (
-              <div key={foundry.id} data-foundry-tile={index === 0 ? "first" : undefined}>
-                <FoundryCard foundry={foundry} index={index} />
+          <>
+            {/* First 8 foundries */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
+              {firstBatch.map((foundry, index) => (
+                <div key={foundry.id} data-foundry-tile={index === 0 ? "first" : undefined}>
+                  <FoundryCard foundry={foundry} index={index} />
+                </div>
+              ))}
+            </div>
+
+            {/* Newsletter Banner - after 8 tiles */}
+            {showBanner && (
+              <div className="my-16 -mx-6 md:-mx-12">
+                <NewsletterBanner />
               </div>
-            ))}
-          </div>
+            )}
+
+            {/* Remaining foundries */}
+            {secondBatch.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
+                {secondBatch.map((foundry, index) => (
+                  <div key={foundry.id}>
+                    <FoundryCard foundry={foundry} index={index + 8} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         ) : (
           <div className="py-20 text-center">
             <p className="text-neutral-700 text-lg">
