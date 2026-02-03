@@ -84,7 +84,7 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
     filteredFoundries.length % 3 !== 0;
 
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-8 md:py-12 bg-white">
       <div className="max-w-[1800px] mx-auto px-6 md:px-12">
 
         {filteredFoundries.length > 0 ? (
@@ -93,7 +93,11 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
               {firstBatch.map((foundry, index) => (
                 <div key={foundry.id} data-foundry-tile={index === 0 ? "first" : undefined}>
-                  <FoundryCard foundry={foundry} index={index} />
+                  <FoundryCard 
+                    foundry={foundry} 
+                    index={index} 
+                    animateOnScroll={index >= 4}
+                  />
                 </div>
               ))}
               {/* Newsletter card to fill empty grid spots */}
@@ -116,7 +120,11 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
                 {secondBatch.map((foundry, index) => (
                   <div key={foundry.id}>
-                    <FoundryCard foundry={foundry} index={index + 12} />
+                    <FoundryCard 
+                      foundry={foundry} 
+                      index={index + 12} 
+                      animateOnScroll={true}
+                    />
                   </div>
                 ))}
               </div>

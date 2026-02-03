@@ -9,6 +9,7 @@ import { Foundry } from "@/lib/foundries";
 interface FoundryCardProps {
   foundry: Foundry;
   index: number;
+  animateOnScroll?: boolean;
 }
 
 // Generate a consistent gradient based on the foundry name
@@ -24,7 +25,7 @@ function generateGradient(name: string): string {
   return `linear-gradient(135deg, hsl(${hue1}, 60%, 85%), hsl(${hue2}, 60%, 80%))`;
 }
 
-export function FoundryCard({ foundry, index }: FoundryCardProps) {
+export function FoundryCard({ foundry, index, animateOnScroll = true }: FoundryCardProps) {
   const router = useRouter();
   const hasScreenshot = foundry.images?.screenshot;
 
@@ -50,9 +51,9 @@ export function FoundryCard({ foundry, index }: FoundryCardProps) {
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
+      initial={animateOnScroll ? { opacity: 0, y: 40 } : { opacity: 1, y: 0 }}
+      whileInView={animateOnScroll ? { opacity: 1, y: 0 } : undefined}
+      viewport={animateOnScroll ? { once: true, margin: "-50px" } : undefined}
       transition={{
         duration: 0.6,
         delay: index * 0.05,

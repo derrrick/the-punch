@@ -63,7 +63,7 @@ export function HeroSpotlightLight({
   if (!currentFoundry || sortedFoundries.length === 0) return null;
 
   return (
-    <section className="max-h-[900px] bg-[#F5F5F3] flex flex-col justify-center py-8 md:py-12 px-4 md:px-8 lg:px-16">
+    <section className="h-[70vh] max-h-[800px] bg-[#F5F5F3] flex flex-col justify-center py-6 md:py-8 px-4 md:px-8 lg:px-16">
       {/* Headline */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -85,7 +85,7 @@ export function HeroSpotlightLight({
           {currentIndex > 0 && (
             <button
               onClick={() => paginate(-1)}
-              className="hidden lg:block relative w-24 xl:w-32 h-[250px] xl:h-[320px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm"
+              className="hidden lg:block relative w-20 xl:w-28 h-[180px] xl:h-[240px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm"
             >
               <img
                 src={sortedFoundries[currentIndex - 1].images?.screenshot || ""}
@@ -107,9 +107,9 @@ export function HeroSpotlightLight({
               className="relative w-full max-w-4xl"
             >
               {/* Rectangle container with 3 sections */}
-              <div className="flex gap-2 md:gap-3 lg:gap-4 max-h-[500px]">
+              <div className="flex gap-2 md:gap-3 lg:gap-4">
                 {/* Left rectangle */}
-                <div className="relative w-1/3 h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
+                <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
                   <img
                     src={currentFoundry.images?.screenshot || ""}
                     alt={currentFoundry.name}
@@ -120,7 +120,7 @@ export function HeroSpotlightLight({
                 </div>
 
                 {/* Center rectangle - Featured */}
-                <div className="relative w-1/3 h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden bg-neutral-200 shadow-xl rounded-sm">
+                <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] overflow-hidden bg-neutral-200 shadow-xl rounded-sm">
                   <img
                     src={currentFoundry.images?.screenshot || ""}
                     alt={currentFoundry.name}
@@ -131,7 +131,7 @@ export function HeroSpotlightLight({
                 </div>
 
                 {/* Right rectangle */}
-                <div className="relative w-1/3 h-[350px] md:h-[400px] lg:h-[450px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
+                <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
                   <img
                     src={currentFoundry.images?.screenshot || ""}
                     alt={currentFoundry.name}
@@ -148,7 +148,7 @@ export function HeroSpotlightLight({
           {currentIndex < totalFoundries - 1 && (
             <button
               onClick={() => paginate(1)}
-              className="hidden lg:block relative w-24 xl:w-32 h-[250px] xl:h-[320px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm"
+              className="hidden lg:block relative w-20 xl:w-28 h-[180px] xl:h-[240px] overflow-hidden opacity-40 hover:opacity-60 transition-opacity cursor-pointer rounded-sm"
             >
               <img
                 src={sortedFoundries[currentIndex + 1].images?.screenshot || ""}
