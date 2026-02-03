@@ -69,10 +69,11 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
     return results;
   }, [allFoundries, styleFilter, locationFilter, searchFilter, sortFilter, typeFilter]);
 
-  // Split foundries for banner insertion after 8 tiles
-  const firstBatch = filteredFoundries.slice(0, 8);
-  const secondBatch = filteredFoundries.slice(8);
-  const showBanner = filteredFoundries.length > 8;
+  // Split foundries for banner insertion after 12 tiles
+  // 12 works perfectly for both 3-column (4 rows) and 4-column (3 rows) grids
+  const firstBatch = filteredFoundries.slice(0, 12);
+  const secondBatch = filteredFoundries.slice(12);
+  const showBanner = filteredFoundries.length > 12;
 
   return (
     <section className="py-16 md:py-24 bg-white">
@@ -80,7 +81,7 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
 
         {filteredFoundries.length > 0 ? (
           <>
-            {/* First 8 foundries */}
+            {/* First 12 foundries */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
               {firstBatch.map((foundry, index) => (
                 <div key={foundry.id} data-foundry-tile={index === 0 ? "first" : undefined}>
@@ -89,7 +90,7 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
               ))}
             </div>
 
-            {/* Newsletter Banner - after 8 tiles */}
+            {/* Newsletter Banner - after 12 tiles */}
             {showBanner && (
               <div className="my-16 -mx-6 md:-mx-12">
                 <NewsletterBanner />
@@ -101,7 +102,7 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
                 {secondBatch.map((foundry, index) => (
                   <div key={foundry.id}>
-                    <FoundryCard foundry={foundry} index={index + 8} />
+                    <FoundryCard foundry={foundry} index={index + 12} />
                   </div>
                 ))}
               </div>
