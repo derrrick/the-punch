@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { Header } from "@/components/Header";
 
 export default function SubmitPage() {
   const [formData, setFormData] = useState({
@@ -129,6 +130,7 @@ export default function SubmitPage() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-neutral-50">
+        <Header />
         <div className="max-w-[680px] mx-auto px-6 md:px-12 py-32 md:py-40">
           <div className="text-center">
             <div className="w-12 h-12 rounded-full bg-neutral-900 text-white flex items-center justify-center mx-auto mb-8">
@@ -167,6 +169,7 @@ export default function SubmitPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
+      <Header />
       <div className="max-w-[680px] mx-auto px-6 md:px-12 py-32 md:py-40">
         {/* Header */}
         <div className="mb-16 md:mb-20">

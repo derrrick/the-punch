@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import gsap from "gsap";
 import type { Foundry } from "@/lib/foundries-db";
+import { Header } from "@/components/Header";
 
 interface FoundryPageClientProps {
   foundry: Foundry;
@@ -58,7 +59,9 @@ export function FoundryPageClient({ foundry }: FoundryPageClientProps) {
   }, []);
 
   return (
-    <div ref={containerRef} className="min-h-screen">
+    <>
+      <Header />
+      <div ref={containerRef} className="min-h-screen">
       {/* Hero Section with generous whitespace */}
       <section className="pt-32 pb-20 px-6 md:px-12 lg:px-20">
         <div className="max-w-6xl mx-auto">
@@ -231,5 +234,6 @@ export function FoundryPageClient({ foundry }: FoundryPageClientProps) {
         </div>
       </section>
     </div>
+    </>
   );
 }

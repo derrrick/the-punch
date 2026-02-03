@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "Sponsorship",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default function SponsorshipPage() {
   return (
     <div className="min-h-screen bg-neutral-50">
+      <Header />
       <div className="max-w-[680px] mx-auto px-6 md:px-12 py-32 md:py-40">
         {/* Headline */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-neutral-900 leading-[1.15] mb-20 md:mb-28">
