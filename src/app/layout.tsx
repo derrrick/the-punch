@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Suspense } from "react";
-import { Header } from "@/components/Header";
+import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { FoundryTransitionProvider } from "@/components/FoundryTransition";
@@ -67,14 +66,12 @@ export default function RootLayout({
       >
         <FoundryTransitionProvider>
           <ScrollProgress />
-          <Suspense fallback={<div className="h-16" />}>
-            <Header />
-          </Suspense>
           <main className="flex-1">
             {children}
           </main>
           <Footer />
         </FoundryTransitionProvider>
+        <Analytics />
       </body>
     </html>
   );

@@ -85,3 +85,60 @@ All foundries inserted into `foundries` table with:
 2. 🔄 Screenshot capture in progress
 3. ⏳ Verify screenshots on live site
 4. ⏳ Update cache/revalidate if needed
+
+---
+
+## Spotlight Primary Feature: February 2, 2026
+
+### Overview
+Added ability to explicitly choose which foundry appears in the #1 featured spot in the Hero spotlight layout.
+
+### Design Limit
+The HeroSpotlight design supports **4 foundries optimally**:
+- 1 featured foundry (large, left side)
+- 3 secondary foundries (numbered 02, 03, 04, right side)
+
+The `max_spotlights` setting allows 1-8, but the hero layout works best with 4.
+
+### Database Changes
+**Migration**: `supabase/migrations/20260202000000_add_spotlight_primary.sql`
+```sql
+-- Add spotlight_is_primary column
+ALTER TABLE foundries 
+ADD COLUMN IF NOT EXISTS spotlight_is_primary BOOLEAN DEFAULT false;
+
+-- Create index for faster queries
+CREATE INDEX IF NOT EXISTS idx_foundries_spotlight_primary 
+ON foundries(is_spotlight, spotlight_is_primary) 
+WHERE is_spotlight = true;
+```
+
+### Code Changes
+
+#### 1. Admin Interface (`src/app/admin/spotlight/page.tsx`)
+- Added `spotlight_is_primary: boolean` to `RawFoundry` interface
+- Added `togglePrimary()` function to set/unset primary status
+- Added "Set as Primary" button for non-primary foundries
+- Primary foundry gets orange badge and highlight styling
+- First spotlight automatically becomes primary
+
+#### 2. Hero Component (`src/components/HeroSpotlight.tsx`)
+- Added `spotlightIsPrimary?: boolean` to `SpotlightFoundry` interface
+- Updated logic to find primary foundry by flag instead of array position
+- Falls back to first foundry if no primary is set
+
+#### 3. Server Data (`src/lib/spotlight.ts`)
+- Added `spotlightIsPrimary?: boolean` to `SpotlightFoundry` interface
+- Maps `spotlight_is_primary` from database to component prop
+
+### Admin UI
+In the Spotlight Manager (Foundries tab):
+- Primary foundry shows orange "Primary" badge
+- Primary foundry has orange ring highlight
+- Other foundries show "Set as Primary" button
+- Clicking the button moves that foundry to the #1 spot
+
+### Next Steps
+1. ⏳ Run migration on production database
+2. ⏳ Test primary toggle in admin
+3. ⏳ Verify HeroSpotlight displays primary foundry correctly

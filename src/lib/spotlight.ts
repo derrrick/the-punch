@@ -1,8 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Foundry } from "./foundries-db";
 
-// For server-side rendering, we need to use the service role key to bypass RLS
-// For client-side, we use the anon key
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
@@ -19,15 +17,14 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 
 export interface SpotlightSettings {
   is_enabled: boolean;
-  title: string;
-  subtitle: string;
-  variant: "hero" | "grid" | "carousel";
+  variant: "hero" | "grid";
   max_spotlights: number;
 }
 
 export interface SpotlightFoundry extends Foundry {
   spotlightDescription?: string;
   spotlightQuote?: string;
+  spotlightIsPrimary?: boolean;
 }
 
 export async function getSpotlightSettings(): Promise<SpotlightSettings | null> {
@@ -44,14 +41,12 @@ export async function getSpotlightSettings(): Promise<SpotlightSettings | null> 
     }
 
     if (!data) {
-      console.log("No spotlight settings found in database");
+      console.log("No spotlight settings found");
       return null;
     }
 
     return {
       is_enabled: data.is_enabled,
-      title: data.title,
-      subtitle: data.subtitle,
       variant: data.variant,
       max_spotlights: data.max_spotlights,
     };
@@ -63,13 +58,12 @@ export async function getSpotlightSettings(): Promise<SpotlightSettings | null> 
 
 export async function getSpotlightFoundries(): Promise<SpotlightFoundry[]> {
   try {
+    // Use explicit ordering by spotlight_order first
     const { data, error } = await supabase
       .from("foundries")
       .select("*")
       .eq("is_spotlight", true)
-      .order("spotlight_order", { ascending: true })
-      .order("tier", { ascending: true })
-      .order("name", { ascending: true });
+      .order("spotlight_order", { ascending: true });
 
     if (error) {
       console.error("Error fetching spotlight foundries:", error.message);
@@ -79,6 +73,8 @@ export async function getSpotlightFoundries(): Promise<SpotlightFoundry[]> {
     if (!data || data.length === 0) {
       return [];
     }
+
+    console.log("Spotlight foundries loaded:", data.map(f => ({ name: f.name, order: f.spotlight_order })));
 
     return data.map((f) => ({
       id: f.id,
@@ -115,6 +111,7 @@ export async function getSpotlightFoundries(): Promise<SpotlightFoundry[]> {
       updated_at: f.updated_at,
       spotlightDescription: f.spotlight_description,
       spotlightQuote: f.spotlight_quote,
+      spotlightIsPrimary: f.spotlight_is_primary,
     }));
   } catch (err) {
     console.error("Exception fetching spotlight foundries:", err);

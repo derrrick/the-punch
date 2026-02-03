@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { FoundryGrid } from "@/components/FoundryGrid";
 import { FilterBar } from "@/components/FilterBar";
 import { FoundrySpotlight } from "@/components/FoundrySpotlight";
+import { HeroSpotlight } from "@/components/HeroSpotlight";
 import { getAllFoundries, getAllCountries, getAllStyles } from "@/lib/foundries-db";
 import { getSpotlightSettings, getSpotlightFoundries } from "@/lib/spotlight";
 
@@ -37,14 +39,23 @@ export default async function Home() {
 
   return (
     <>
-      <Hero totalFoundries={foundries.length} />
+      <Suspense fallback={<div className="h-[72px]" />}>
+        <Header darkMode={showSpotlight} />
+      </Suspense>
       
-      {/* Foundry Spotlight - Shows when enabled in admin */}
-      {showSpotlight && (
+      {showSpotlight ? (
+        <HeroSpotlight
+          spotlightFoundries={spotlightFoundries.slice(0, spotlightSettings?.max_spotlights || 4)}
+        />
+      ) : (
+        // Normal Hero only
+        <Hero totalFoundries={foundries.length} />
+      )}
+      
+      {/* Regular Spotlight section (only when hero is normal) */}
+      {!showSpotlight && (
         <FoundrySpotlight
           foundries={spotlightFoundries.slice(0, spotlightSettings?.max_spotlights || 4)}
-          title={spotlightSettings?.title}
-          subtitle={spotlightSettings?.subtitle}
           variant={spotlightSettings?.variant}
         />
       )}

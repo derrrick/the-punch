@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import type { Foundry, FoundriesData } from "@/lib/foundries-db";
 import { FoundryCard } from "./FoundryCard";
 import { NewsletterBanner } from "./NewsletterBanner";
+import { NewsletterCard } from "./NewsletterCard";
 
 interface FoundryGridProps {
   foundries: Foundry[];
@@ -75,6 +76,13 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
   const secondBatch = filteredFoundries.slice(12);
   const showBanner = filteredFoundries.length > 12;
 
+  // Show a compact newsletter card to fill empty grid spots when:
+  // - There are foundries but fewer than 12 (no inline banner)
+  // - The last row is incomplete (not divisible by 3 for lg breakpoint)
+  const showFillerCard = filteredFoundries.length > 0 &&
+    filteredFoundries.length <= 12 &&
+    filteredFoundries.length % 3 !== 0;
+
   return (
     <section className="py-16 md:py-24 bg-white">
       <div className="max-w-[1800px] mx-auto px-6 md:px-12">
@@ -88,6 +96,12 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
                   <FoundryCard foundry={foundry} index={index} />
                 </div>
               ))}
+              {/* Newsletter card to fill empty grid spots */}
+              {showFillerCard && (
+                <div className="hidden lg:block xl:hidden">
+                  <NewsletterCard />
+                </div>
+              )}
             </div>
 
             {/* Newsletter Banner - after 12 tiles */}

@@ -4,9 +4,10 @@ import { motion, Variants } from "framer-motion";
 
 interface AnimatedLogoProps {
   className?: string;
+  squareColor?: string;
 }
 
-export function AnimatedLogo({ className = "" }: AnimatedLogoProps) {
+export function AnimatedLogo({ className = "", squareColor = "#171717" }: AnimatedLogoProps) {
   // Individual square animation variants with spring physics
   const squareVariants: Variants = {
     hidden: { 
@@ -76,7 +77,7 @@ export function AnimatedLogo({ className = "" }: AnimatedLogoProps) {
               x={x}
               width="86"
               height="86"
-              fill="#171717"
+              fill={squareColor}
             />
           </motion.g>
         ))}
