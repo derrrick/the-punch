@@ -26,8 +26,8 @@ export interface SpotlightSettings {
 }
 
 export interface SpotlightFoundry extends Foundry {
-  spotlight_description?: string;
-  spotlight_quote?: string;
+  spotlightDescription?: string;
+  spotlightQuote?: string;
 }
 
 export async function getSpotlightSettings(): Promise<SpotlightSettings | null> {
@@ -113,8 +113,8 @@ export async function getSpotlightFoundries(): Promise<SpotlightFoundry[]> {
       },
       created_at: f.created_at,
       updated_at: f.updated_at,
-      spotlight_description: f.spotlight_description,
-      spotlight_quote: f.spotlight_quote,
+      spotlightDescription: f.spotlight_description,
+      spotlightQuote: f.spotlight_quote,
     }));
   } catch (err) {
     console.error("Exception fetching spotlight foundries:", err);
