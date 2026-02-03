@@ -31,6 +31,52 @@ interface SpotlightSettings {
   max_spotlights: number;
 }
 
+interface SpotlightTheme {
+  name: string;
+  title: string;
+  subtitle: string;
+  variant: "hero" | "grid";
+}
+
+const SPOTLIGHT_THEMES: SpotlightTheme[] = [
+  {
+    name: "Weekly Spotlight",
+    title: "This Week's Spotlight",
+    subtitle: "Exceptional foundries worth your attention",
+    variant: "hero",
+  },
+  {
+    name: "Editor's Picks",
+    title: "Editor's Picks",
+    subtitle: "Hand-selected foundries we love right now",
+    variant: "hero",
+  },
+  {
+    name: "New Discoveries",
+    title: "New Discoveries",
+    subtitle: "Fresh finds from the world of independent type",
+    variant: "grid",
+  },
+  {
+    name: "Featured Foundries",
+    title: "Featured Foundries",
+    subtitle: "Standout studios crafting exceptional letterforms",
+    variant: "grid",
+  },
+  {
+    name: "Type Spotlight",
+    title: "In the Spotlight",
+    subtitle: "Foundries making waves in the type community",
+    variant: "hero",
+  },
+  {
+    name: "Curator's Choice",
+    title: "Curator's Choice",
+    subtitle: "Our favorite foundries this month",
+    variant: "grid",
+  },
+];
+
 export default function SpotlightAdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
@@ -45,6 +91,9 @@ export default function SpotlightAdminPage() {
   const [setupSql, setSetupSql] = useState("");
   const [generatingAI, setGeneratingAI] = useState<string | null>(null);
   const [aiContent, setAIContent] = useState<Record<string, { description: string; quote: string; altDescription: string }>>({});
+  const [generatingSectionAI, setGeneratingSectionAI] = useState(false);
+  const [sectionAIContent, setSectionAIContent] = useState<{ titles: string[]; subtitles: string[] } | null>(null);
+  const [hasDraft, setHasDraft] = useState(false);
 
   const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "thepunch2026";
 
@@ -55,6 +104,20 @@ export default function SpotlightAdminPage() {
       loadData();
     } else {
       setLoading(false);
+    }
+
+    // Load draft from localStorage
+    const savedDraft = localStorage.getItem("spotlight_draft");
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        if (draft.formState) {
+          setFormState(draft.formState);
+          setHasDraft(true);
+        }
+      } catch {
+        // Invalid draft, ignore
+      }
     }
   }, []);
 
@@ -181,6 +244,9 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
       const newSettings = { ...settings, ...updates };
       setSettings(newSettings);
       setFormState(newSettings);
+      // Clear draft on successful save
+      localStorage.removeItem("spotlight_draft");
+      setHasDraft(false);
       setMessage({ type: "success", text: "Settings saved successfully! Changes will appear on the homepage." });
     } catch (err) {
       console.error("Error saving settings:", err);
@@ -267,6 +333,65 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
 
   const applyAIContent = (foundryId: string, field: "spotlight_description" | "spotlight_quote", value: string) => {
     updateSpotlightData(foundryId, { [field]: value });
+  };
+
+  const saveDraft = () => {
+    const draft = {
+      formState,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem("spotlight_draft", JSON.stringify(draft));
+    setHasDraft(true);
+    setMessage({ type: "success", text: "Draft saved" });
+  };
+
+  const clearDraft = () => {
+    localStorage.removeItem("spotlight_draft");
+    setHasDraft(false);
+    if (settings) {
+      setFormState(settings);
+    }
+    setMessage({ type: "success", text: "Draft cleared" });
+  };
+
+  const applyTheme = (theme: SpotlightTheme) => {
+    setFormState(prev => prev ? {
+      ...prev,
+      title: theme.title,
+      subtitle: theme.subtitle,
+      variant: theme.variant,
+    } : null);
+  };
+
+  const generateSectionAI = async () => {
+    const spotlightFoundriesList = foundries.filter(f => f.is_spotlight);
+    if (spotlightFoundriesList.length === 0) {
+      setMessage({ type: "error", text: "Add foundries to spotlight first" });
+      return;
+    }
+
+    setGeneratingSectionAI(true);
+    try {
+      const foundryNames = spotlightFoundriesList.map(f => f.name).join(", ");
+      const styles = [...new Set(spotlightFoundriesList.flatMap(f => f.style))].slice(0, 5).join(", ");
+
+      const response = await fetch("/api/spotlight/generate-section", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ foundryNames, styles }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+
+      setSectionAIContent(data.content);
+      setMessage({ type: "success", text: "Section content generated!" });
+    } catch (err) {
+      console.error("Section AI error:", err);
+      setMessage({ type: "error", text: "Failed to generate section content" });
+    } finally {
+      setGeneratingSectionAI(false);
+    }
   };
 
   const spotlightFoundries = foundries
@@ -429,10 +554,102 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
           </div>
         ) : (
           <div className="space-y-8">
+            {/* Quick Themes */}
+            <section className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-lg p-6 border border-orange-200">
+              <h2 className="text-lg font-medium mb-4 text-orange-900">Quick Themes</h2>
+              <p className="text-sm text-orange-700 mb-4">Apply a pre-built theme to quickly set up your spotlight section</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {SPOTLIGHT_THEMES.map((theme) => (
+                  <button
+                    key={theme.name}
+                    onClick={() => applyTheme(theme)}
+                    className="p-3 bg-white rounded-lg border border-orange-200 hover:border-orange-400 transition-colors text-left"
+                  >
+                    <p className="font-medium text-sm text-neutral-900">{theme.name}</p>
+                    <p className="text-xs text-neutral-500 mt-1">{theme.variant} layout</p>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            {/* AI Section Generator */}
+            <section className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg p-6 border border-purple-200">
+              <div className="flex items-center gap-2 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600">
+                  <path d="M12 3v18" />
+                  <rect width="16" height="12" x="4" y="6" rx="2" />
+                  <path d="M2 12h4" />
+                  <path d="M18 12h4" />
+                </svg>
+                <h2 className="text-lg font-medium text-purple-900">AI Section Generator</h2>
+              </div>
+              <p className="text-sm text-purple-700 mb-4">Generate custom titles and subtitles based on your spotlighted foundries</p>
+
+              <button
+                onClick={generateSectionAI}
+                disabled={generatingSectionAI || foundries.filter(f => f.is_spotlight).length === 0}
+                className="w-full py-3 bg-purple-600 text-white font-medium rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              >
+                {generatingSectionAI ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Generating...
+                  </>
+                ) : (
+                  "Generate Titles & Subtitles"
+                )}
+              </button>
+
+              {sectionAIContent && (
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <p className="text-xs font-medium text-purple-700 mb-2">Title Options (click to apply)</p>
+                    <div className="space-y-2">
+                      {sectionAIContent.titles.map((title, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setFormState(prev => prev ? { ...prev, title } : null)}
+                          className={`w-full text-left px-3 py-2 text-sm rounded border transition-colors ${
+                            formState?.title === title
+                              ? "bg-purple-100 border-purple-400"
+                              : "bg-white border-purple-200 hover:border-purple-300"
+                          }`}
+                        >
+                          {title}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-medium text-purple-700 mb-2">Subtitle Options (click to apply)</p>
+                    <div className="space-y-2">
+                      {sectionAIContent.subtitles.map((subtitle, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setFormState(prev => prev ? { ...prev, subtitle } : null)}
+                          className={`w-full text-left px-3 py-2 text-sm rounded border transition-colors ${
+                            formState?.subtitle === subtitle
+                              ? "bg-purple-100 border-purple-400"
+                              : "bg-white border-purple-200 hover:border-purple-300"
+                          }`}
+                        >
+                          {subtitle}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
+
             {/* Global Settings */}
             <section className="bg-white rounded-lg p-6 border border-neutral-200">
               <h2 className="text-lg font-medium mb-6">Spotlight Settings</h2>
-              
+
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Enable/Disable */}
                 <div>
@@ -513,18 +730,42 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
 
               {/* Save Button */}
               <div className="mt-8 pt-6 border-t border-neutral-200 flex items-center justify-between">
-                <p className="text-sm text-neutral-500">
-                  {JSON.stringify(formState) !== JSON.stringify(settings) && (
-                    <span className="text-amber-600">You have unsaved changes</span>
+                <div className="flex items-center gap-4">
+                  {hasDraft && (
+                    <span className="text-xs text-green-600 flex items-center gap-1">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                      Draft saved
+                    </span>
                   )}
-                </p>
-                <button
-                  onClick={() => formState && updateSettings(formState)}
-                  disabled={saving || JSON.stringify(formState) === JSON.stringify(settings)}
-                  className="px-6 py-2.5 bg-neutral-900 text-white font-medium rounded-lg hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {saving ? "Saving..." : "Save Settings"}
-                </button>
+                  {JSON.stringify(formState) !== JSON.stringify(settings) && (
+                    <span className="text-xs text-amber-600">Unsaved changes</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={saveDraft}
+                    className="px-4 py-2 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
+                  >
+                    Save Draft
+                  </button>
+                  {hasDraft && (
+                    <button
+                      onClick={clearDraft}
+                      className="px-4 py-2 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
+                    >
+                      Clear Draft
+                    </button>
+                  )}
+                  <button
+                    onClick={() => formState && updateSettings(formState)}
+                    disabled={saving || JSON.stringify(formState) === JSON.stringify(settings)}
+                    className="px-6 py-2.5 bg-neutral-900 text-white font-medium rounded-lg hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {saving ? "Saving..." : "Save Settings"}
+                  </button>
+                </div>
               </div>
             </section>
 
