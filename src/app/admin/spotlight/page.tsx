@@ -43,6 +43,8 @@ export default function SpotlightAdminPage() {
   const [previewMode, setPreviewMode] = useState(false);
   const [needsSetup, setNeedsSetup] = useState(false);
   const [setupSql, setSetupSql] = useState("");
+  const [generatingAI, setGeneratingAI] = useState<string | null>(null);
+  const [aiContent, setAIContent] = useState<Record<string, { description: string; quote: string; altDescription: string }>>({});
 
   const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "thepunch2026";
 
@@ -236,6 +238,35 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
   const getNextSpotlightOrder = () => {
     const spotlightFoundries = foundries.filter(f => f.is_spotlight);
     return spotlightFoundries.length + 1;
+  };
+
+  const generateAIContent = async (foundryId: string) => {
+    setGeneratingAI(foundryId);
+    try {
+      const response = await fetch("/api/spotlight/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ foundryId }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+
+      setAIContent(prev => ({
+        ...prev,
+        [foundryId]: data.content,
+      }));
+      setMessage({ type: "success", text: "Content generated! Select an option below." });
+    } catch (err) {
+      console.error("AI generation error:", err);
+      setMessage({ type: "error", text: "Failed to generate content" });
+    } finally {
+      setGeneratingAI(null);
+    }
+  };
+
+  const applyAIContent = (foundryId: string, field: "spotlight_description" | "spotlight_quote", value: string) => {
+    updateSpotlightData(foundryId, { [field]: value });
   };
 
   const spotlightFoundries = foundries
@@ -554,30 +585,110 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                         </button>
                       </div>
                       
-                      <div className="grid md:grid-cols-2 gap-4 ml-9">
-                        <div>
-                          <label className="block text-xs text-neutral-500 mb-1">
-                            Spotlight Description
-                          </label>
-                          <textarea
-                            value={foundry.spotlight_description || ""}
-                            onChange={(e) => updateSpotlightData(foundry.id, { spotlight_description: e.target.value })}
-                            placeholder="Custom description for spotlight..."
-                            rows={2}
-                            className="w-full bg-white border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs text-neutral-500 mb-1">
-                            Quote (optional)
-                          </label>
-                          <textarea
-                            value={foundry.spotlight_quote || ""}
-                            onChange={(e) => updateSpotlightData(foundry.id, { spotlight_quote: e.target.value })}
-                            placeholder="A quote from the foundry or about their work..."
-                            rows={2}
-                            className="w-full bg-white border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"
-                          />
+                      <div className="ml-9 space-y-4">
+                        {/* AI Generate Button */}
+                        <button
+                          onClick={() => generateAIContent(foundry.id)}
+                          disabled={generatingAI === foundry.id}
+                          className="flex items-center gap-2 px-3 py-1.5 bg-purple-100 text-purple-700 text-sm rounded hover:bg-purple-200 transition-colors disabled:opacity-50"
+                        >
+                          {generatingAI === foundry.id ? (
+                            <>
+                              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                              </svg>
+                              Generating...
+                            </>
+                          ) : (
+                            <>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 3v18" />
+                                <rect width="16" height="12" x="4" y="6" rx="2" />
+                                <path d="M2 12h4" />
+                                <path d="M18 12h4" />
+                              </svg>
+                              Generate with AI
+                            </>
+                          )}
+                        </button>
+
+                        {/* AI Generated Options */}
+                        {aiContent[foundry.id] && (
+                          <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg space-y-3">
+                            <p className="text-xs font-medium text-purple-700">AI Suggestions (click to apply)</p>
+
+                            <div>
+                              <p className="text-xs text-purple-600 mb-1">Description:</p>
+                              <button
+                                onClick={() => applyAIContent(foundry.id, "spotlight_description", aiContent[foundry.id].description)}
+                                className={`w-full text-left p-2 text-sm rounded border transition-colors ${
+                                  foundry.spotlight_description === aiContent[foundry.id].description
+                                    ? "bg-purple-100 border-purple-400"
+                                    : "bg-white border-purple-200 hover:border-purple-300"
+                                }`}
+                              >
+                                {aiContent[foundry.id].description}
+                              </button>
+                            </div>
+
+                            {aiContent[foundry.id].altDescription && (
+                              <div>
+                                <p className="text-xs text-purple-600 mb-1">Alternative:</p>
+                                <button
+                                  onClick={() => applyAIContent(foundry.id, "spotlight_description", aiContent[foundry.id].altDescription)}
+                                  className={`w-full text-left p-2 text-sm rounded border transition-colors ${
+                                    foundry.spotlight_description === aiContent[foundry.id].altDescription
+                                      ? "bg-purple-100 border-purple-400"
+                                      : "bg-white border-purple-200 hover:border-purple-300"
+                                  }`}
+                                >
+                                  {aiContent[foundry.id].altDescription}
+                                </button>
+                              </div>
+                            )}
+
+                            <div>
+                              <p className="text-xs text-purple-600 mb-1">Quote:</p>
+                              <button
+                                onClick={() => applyAIContent(foundry.id, "spotlight_quote", aiContent[foundry.id].quote)}
+                                className={`w-full text-left p-2 text-sm rounded border transition-colors ${
+                                  foundry.spotlight_quote === aiContent[foundry.id].quote
+                                    ? "bg-purple-100 border-purple-400"
+                                    : "bg-white border-purple-200 hover:border-purple-300"
+                                }`}
+                              >
+                                {aiContent[foundry.id].quote}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs text-neutral-500 mb-1">
+                              Spotlight Description
+                            </label>
+                            <textarea
+                              value={foundry.spotlight_description || ""}
+                              onChange={(e) => updateSpotlightData(foundry.id, { spotlight_description: e.target.value })}
+                              placeholder="Custom description for spotlight..."
+                              rows={2}
+                              className="w-full bg-white border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-neutral-500 mb-1">
+                              Quote (optional)
+                            </label>
+                            <textarea
+                              value={foundry.spotlight_quote || ""}
+                              onChange={(e) => updateSpotlightData(foundry.id, { spotlight_quote: e.target.value })}
+                              placeholder="A quote from the foundry or about their work..."
+                              rows={2}
+                              className="w-full bg-white border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>

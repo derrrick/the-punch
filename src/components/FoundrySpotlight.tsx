@@ -110,7 +110,7 @@ export function FoundrySpotlight({
 
                   {featured.spotlightQuote && (
                     <blockquote className="border-l-2 border-orange-500 pl-4 mb-6 italic text-neutral-600">
-                      "{featured.spotlightQuote}"
+                      &ldquo;{featured.spotlightQuote}&rdquo;
                     </blockquote>
                   )}
 
