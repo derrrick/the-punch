@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { HeroSpotlight } from "@/components/HeroSpotlight";
+import { HeroSpotlightLight } from "@/components/HeroSpotlightLight";
 
 interface RawFoundry {
   id: string;
@@ -21,6 +22,9 @@ interface RawFoundry {
   spotlight_quote: string | null;
   spotlight_order: number;
   spotlight_is_primary: boolean;
+  spotlight_image_left: string | null;
+  spotlight_image_center: string | null;
+  spotlight_image_right: string | null;
 }
 
 interface SpotlightSettings {
@@ -50,7 +54,8 @@ export default function SpotlightAdminPage() {
   const [pendingDraft, setPendingDraft] = useState<SpotlightSettings | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  
+  const [uploadingImage, setUploadingImage] = useState<string | null>(null); // "foundryId-position"
+
   const MAX_SPOTLIGHTS = 4;
 
   // Load draft on mount
@@ -348,6 +353,60 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
     }
   };
 
+  const handleImageUpload = async (
+    foundryId: string,
+    foundrySlug: string,
+    position: "left" | "center" | "right",
+    file: File | null
+  ) => {
+    const uploadKey = `${foundryId}-${position}`;
+    setUploadingImage(uploadKey);
+    setMessage(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("password", ADMIN_PASSWORD);
+      formData.append("foundryId", foundryId);
+      formData.append("foundrySlug", foundrySlug);
+      formData.append("position", position);
+      if (file) {
+        formData.append("file", file);
+      }
+
+      const response = await fetch("/api/admin/spotlight-images", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Upload failed");
+      }
+
+      // Update local state with new image URL
+      const columnName = `spotlight_image_${position}` as keyof RawFoundry;
+      setFoundries(prev =>
+        prev.map(f =>
+          f.id === foundryId ? { ...f, [columnName]: result.url } : f
+        )
+      );
+
+      setMessage({
+        type: "success",
+        text: file ? `${position} image uploaded` : `${position} image removed`,
+      });
+    } catch (err) {
+      console.error("Error uploading image:", err);
+      setMessage({
+        type: "error",
+        text: err instanceof Error ? err.message : "Upload failed",
+      });
+    } finally {
+      setUploadingImage(null);
+    }
+  };
+
   const reorderSpotlights = async (newOrder: RawFoundry[]) => {
     try {
       // Update local state first for immediate feedback
@@ -437,6 +496,11 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
       spotlightDescription: f.spotlight_description || undefined,
       spotlightQuote: f.spotlight_quote || undefined,
       spotlightIsPrimary: f.spotlight_is_primary,
+      spotlightImages: {
+        left: f.spotlight_image_left,
+        center: f.spotlight_image_center,
+        right: f.spotlight_image_right,
+      },
     }));
   };
 
@@ -897,15 +961,85 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                         </div>
                       </div>
                       
-                      {/* Description */}
+                      {/* Spotlight Images */}
                       <div className="mt-3 ml-9">
-                        <textarea
-                          value={foundry.spotlight_description || ""}
-                          onChange={(e) => updateSpotlightData(foundry.id, { spotlight_description: e.target.value })}
-                          placeholder="Add a custom description..."
-                          rows={2}
-                          className="w-full bg-white border border-neutral-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-neutral-400 resize-none"
-                        />
+                        <p className="text-xs text-neutral-500 mb-2">Custom spotlight images (optional)</p>
+                        <div className="grid grid-cols-3 gap-2">
+                          {(["left", "center", "right"] as const).map((position) => {
+                            const imageUrl = foundry[`spotlight_image_${position}` as keyof RawFoundry] as string | null;
+                            const isUploading = uploadingImage === `${foundry.id}-${position}`;
+
+                            return (
+                              <div key={position} className="relative">
+                                <div className="aspect-[4/3] bg-neutral-100 rounded overflow-hidden border border-neutral-200 relative group">
+                                  {imageUrl ? (
+                                    <>
+                                      <img
+                                        src={imageUrl}
+                                        alt={`${position} panel`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                                        <label className="cursor-pointer p-1.5 bg-white rounded-full hover:bg-neutral-100 transition-colors">
+                                          <input
+                                            type="file"
+                                            accept="image/jpeg,image/png,image/webp"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                              const file = e.target.files?.[0];
+                                              if (file) handleImageUpload(foundry.id, foundry.slug, position, file);
+                                              e.target.value = "";
+                                            }}
+                                          />
+                                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                            <polyline points="17 8 12 3 7 8" />
+                                            <line x1="12" y1="3" x2="12" y2="15" />
+                                          </svg>
+                                        </label>
+                                        <button
+                                          type="button"
+                                          onClick={() => handleImageUpload(foundry.id, foundry.slug, position, null)}
+                                          className="p-1.5 bg-white rounded-full hover:bg-red-50 text-red-600 transition-colors"
+                                        >
+                                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M3 6h18" />
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                          </svg>
+                                        </button>
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-neutral-200 transition-colors">
+                                      <input
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) handleImageUpload(foundry.id, foundry.slug, position, file);
+                                          e.target.value = "";
+                                        }}
+                                      />
+                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-neutral-400">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                                        <circle cx="8.5" cy="8.5" r="1.5" />
+                                        <path d="M21 15l-5-5L5 21" />
+                                      </svg>
+                                      <span className="text-[10px] text-neutral-400 mt-1 capitalize">{position}</span>
+                                    </label>
+                                  )}
+                                  {isUploading && (
+                                    <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
+                                      <div className="w-5 h-5 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -987,13 +1121,15 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
             {previewMode && spotlightFoundries.length > 0 ? (
               <div className="border-2 border-dashed border-neutral-300 rounded-lg overflow-hidden">
                 <div className="bg-orange-50 px-4 py-2 text-xs text-orange-700 font-medium flex items-center justify-between">
-                  <span>Live Preview</span>
+                  <span>Live Preview — {formState?.theme === "light" ? "Light" : "Dark"} Theme</span>
                   <span className="text-orange-600">Showing {spotlightFoundries.length} of {MAX_SPOTLIGHTS}</span>
                 </div>
                 <div className="max-h-[600px] overflow-y-auto">
-                  <HeroSpotlight
-                    spotlightFoundries={getPreviewFoundries()}
-                  />
+                  {formState?.theme === "light" ? (
+                    <HeroSpotlightLight spotlightFoundries={getPreviewFoundries()} />
+                  ) : (
+                    <HeroSpotlight spotlightFoundries={getPreviewFoundries()} />
+                  )}
                 </div>
               </div>
             ) : previewMode ? (

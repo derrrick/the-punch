@@ -100,9 +100,11 @@ export function FoundryCard({ foundry, index, animateOnScroll = true }: FoundryC
         </div>
 
         {/* Notes as description */}
-        <p className="text-sm leading-relaxed text-neutral-600 mb-6 max-w-xs">
-          {foundry.notes}
-        </p>
+        {foundry.notes && (
+          <p className="text-sm leading-relaxed text-neutral-600 mb-6 max-w-xs line-clamp-3">
+            {foundry.notes}
+          </p>
+        )}
 
         {/* Style Tags */}
         <div className="flex flex-wrap gap-2 mb-4">

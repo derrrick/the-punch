@@ -27,6 +27,11 @@ export interface SpotlightFoundry extends Foundry {
   spotlightQuote?: string;
   spotlightIsPrimary?: boolean;
   spotlight_order?: number;
+  spotlightImages?: {
+    left?: string | null;
+    center?: string | null;
+    right?: string | null;
+  };
 }
 
 export async function getSpotlightSettings(): Promise<SpotlightSettings | null> {
@@ -116,6 +121,11 @@ export async function getSpotlightFoundries(): Promise<SpotlightFoundry[]> {
       spotlightQuote: f.spotlight_quote,
       spotlightIsPrimary: f.spotlight_is_primary,
       spotlight_order: f.spotlight_order,
+      spotlightImages: {
+        left: f.spotlight_image_left,
+        center: f.spotlight_image_center,
+        right: f.spotlight_image_right,
+      },
     }));
   } catch (err) {
     console.error("Exception fetching spotlight foundries:", err);

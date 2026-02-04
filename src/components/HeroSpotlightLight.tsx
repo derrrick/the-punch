@@ -10,6 +10,11 @@ interface SpotlightFoundry extends Foundry {
   spotlightQuote?: string;
   spotlightIsPrimary?: boolean;
   spotlight_order?: number;
+  spotlightImages?: {
+    left?: string | null;
+    center?: string | null;
+    right?: string | null;
+  };
 }
 
 interface HeroSpotlightLightProps {
@@ -62,6 +67,18 @@ export function HeroSpotlightLight({
 
   if (!currentFoundry || sortedFoundries.length === 0) return null;
 
+  // Get image source for each panel position, preferring custom spotlight images
+  const getImageSrc = (position: "left" | "center" | "right") => {
+    const customImage = currentFoundry.spotlightImages?.[position];
+    if (customImage) return customImage;
+    return currentFoundry.images?.screenshot || "";
+  };
+
+  // Check if using custom images (affects object-position styling)
+  const hasCustomImage = (position: "left" | "center" | "right") => {
+    return !!currentFoundry.spotlightImages?.[position];
+  };
+
   return (
     <section className="min-h-[650px] max-h-[85vh] bg-[#F5F5F3] flex flex-col justify-center py-6 md:py-10 lg:py-12 lg:[@media(max-height:900px)]:py-8 xl:[@media(max-height:900px)]:py-6 px-4 md:px-8 lg:px-16 overflow-hidden">
       {/* Headline */}
@@ -111,9 +128,9 @@ export function HeroSpotlightLight({
                 {/* Left rectangle */}
                 <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] lg:[@media(max-height:900px)]:h-[280px] xl:[@media(max-height:900px)]:h-[240px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
                   <img
-                    src={currentFoundry.images?.screenshot || ""}
+                    src={getImageSrc("left")}
                     alt={currentFoundry.name}
-                    className="w-full h-full object-cover object-left"
+                    className={`w-full h-full object-cover ${hasCustomImage("left") ? "object-center" : "object-left"}`}
                   />
                   {/* Overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -122,7 +139,7 @@ export function HeroSpotlightLight({
                 {/* Center rectangle - Featured */}
                 <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] lg:[@media(max-height:900px)]:h-[280px] xl:[@media(max-height:900px)]:h-[240px] overflow-hidden bg-neutral-200 shadow-xl rounded-sm">
                   <img
-                    src={currentFoundry.images?.screenshot || ""}
+                    src={getImageSrc("center")}
                     alt={currentFoundry.name}
                     className="w-full h-full object-cover object-center"
                   />
@@ -133,9 +150,9 @@ export function HeroSpotlightLight({
                 {/* Right rectangle */}
                 <div className="relative w-1/3 h-[200px] md:h-[280px] lg:h-[350px] lg:[@media(max-height:900px)]:h-[280px] xl:[@media(max-height:900px)]:h-[240px] overflow-hidden bg-neutral-200 shadow-lg rounded-sm">
                   <img
-                    src={currentFoundry.images?.screenshot || ""}
+                    src={getImageSrc("right")}
                     alt={currentFoundry.name}
-                    className="w-full h-full object-cover object-right"
+                    className={`w-full h-full object-cover ${hasCustomImage("right") ? "object-center" : "object-right"}`}
                   />
                   {/* Overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -229,7 +246,7 @@ export function HeroSpotlightLight({
         </div>
       </div>
 
-      {/* Location & Description */}
+      {/* Location & Details */}
       <motion.div
         key={`info-${currentIndex}`}
         initial={{ opacity: 0, y: 10 }}
@@ -237,14 +254,35 @@ export function HeroSpotlightLight({
         transition={{ duration: 0.4, delay: 0.2 }}
         className="mt-2 md:mt-4 lg:[@media(max-height:900px)]:mt-1 text-center max-w-2xl mx-auto shrink-0 pb-2 lg:[@media(max-height:900px)]:pb-0"
       >
-        <p className="text-neutral-500 text-sm mb-2">
+        <p className="text-neutral-500 text-sm mb-3">
           {currentFoundry.location.city}, {currentFoundry.location.country}
         </p>
-        <p className="text-neutral-600 text-sm md:text-base leading-relaxed">
-          {currentFoundry.spotlightDescription ||
-            currentFoundry.notes?.substring(0, 120) ||
-            `${currentFoundry.name} creates exceptional typography for designers worldwide.`}
-        </p>
+
+        {/* Notable Typefaces */}
+        <div className="flex items-center justify-center gap-3 mb-2">
+          {currentFoundry.notableTypefaces?.slice(0, 3).map((typeface, i) => (
+            <span key={typeface} className="flex items-center gap-3">
+              <span className="text-neutral-800 text-sm font-medium tracking-tight">
+                {typeface}
+              </span>
+              {i < Math.min(currentFoundry.notableTypefaces.length, 3) - 1 && (
+                <span className="text-neutral-300">·</span>
+              )}
+            </span>
+          ))}
+        </div>
+
+        {/* Style Tags */}
+        <div className="flex items-center justify-center gap-2">
+          {currentFoundry.style?.slice(0, 3).map((style) => (
+            <span
+              key={style}
+              className="px-2 py-0.5 bg-neutral-200/60 text-neutral-600 text-xs uppercase tracking-wider rounded-sm"
+            >
+              {style}
+            </span>
+          ))}
+        </div>
       </motion.div>
     </section>
   );
