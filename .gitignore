@@ -44,3 +44,4 @@ files.zip
 *.mp4
 footer-check.png
 submit-success.png
+validation-report-*.json
