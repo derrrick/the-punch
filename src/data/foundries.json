@@ -1452,7 +1452,7 @@
       "name": "Okay Type",
       "slug": "okay-type",
       "location": {
-        "city": "Portland",
+        "city": "Chicago",
         "country": "United States",
         "countryCode": "US"
       },
@@ -1463,12 +1463,13 @@
         "rss": null,
         "frequency": null
       },
-      "founder": "Jackson Cavanaugh",
-      "founded": 2010,
+      "founder": "Jackson Showalter-Cavanaugh",
+      "founded": 2008,
       "notableTypefaces": [
         "Alright Sans",
         "Harriet",
-        "Bookmania"
+        "Okay",
+        "Euchre"
       ],
       "style": [
         "americana",

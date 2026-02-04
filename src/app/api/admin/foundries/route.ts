@@ -16,20 +16,21 @@ const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "thepunch2026";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { password, foundryId, data } = body;
-    
+    const { password, foundryId, slug, data } = body;
+
     if (password !== ADMIN_PASSWORD) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    
-    if (!foundryId || !data) {
-      return NextResponse.json({ error: "Missing foundryId or data" }, { status: 400 });
+
+    if ((!foundryId && !slug) || !data) {
+      return NextResponse.json({ error: "Missing foundryId/slug or data" }, { status: 400 });
     }
-    
-    const { error } = await supabase
-      .from("foundries")
-      .update(data)
-      .eq("id", foundryId);
+
+    // Support both UUID (foundryId) and slug
+    const query = supabase.from("foundries").update(data);
+    const { error } = slug
+      ? await query.eq("slug", slug)
+      : await query.eq("id", foundryId);
     
     if (error) {
       console.error("Error updating foundry:", error);
