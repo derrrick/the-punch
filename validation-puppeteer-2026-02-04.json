@@ -1,0 +1,30 @@
+{
+  "results": [
+    {
+      "slug": "vocal-type",
+      "name": "Vocal Type Co",
+      "url": "https://www.vocaltype.co",
+      "issues": [],
+      "suggestions": {},
+      "verified": []
+    },
+    {
+      "slug": "lineto",
+      "name": "Lineto",
+      "url": "https://lineto.com",
+      "issues": [],
+      "suggestions": {},
+      "verified": [],
+      "error": "Could not fetch website content even with Puppeteer"
+    },
+    {
+      "slug": "central-type",
+      "name": "Central Type",
+      "url": "https://www.centraltype.com",
+      "issues": [],
+      "suggestions": {},
+      "verified": [],
+      "error": "Could not fetch website content even with Puppeteer"
+    }
+  ]
+}

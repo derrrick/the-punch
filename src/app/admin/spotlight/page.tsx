@@ -328,31 +328,6 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
     }
   };
 
-  const updateSpotlightData = async (foundryId: string, data: Partial<RawFoundry>) => {
-    try {
-      const response = await fetch("/api/admin/foundries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          password: ADMIN_PASSWORD,
-          foundryId: foundryId,
-          data: data,
-        }),
-      });
-      
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to update");
-      }
-
-      setFoundries(prev => prev.map(f => f.id === foundryId ? { ...f, ...data } : f));
-    } catch (err) {
-      console.error("Error updating spotlight data:", err);
-      setMessage({ type: "error", text: "Failed to update" });
-    }
-  };
-
   const handleImageUpload = async (
     foundryId: string,
     foundrySlug: string,

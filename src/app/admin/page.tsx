@@ -137,7 +137,7 @@ export default function AdminPage() {
         </div>
 
         {/* Navigation Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <a
             href="/admin/spotlight"
             className="group bg-white border border-neutral-200 rounded-lg p-6 hover:border-orange-400 transition-colors"
@@ -185,6 +185,23 @@ export default function AdminPage() {
               <span className="text-2xl">📋</span>
             </div>
           </div>
+
+          <a
+            href="/admin/settings"
+            className="group bg-white border border-neutral-200 rounded-lg p-6 hover:border-neutral-400 transition-colors"
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="text-xl font-medium mb-2 group-hover:text-neutral-700">
+                  Settings & Maintenance
+                </h2>
+                <p className="text-sm text-neutral-500">
+                  Re-scrape screenshots, run data validation
+                </p>
+              </div>
+              <span className="text-2xl">⚙️</span>
+            </div>
+          </a>
         </div>
 
         <h2 className="text-2xl font-medium tracking-tight text-neutral-900 mb-6">

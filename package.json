@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "migrate:foundries": "node scripts/migrate-foundries-to-db.mjs",
-    "validate:foundries": "tsx scripts/validate-foundries.ts"
+    "validate:foundries": "tsx scripts/validate-foundries.ts",
+    "apply-fixes": "tsx scripts/apply-fixes.ts",
+    "rollback-fixes": "tsx scripts/rollback-fixes.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.72.1",

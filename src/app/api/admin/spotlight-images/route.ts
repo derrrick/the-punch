@@ -48,9 +48,10 @@ export async function POST(request: NextRequest) {
         .eq("id", foundryId)
         .single();
 
-      if (foundry && foundry[columnName]) {
+      const foundryRecord = foundry as Record<string, string | null> | null;
+      if (foundryRecord && foundryRecord[columnName]) {
         // Extract filename from URL and delete from storage
-        const url = foundry[columnName] as string;
+        const url = foundryRecord[columnName] as string;
         const filename = url.split("/").pop();
         if (filename) {
           await supabase.storage.from(BUCKET_NAME).remove([filename]);
