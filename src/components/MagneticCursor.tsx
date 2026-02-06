@@ -1,161 +1,239 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
-import gsap from "gsap";
+import { useEffect, useRef } from "react";
 
+/**
+ * Two-layer custom cursor:
+ *  - Inner dot: follows mouse near-instantly (lerp 0.85) — feels direct
+ *  - Outer ring: trails with elegant lag (lerp 0.15) — feels fluid
+ *
+ * On foundry cards: ring expands + fills dark, dot hides, "View" label appears
+ * On links/buttons: ring grows slightly with stronger border
+ * Click: everything contracts sharply, snaps back
+ * Magnetic pull on small interactive elements
+ *
+ * Zero GSAP dependency — pure rAF for maximum responsiveness.
+ */
 export function MagneticCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const cursorLabelRef = useRef<HTMLSpanElement>(null);
-  const pos = useRef({ x: 0, y: 0 });
-  const target = useRef({ x: 0, y: 0 });
-  const isVisible = useRef(false);
-  const currentState = useRef<"default" | "card" | "link">("default");
-
-  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
-  const tick = useCallback(() => {
-    pos.current.x = lerp(pos.current.x, target.current.x, 0.15);
-    pos.current.y = lerp(pos.current.y, target.current.y, 0.15);
-
-    if (cursorRef.current) {
-      cursorRef.current.style.transform = `translate3d(${pos.current.x}px, ${pos.current.y}px, 0)`;
-    }
-
-    requestAnimationFrame(tick);
-  }, []);
+  const dotRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    // Only show custom cursor on devices with fine pointer (mouse)
     if (typeof window === "undefined") return;
-    const hasFineMouse = window.matchMedia("(pointer: fine)").matches;
-    if (!hasFineMouse) return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
 
-    const cursor = cursorRef.current;
-    const label = cursorLabelRef.current;
-    if (!cursor || !label) return;
+    const dot = dotRef.current!;
+    const ring = ringRef.current!;
+    const label = labelRef.current!;
+    if (!dot || !ring || !label) return;
 
-    // Start animation loop
-    const raf = requestAnimationFrame(tick);
+    let mx = 0, my = 0;           // raw mouse position
+    let dX = 0, dY = 0;           // dot position (fast)
+    let rX = 0, rY = 0;           // ring position (slow)
+    let visible = false;
+    let state: "default" | "card" | "link" = "default";
+    let running = true;
 
-    const onMouseMove = (e: MouseEvent) => {
-      target.current.x = e.clientX;
-      target.current.y = e.clientY;
+    // Targets — lerped smoothly each frame
+    let tRingSize = 32;
+    let tDotScale = 1;
+    let tRingBorder = 0.2;
+    let tRingBg = 0;              // 0 = transparent, 1 = filled
+    let tLabelOpacity = 0;
+    let tLabelScale = 0.5;
 
-      if (!isVisible.current) {
-        isVisible.current = true;
-        gsap.to(cursor, { opacity: 1, duration: 0.3 });
-        // Snap immediately on first move
-        pos.current.x = e.clientX;
-        pos.current.y = e.clientY;
+    // Current values
+    let cRingSize = 32;
+    let cDotScale = 1;
+    let cRingBorder = 0.2;
+    let cRingBg = 0;
+    let cLabelOpacity = 0;
+    let cLabelScale = 0.5;
+
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    function tick() {
+      if (!running) return;
+      requestAnimationFrame(tick);
+
+      // Dot — fast follow
+      dX = lerp(dX, mx, 0.85);
+      dY = lerp(dY, my, 0.85);
+
+      // Ring — smooth trail
+      rX = lerp(rX, mx, 0.15);
+      rY = lerp(rY, my, 0.15);
+
+      // Smooth all properties
+      cRingSize = lerp(cRingSize, tRingSize, 0.18);
+      cDotScale = lerp(cDotScale, tDotScale, 0.25);
+      cRingBorder = lerp(cRingBorder, tRingBorder, 0.18);
+      cRingBg = lerp(cRingBg, tRingBg, 0.15);
+      cLabelOpacity = lerp(cLabelOpacity, tLabelOpacity, 0.18);
+      cLabelScale = lerp(cLabelScale, tLabelScale, 0.18);
+
+      const halfRing = cRingSize / 2;
+
+      // Dot
+      dot.style.transform = `translate3d(${dX - 3}px, ${dY - 3}px, 0) scale(${cDotScale})`;
+
+      // Ring
+      ring.style.transform = `translate3d(${rX - halfRing}px, ${rY - halfRing}px, 0)`;
+      ring.style.width = ring.style.height = `${cRingSize}px`;
+      ring.style.borderColor = `rgba(23, 23, 23, ${cRingBorder})`;
+      ring.style.backgroundColor = `rgba(23, 23, 23, ${cRingBg * 0.88})`;
+
+      // Label
+      label.style.opacity = `${cLabelOpacity}`;
+      label.style.transform = `scale(${cLabelScale})`;
+    }
+
+    function setState(newState: "default" | "card" | "link") {
+      if (state === newState) return;
+      state = newState;
+
+      if (newState === "card") {
+        tRingSize = 64;
+        tRingBorder = 0;
+        tRingBg = 1;
+        tDotScale = 0;
+        tLabelOpacity = 1;
+        tLabelScale = 1;
+      } else if (newState === "link") {
+        tRingSize = 40;
+        tRingBorder = 0.35;
+        tRingBg = 0;
+        tDotScale = 1;
+        tLabelOpacity = 0;
+        tLabelScale = 0.5;
+      } else {
+        tRingSize = 32;
+        tRingBorder = 0.2;
+        tRingBg = 0;
+        tDotScale = 1;
+        tLabelOpacity = 0;
+        tLabelScale = 0.5;
+      }
+    }
+
+    function onMouseMove(e: MouseEvent) {
+      mx = e.clientX;
+      my = e.clientY;
+
+      if (!visible) {
+        visible = true;
+        dX = mx; dY = my;
+        rX = mx; rY = my;
+        dot.style.opacity = "1";
+        ring.style.opacity = "1";
       }
 
-      // Detect what we're hovering over
       const el = document.elementFromPoint(e.clientX, e.clientY);
       if (!el) return;
 
       const card = el.closest("[data-cursor='card']");
       const link = el.closest("a, button, [data-cursor='link']");
 
-      if (card && currentState.current !== "card") {
-        currentState.current = "card";
-        gsap.to(cursor, {
-          width: 80,
-          height: 80,
-          backgroundColor: "rgba(23, 23, 23, 0.9)",
-          duration: 0.4,
-          ease: "power3.out",
-        });
-        gsap.to(label, { opacity: 1, scale: 1, duration: 0.3 });
-      } else if (!card && link && currentState.current !== "link") {
-        currentState.current = "link";
-        gsap.to(cursor, {
-          width: 40,
-          height: 40,
-          backgroundColor: "rgba(23, 23, 23, 0.6)",
-          duration: 0.3,
-          ease: "power3.out",
-        });
-        gsap.to(label, { opacity: 0, scale: 0.5, duration: 0.2 });
-      } else if (!card && !link && currentState.current !== "default") {
-        currentState.current = "default";
-        gsap.to(cursor, {
-          width: 12,
-          height: 12,
-          backgroundColor: "rgba(23, 23, 23, 0.8)",
-          duration: 0.3,
-          ease: "power3.out",
-        });
-        gsap.to(label, { opacity: 0, scale: 0.5, duration: 0.2 });
-      }
+      if (card) setState("card");
+      else if (link) setState("link");
+      else setState("default");
 
-      // Magnetic pull toward nearby interactive elements
+      // Magnetic pull on small interactive elements
       if (link && !card) {
         const rect = (link as HTMLElement).getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
-        const dx = e.clientX - cx;
-        const dy = e.clientY - cy;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < 80) {
-          const pull = 0.3 * (1 - dist / 80);
-          target.current.x = e.clientX - dx * pull;
-          target.current.y = e.clientY - dy * pull;
+        const ddx = e.clientX - cx;
+        const ddy = e.clientY - cy;
+        const dist = Math.sqrt(ddx * ddx + ddy * ddy);
+        if (dist < 50) {
+          const pull = 0.2 * (1 - dist / 50);
+          mx = e.clientX - ddx * pull;
+          my = e.clientY - ddy * pull;
         }
       }
-    };
+    }
 
-    const onMouseLeave = () => {
-      isVisible.current = false;
-      gsap.to(cursor, { opacity: 0, duration: 0.3 });
-    };
+    function onMouseLeave() {
+      visible = false;
+      dot.style.opacity = "0";
+      ring.style.opacity = "0";
+    }
 
-    const onMouseDown = () => {
-      gsap.to(cursor, { scale: 0.8, duration: 0.15 });
-    };
+    function onMouseDown() {
+      // Contract everything
+      tRingSize *= 0.82;
+      tDotScale *= 0.7;
+    }
 
-    const onMouseUp = () => {
-      gsap.to(cursor, { scale: 1, duration: 0.3, ease: "elastic.out(1, 0.4)" });
-    };
+    function onMouseUp() {
+      // Restore based on current state
+      setState("default"); // force recalc
+      state = "default";   // reset so setState works
+      // Re-detect from current position
+      const el = document.elementFromPoint(mx, my);
+      if (el) {
+        const card = el.closest("[data-cursor='card']");
+        const link = el.closest("a, button, [data-cursor='link']");
+        if (card) setState("card");
+        else if (link) setState("link");
+        else setState("default");
+      }
+    }
 
-    document.addEventListener("mousemove", onMouseMove);
+    requestAnimationFrame(tick);
+    document.addEventListener("mousemove", onMouseMove, { passive: true });
     document.addEventListener("mouseleave", onMouseLeave);
     document.addEventListener("mousedown", onMouseDown);
     document.addEventListener("mouseup", onMouseUp);
-
-    // Hide default cursor site-wide
     document.documentElement.classList.add("custom-cursor-active");
 
     return () => {
-      cancelAnimationFrame(raf);
+      running = false;
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseleave", onMouseLeave);
       document.removeEventListener("mousedown", onMouseDown);
       document.removeEventListener("mouseup", onMouseUp);
       document.documentElement.classList.remove("custom-cursor-active");
     };
-  }, [tick]);
+  }, []);
 
   return (
-    <div
-      ref={cursorRef}
-      className="fixed top-0 left-0 pointer-events-none z-[200] flex items-center justify-center rounded-full opacity-0"
-      style={{
-        width: 12,
-        height: 12,
-        backgroundColor: "rgba(23, 23, 23, 0.8)",
-        marginLeft: -6,
-        marginTop: -6,
-        willChange: "transform, width, height",
-        mixBlendMode: "exclusion",
-      }}
-    >
-      <span
-        ref={cursorLabelRef}
-        className="text-[10px] font-medium uppercase tracking-wider text-white opacity-0 scale-50 select-none whitespace-nowrap"
+    <>
+      {/* Inner dot — snappy, solid, always tracks precisely */}
+      <div
+        ref={dotRef}
+        className="fixed top-0 left-0 pointer-events-none z-[201] rounded-full opacity-0"
+        style={{
+          width: 6,
+          height: 6,
+          backgroundColor: "#171717",
+          willChange: "transform",
+          transition: "opacity 0.15s",
+        }}
+      />
+      {/* Outer ring — trailing, morphs on context */}
+      <div
+        ref={ringRef}
+        className="fixed top-0 left-0 pointer-events-none z-[200] rounded-full opacity-0 flex items-center justify-center"
+        style={{
+          width: 32,
+          height: 32,
+          border: "1.5px solid rgba(23, 23, 23, 0.2)",
+          backgroundColor: "transparent",
+          willChange: "transform, width, height",
+          transition: "opacity 0.15s",
+        }}
       >
-        View
-      </span>
-    </div>
+        <span
+          ref={labelRef}
+          className="text-[10px] font-medium uppercase tracking-widest text-white select-none whitespace-nowrap"
+          style={{ opacity: 0, transform: "scale(0.5)" }}
+        >
+          View
+        </span>
+      </div>
+    </>
   );
 }
