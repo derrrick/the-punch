@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Foundry, FoundriesData } from "@/lib/foundries-db";
 import { FoundryCard } from "./FoundryCard";
@@ -12,8 +12,29 @@ interface FoundryGridProps {
   countries: FoundriesData["countries"];
 }
 
+// Hook to detect current grid column count based on breakpoints
+function useColumnCount() {
+  const [columns, setColumns] = useState(1);
+
+  useEffect(() => {
+    function update() {
+      const w = window.innerWidth;
+      if (w >= 1280) setColumns(4);      // xl
+      else if (w >= 1024) setColumns(3); // lg
+      else if (w >= 768) setColumns(2);  // md
+      else setColumns(1);
+    }
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return columns;
+}
+
 export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
   const searchParams = useSearchParams();
+  const columns = useColumnCount();
 
   const styleFilter = searchParams.get("style");
   const locationFilter = searchParams.get("location");
@@ -84,19 +105,20 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
     filteredFoundries.length % 3 !== 0;
 
   return (
-    <section className="py-8 md:py-12 bg-white">
+    <section className="py-8 md:py-12 relative z-[1]">
       <div className="max-w-[1800px] mx-auto px-6 md:px-12">
 
         {filteredFoundries.length > 0 ? (
           <>
             {/* First 12 foundries */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
+            <div className="foundry-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
               {firstBatch.map((foundry, index) => (
                 <div key={foundry.id} data-foundry-tile={index === 0 ? "first" : undefined}>
-                  <FoundryCard 
-                    foundry={foundry} 
-                    index={index} 
+                  <FoundryCard
+                    foundry={foundry}
+                    index={index}
                     animateOnScroll={index >= 4}
+                    columnIndex={index % columns}
                   />
                 </div>
               ))}
@@ -117,13 +139,14 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
 
             {/* Remaining foundries */}
             {secondBatch.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
+              <div className="foundry-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
                 {secondBatch.map((foundry, index) => (
                   <div key={foundry.id}>
-                    <FoundryCard 
-                      foundry={foundry} 
-                      index={index + 12} 
+                    <FoundryCard
+                      foundry={foundry}
+                      index={index + 12}
                       animateOnScroll={true}
+                      columnIndex={index % columns}
                     />
                   </div>
                 ))}

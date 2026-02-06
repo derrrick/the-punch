@@ -24,6 +24,44 @@ body {
   color: #fafafa;
 }
 
+/* Custom cursor — hide default when active (fine pointer devices only) */
+html.custom-cursor-active,
+html.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* ── Card Hover Depth Stack ────────────────────────────────── */
+/* When any card in the grid is hovered, dim its siblings */
+.foundry-grid:hover .foundry-card {
+  opacity: 0.55;
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s ease;
+}
+
+.foundry-grid .foundry-card {
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s ease;
+}
+
+/* The hovered card stays fully visible and elevates */
+.foundry-grid .foundry-card:hover {
+  opacity: 1 !important;
+  transform: translateY(-4px);
+}
+
+/* Ken Burns slow drift on the card image while hovered */
+.foundry-card:hover .card-image-ken-burns {
+  animation: kenBurnsDrift 8s ease-in-out infinite alternate;
+}
+
+@keyframes kenBurnsDrift {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.06) translate(-1%, -0.5%);
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

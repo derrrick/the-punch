@@ -1,15 +1,20 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Foundry } from "@/lib/foundries";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface FoundryCardProps {
   foundry: Foundry;
-  index: number;
+  index?: number;
   animateOnScroll?: boolean;
+  columnIndex?: number;
 }
 
 // Generate a consistent gradient based on the foundry name
@@ -25,9 +30,70 @@ function generateGradient(name: string): string {
   return `linear-gradient(135deg, hsl(${hue1}, 60%, 85%), hsl(${hue2}, 60%, 80%))`;
 }
 
-export function FoundryCard({ foundry, index, animateOnScroll = true }: FoundryCardProps) {
+export function FoundryCard({ foundry, animateOnScroll = true, columnIndex = 0 }: FoundryCardProps) {
   const router = useRouter();
+  const cardRef = useRef<HTMLElement>(null);
   const hasScreenshot = foundry.images?.screenshot;
+
+  useEffect(() => {
+    if (!animateOnScroll || !cardRef.current) return;
+
+    const el = cardRef.current;
+
+    // Set initial hidden state — clipped from bottom with slight y offset
+    gsap.set(el, {
+      clipPath: "inset(100% 0 0 0)",
+      y: 60,
+      opacity: 0,
+    });
+
+    // Stagger delay based on column position for waterfall cascade effect
+    const colDelay = columnIndex * 0.08;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: el,
+        start: "top 92%",
+        end: "top 40%",
+        toggleActions: "play none none none",
+        once: true,
+      },
+      delay: colDelay,
+    });
+
+    // Clip-path wipe reveal from bottom to top
+    tl.to(el, {
+      clipPath: "inset(0% 0 0 0)",
+      duration: 0.9,
+      ease: "power3.inOut",
+    });
+
+    // Simultaneously slide up and fade in
+    tl.to(el, {
+      y: 0,
+      opacity: 1,
+      duration: 0.7,
+      ease: "power2.out",
+    }, "<0.1");
+
+    // Animate the image inside with a slight counter-scale for depth
+    const img = el.querySelector(".card-image-wrapper");
+    if (img) {
+      gsap.set(img, { scale: 1.15 });
+      tl.to(img, {
+        scale: 1,
+        duration: 1.2,
+        ease: "power2.out",
+      }, "<");
+    }
+
+    return () => {
+      tl.kill();
+      ScrollTrigger.getAll().forEach(st => {
+        if (st.trigger === el) st.kill();
+      });
+    };
+  }, [animateOnScroll, columnIndex]);
 
   const handleStyleClick = (e: React.MouseEvent, style: string) => {
     e.preventDefault();
@@ -38,11 +104,11 @@ export function FoundryCard({ foundry, index, animateOnScroll = true }: FoundryC
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     // Trigger transition before navigation
-    const event = new CustomEvent('foundryTransitionStart', { 
+    const event = new CustomEvent('foundryTransitionStart', {
       detail: { slug: foundry.slug }
     });
     window.dispatchEvent(event);
-    
+
     // Navigate after curtains have fully covered the screen
     setTimeout(() => {
       router.push(`/foundry/${foundry.slug}`);
@@ -50,41 +116,39 @@ export function FoundryCard({ foundry, index, animateOnScroll = true }: FoundryC
   };
 
   return (
-    <motion.article
-      initial={animateOnScroll ? { opacity: 0, y: 40 } : { opacity: 1, y: 0 }}
-      whileInView={animateOnScroll ? { opacity: 1, y: 0 } : undefined}
-      viewport={animateOnScroll ? { once: true, margin: "-50px" } : undefined}
-      transition={{
-        duration: 0.6,
-        delay: index * 0.05,
-        ease: [0.25, 0.1, 0.25, 1],
-      }}
+    <article
+      ref={cardRef}
+      className="foundry-card"
+      style={!animateOnScroll ? undefined : { clipPath: "inset(100% 0 0 0)", opacity: 0 }}
     >
       <Link
         href={`/foundry/${foundry.slug}`}
         onClick={handleClick}
+        data-cursor="card"
         className="group block border-t border-neutral-200 pt-6 pb-8 transition-colors duration-300 hover:border-neutral-400"
       >
         {/* Screenshot or Gradient Placeholder */}
         <div className="relative w-full aspect-[16/10] mb-6 overflow-hidden rounded-lg bg-neutral-100">
-          {hasScreenshot ? (
-            <Image
-              src={foundry.images.screenshot!}
-              alt={`${foundry.name} website screenshot`}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          ) : (
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              style={{ background: generateGradient(foundry.name) }}
-            >
-              <span className="text-2xl font-medium text-neutral-700/50">
-                {foundry.name.charAt(0)}
-              </span>
-            </div>
-          )}
+          <div className="card-image-wrapper card-image-ken-burns absolute inset-0">
+            {hasScreenshot ? (
+              <Image
+                src={foundry.images.screenshot!}
+                alt={`${foundry.name} website screenshot`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            ) : (
+              <div
+                className="absolute inset-0 flex items-center justify-center"
+                style={{ background: generateGradient(foundry.name) }}
+              >
+                <span className="text-2xl font-medium text-neutral-700/50">
+                  {foundry.name.charAt(0)}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Foundry Name */}
@@ -131,6 +195,6 @@ export function FoundryCard({ foundry, index, animateOnScroll = true }: FoundryC
           ))}
         </div>
       </Link>
-    </motion.article>
+    </article>
   );
 }

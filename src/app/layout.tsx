@@ -5,6 +5,9 @@ import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { FoundryTransitionProvider } from "@/components/FoundryTransition";
+import { MagneticCursor } from "@/components/MagneticCursor";
+import { GrainOverlay } from "@/components/GrainOverlay";
+import { GradientMesh } from "@/components/GradientMesh";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -64,6 +67,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
+        <GradientMesh />
+        <GrainOverlay />
+        <MagneticCursor />
         <FoundryTransitionProvider>
           <ScrollProgress />
           <main className="flex-1">
