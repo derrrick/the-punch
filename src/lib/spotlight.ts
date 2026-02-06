@@ -1,19 +1,22 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Foundry } from "./foundries-db";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error("Missing Supabase environment variables for spotlight");
+// Create client lazily — only if env vars are present.
+// Spotlight gracefully returns empty data when unconfigured.
+function getSupabase() {
+  if (!supabaseUrl || !supabaseKey) {
+    return null;
+  }
+  return createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
 }
-
-const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
 
 export interface SpotlightSettings {
   is_enabled: boolean;
@@ -36,6 +39,9 @@ export interface SpotlightFoundry extends Foundry {
 
 export async function getSpotlightSettings(): Promise<SpotlightSettings | null> {
   try {
+    const supabase = getSupabase();
+    if (!supabase) return null;
+
     const { data, error } = await supabase
       .from("spotlight_settings")
       .select("*")
@@ -66,6 +72,9 @@ export async function getSpotlightSettings(): Promise<SpotlightSettings | null> 
 
 export async function getSpotlightFoundries(): Promise<SpotlightFoundry[]> {
   try {
+    const supabase = getSupabase();
+    if (!supabase) return [];
+
     // Use explicit ordering by spotlight_order first
     const { data, error } = await supabase
       .from("foundries")
