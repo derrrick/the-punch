@@ -105,7 +105,7 @@ export function FoundryGrid({ foundries: allFoundries }: FoundryGridProps) {
     filteredFoundries.length % 3 !== 0;
 
   return (
-    <section className="py-8 md:py-12 relative z-[1]">
+    <section className="py-8 md:py-12">
       <div className="max-w-[1800px] mx-auto px-6 md:px-12">
 
         {filteredFoundries.length > 0 ? (

@@ -57,9 +57,9 @@ export function MagneticCursor() {
       if (!running) return;
       requestAnimationFrame(tick);
 
-      // Dot — fast follow
-      dX = lerp(dX, mx, 0.85);
-      dY = lerp(dY, my, 0.85);
+      // Dot — near-instant (respects OS cursor speed via raw mouse coords)
+      dX = lerp(dX, mx, 0.95);
+      dY = lerp(dY, my, 0.95);
 
       // Ring — smooth trail
       rX = lerp(rX, mx, 0.15);

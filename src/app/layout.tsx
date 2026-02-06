@@ -72,7 +72,7 @@ export default function RootLayout({
         <MagneticCursor />
         <FoundryTransitionProvider>
           <ScrollProgress />
-          <main className="flex-1">
+          <main className="flex-1 relative z-[1]">
             {children}
           </main>
           <Footer />
