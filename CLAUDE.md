@@ -4,155 +4,126 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-The Punch is a curated directory of independent type foundries built with Next.js 14 (App Router). The site showcases typography organized by the foundries that created them, with filtering by style and location.
+The Punch is a curated directory of independent type foundries built with Next.js 14 (App Router) and backed by Supabase PostgreSQL. The site showcases typography organized by the foundries that created them, with filtering by style and location. It includes an admin panel for reviewing submissions, managing a homepage spotlight feature, and sending newsletters.
+
+**Live URL:** https://thepunch.studio
 
 ## Development Commands
 
 ```bash
-# Start development server (http://localhost:3000)
-npm run dev
-
-# Build for production
-npm run build
-
-# Run production build locally
-npm start
-
-# Run linter
-npm run lint
+npm run dev              # Start dev server (http://localhost:3000)
+npm run build            # Production build (includes TypeScript type checking)
+npm start                # Run production build locally
+npm run lint             # ESLint
+npm run migrate:foundries  # Migrate foundries from JSON to Supabase
+npm run validate:foundries # Validate foundry data integrity
 ```
+
+There is no automated test suite. Verification is done via `npm run build` (catches type errors) and `npm run lint`.
 
 ## Tech Stack
 
-- **Framework**: Next.js 14 with App Router and TypeScript
-- **Styling**: Tailwind CSS with custom typography extensions
-- **Animations**: Framer Motion for page transitions and UI interactions, GSAP for scroll animations
-- **Data**: Static JSON database (`src/data/foundries.json`) with TypeScript interfaces
-- **Fonts**: Geist Sans and Geist Mono (local fonts via `next/font`)
+- **Framework**: Next.js 14.2.35 with App Router, TypeScript (strict mode)
+- **Styling**: Tailwind CSS 3.4 with custom extensions (see `tailwind.config.ts`)
+- **Animations**: Framer Motion (UI transitions), GSAP (scroll-based animations)
+- **Database**: Supabase (PostgreSQL) with Row Level Security
+- **AI**: Anthropic Claude API (`@anthropic-ai/sdk`) for foundry website analysis
+- **Scraping**: Puppeteer for website screenshots and metadata extraction
+- **Email**: Resend + React Email for newsletters
+- **Fonts**: Geist Sans and Geist Mono (local via `next/font`)
+- **Deployment**: Vercel with Vercel Analytics
 
 ## Architecture
 
-### Data Layer (`src/lib/foundries.ts`)
+### Data Layer
 
-All foundry data is stored in a single JSON file (`src/data/foundries.json`) containing:
-- Metadata (version, last updated, total count)
-- Array of foundry objects with comprehensive details (name, location, typefaces, style tags, images, etc.)
-- Pre-computed aggregations (all styles, country counts)
+All foundry data lives in Supabase PostgreSQL (migrated from legacy `src/data/foundries.json`).
 
-The `foundries.ts` library provides typed functions to access this data:
-- `getAllFoundries()` - Returns all foundries
-- `getFoundryBySlug(slug)` - Get single foundry for detail pages
-- `getFoundriesByCountry(code)` - Filter by country code
-- `getFoundriesByStyle(style)` - Filter by style tag
-- `searchFoundries(query)` - Search across multiple fields
+**`src/lib/foundries-db.ts`** — Primary data access layer. Creates its own Supabase client with `revalidate: 60` (ISR) baked into the fetch options. Transforms flat database records (`DbFoundry` with `location_city`, `location_country_code`, etc.) into nested `Foundry` interface objects (with `location.city`, `location.countryCode`, etc.). Key functions: `getAllFoundries()`, `getFoundryBySlug()`, `getFoundriesByCountry()`, `getFoundriesByStyle()`, `searchFoundries()` (client-side filter over all results — no DB full-text search yet).
 
-### Routing Structure
+**`src/lib/supabase.ts`** — Shared Supabase client (no ISR fetch config). Used by client components and API routes. Exports `FoundrySubmission` and `Foundry` (flat DB schema) interfaces.
 
-- `/` - Home page with hero and filterable foundry grid
-- `/foundry/[slug]` - Dynamic foundry detail pages (statically generated)
-- `/about` - About page
-- `/submit` - Foundry submission page
+**`src/lib/foundries.ts`** — Re-exports types and functions from `foundries-db.ts`.
 
-All foundry detail pages are statically generated at build time using `generateStaticParams()`.
+Note: There are two `Foundry` interfaces — the nested one in `foundries-db.ts` (used by components) and the flat DB one in `supabase.ts` (used by admin/API code). Watch for which one you're working with.
 
-### Layout & Components
+### Database Schema
 
-**Layout** (`src/app/layout.tsx`):
-- Fixed header with scroll-based backdrop blur
-- Scroll progress indicator
-- Footer (always at bottom)
-- Main content area with top padding to account for fixed header
+Two main tables:
 
-**Header** (`src/components/Header.tsx`):
-- Fixed position with glassmorphic blur on scroll
-- Animated dropdown filters for Style and Location
-- Client-side routing with URL query parameters (`?style=swiss`, `?location=US`)
-- Dropdowns close on click-outside using refs
+- **`foundries`** — The directory. Key columns: `slug` (unique), `style` (text[]), `tier` (1-4, determines sort prominence), `notable_typefaces` (text[]), `screenshot_url` (base64 data URL), spotlight columns (`is_spotlight`, `spotlight_order`, `spotlight_is_primary`, `spotlight_description`, `spotlight_quote`, `spotlight_image_*`, `spotlight_theme`).
+- **`foundry_submissions`** — User submissions. Status: `pending` | `approved` | `rejected`. Has `scraped_metadata` (JSONB) and `ai_analysis` (JSONB) fields populated by the review pipeline.
 
-**Foundry Grid** (`src/components/FoundryGrid.tsx`):
-- Responsive grid (1-4 columns based on breakpoint)
-- Client-side filtering based on URL search params
-- Auto-scrolls to filter status when filter is applied
-- Shows count and active filter name
+Migrations live in `supabase/migrations/`.
 
-**Foundry Card** (`src/components/FoundryCard.tsx`):
-- Links to individual foundry pages
-- Displays foundry name, location, and style tags
+### Routing
+
+**Pages:**
+- `/` — Home page with hero spotlight and filterable foundry grid (server component)
+- `/foundry/[slug]` — Foundry detail pages (statically generated via `generateStaticParams()`)
+- `/about`, `/submit`, `/privacy`, `/sponsorship` — Static/form pages
+- `/admin` — Submission review dashboard (password protected)
+- `/admin/spotlight` — Spotlight feature management
+- `/admin/newsletter` — Newsletter composition and sending
+
+**API Routes** (`src/app/api/`):
+- `scrape-foundry/` — Puppeteer website scraping (screenshots, metadata)
+- `analyze-foundry/` — Claude AI analysis (extracts founder, location, typefaces, style tags, tier)
+- `add-to-directory/` — Adds approved submission to foundries table
+- `update-submission/` — Updates submission status
+- `newsletter/subscribe/`, `newsletter/send/`, `newsletter/stats/` — Newsletter endpoints
+- `spotlight/*` — Spotlight management endpoints
+- `admin/foundries/` — Admin foundry CRUD
 
 ### Filtering System
 
-Filters work via URL query parameters:
-- Style filter: `/?style=swiss` (exact match, case-insensitive)
-- Location filter: `/?location=US` (matches country code)
-- Mutually exclusive - applying one clears the other
-- Implemented client-side in `FoundryGrid` using `useSearchParams` and `useMemo`
+Client-side filtering via URL query parameters in `FoundryGrid.tsx`:
+- `?style=swiss` — Style filter (case-insensitive, array containment)
+- `?location=US` — Country code filter
+- `?search=query` — Text search across name, founder, location, typefaces, style
+- `?sort=popular` — Sort by tier
+- `?filter=recent|classic|established` — Filter by founding year
 
-### Styling Approach
+Filters are mutually exclusive for style/location. Implemented with `useSearchParams` and `useMemo`.
 
-Tailwind is configured with custom extensions in `tailwind.config.ts`:
-- Custom font sizes (`2xs`)
-- Custom letter-spacing (`tighter`, `tight`)
-- Custom line-height (`tighter`)
-- CSS variables for `background` and `foreground` colors
-- Geist Sans and Mono font families via CSS variables
+### Submission Review Pipeline
 
-Global styles in `src/app/globals.css` define:
-- Light mode: white background (#FFFFFF), dark text (#171717)
-- Dark mode: dark background (#171717), light text (#EDEDED)
+1. User submits foundry via `/submit` form → stored in `foundry_submissions` as `pending`
+2. Admin scrapes website via `/api/scrape-foundry` (Puppeteer: screenshots, social links, descriptions)
+3. Admin runs AI analysis via `/api/analyze-foundry` (Claude extracts metadata)
+4. Admin reviews/edits extracted data, approves or rejects
+5. Approval calls `/api/add-to-directory` → inserts into `foundries` table
 
-### Animation Patterns
+### Spotlight Feature
 
-**Framer Motion** is used for:
-- Header dropdown enter/exit animations
-- Staggered list item animations (see Header dropdowns with index-based delays)
+The homepage hero (`HeroSpotlight.tsx` / `HeroSpotlightLight.tsx`) features up to 4 foundries. Managed via `/admin/spotlight`. One foundry is marked `spotlight_is_primary` (displayed large). Supports dark/light theme variants and custom spotlight images. Data fetched via `src/lib/spotlight.ts`.
 
-**GSAP** is used for:
-- Scroll-based progress indicator (`ScrollProgress.tsx`)
+### Key Patterns
 
-### Scripts
+- **Server components by default**, `"use client"` only for interactivity (hooks, browser APIs)
+- **ISR with 60s revalidation** on foundry data fetches (configured in `foundries-db.ts` Supabase client)
+- **Two Supabase clients**: one in `foundries-db.ts` (with ISR fetch), one in `supabase.ts` (standard)
+- **Path alias**: `@/*` maps to `./src/*`
 
-- `scripts/generate-favicon.js` - Generates favicon.ico programmatically (simple "P" icon on dark background)
+## Environment Variables
 
-## Admin Panel
+Required in `.env.local`:
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=          # Server-side only, never expose to client
+ANTHROPIC_API_KEY=                  # Server-side only
+RESEND_API_KEY=                     # Server-side only
+NEXT_PUBLIC_ADMIN_PASSWORD=         # Admin panel password
+NEXT_PUBLIC_SITE_URL=               # For metadata/OG images
+```
 
-Access the admin panel at `/admin` to review foundry submissions.
+## Styling
 
-**Login credentials:**
-- Password: Set via `NEXT_PUBLIC_ADMIN_PASSWORD` environment variable (default: `thepunch2026`)
+Tailwind custom extensions in `tailwind.config.ts`:
+- Font size: `2xs` (0.625rem)
+- Letter spacing: `tighter` (-0.04em), `tight` (-0.02em)
+- Line height: `tighter` (1.1)
+- Theme colors via CSS variables: `--background`, `--foreground`
 
-**Features:**
-- View all submissions with status filter (all/pending/approved/rejected)
-- Approve submissions with one click
-- Reject submissions with required reason
-- View submission details (URL, location, submitter email, notes)
-- Simple password authentication (upgrade to Supabase Auth later)
-
-**Database Tables:**
-- `foundry_submissions` - Stores all form submissions with status tracking
-- `foundries` - Will store approved foundries (currently using JSON)
-
-## Key Patterns
-
-1. **Client Components**: Components using hooks (`useState`, `useSearchParams`, etc.) are marked with `"use client"`
-
-2. **Type Safety**: All foundry data uses the `Foundry` and `FoundriesData` interfaces from `src/lib/foundries.ts`
-
-3. **Static Generation**: Foundry detail pages are pre-rendered at build time for optimal performance
-
-4. **URL State Management**: Filters are managed via URL params for shareability and browser history
-
-5. **Responsive Design**: Mobile-first approach with breakpoint-specific layouts using Tailwind
-
-## Adding/Modifying Foundries
-
-To add or modify foundry data, edit `src/data/foundries.json`. The schema includes:
-- `id`, `name`, `slug` (for URL)
-- `location` (city, country, countryCode)
-- `url`, `founder`, `founded`
-- `notableTypefaces` (array)
-- `style` (array of tags matching the global `styles` array)
-- `tier` (1-4, determines prominence)
-- `images` (screenshot, logo, specimens)
-- `socialMedia`, `contentFeed`, `notes`
-
-After modifying the JSON, ensure the `meta` section and `countries` array are updated accordingly.
+Light mode: #fafafa bg, #171717 text. Dark mode: #171717 bg, #EDEDED text.
