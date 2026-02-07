@@ -19,7 +19,7 @@ export default function AboutPage() {
       <div className="max-w-[680px] mx-auto px-6 md:px-12 py-32 md:py-40">
         {/* Headline */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-neutral-900 leading-[1.15] mb-20 md:mb-28">
-          Typography, organized by the experts who made them.
+        A curated directory of the web&apos;s finest Indie Type Foundries.
         </h1>
 
         {/* What this site is */}

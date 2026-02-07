@@ -29,8 +29,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Submission must be approved first' }, { status: 400 });
     }
 
+    // Use name override from manual edits if available
+    const foundryName = aiAnalysis.foundryNameOverride || submission.foundry_name;
+
     // Generate slug from name
-    const slug = submission.foundry_name
+    const slug = foundryName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
@@ -90,13 +93,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Extract social media from scraped data
-    const instagram = submission.scraped_metadata?.socialMedia?.instagram || null;
-    const twitter = submission.scraped_metadata?.socialMedia?.twitter || null;
+    // Extract social media - prefer manually-entered values from ai_analysis over scraped data
+    const instagram = aiAnalysis.socialInstagram || submission.scraped_metadata?.socialMedia?.instagram || null;
+    const twitter = aiAnalysis.socialTwitter || submission.scraped_metadata?.socialMedia?.twitter || null;
+
+    // Extract screenshot - prefer manual override from ai_analysis
+    const screenshotUrl = aiAnalysis.screenshotUrl || submission.scraped_metadata?.screenshot || null;
 
     // Create foundry record using AI analysis data when available
     const newFoundry = {
-      name: submission.foundry_name,
+      name: foundryName,
       slug,
       location_city: city || 'Unknown',
       location_country: country || 'Unknown',
@@ -110,12 +116,12 @@ export async function POST(request: NextRequest) {
       social_instagram: instagram,
       social_twitter: twitter,
       notes: aiAnalysis.notes || submission.notes || null,
-      screenshot_url: submission.scraped_metadata?.screenshot || null,
+      screenshot_url: screenshotUrl,
       logo_url: submission.scraped_metadata?.favicon || null,
-      content_feed_type: null,
-      content_feed_url: null,
-      content_feed_rss: null,
-      content_feed_frequency: null,
+      content_feed_type: aiAnalysis.contentFeedType || null,
+      content_feed_url: aiAnalysis.contentFeedUrl || null,
+      content_feed_rss: aiAnalysis.contentFeedRss || null,
+      content_feed_frequency: aiAnalysis.contentFeedFrequency || null,
     };
 
     const { data, error: insertError } = await supabase

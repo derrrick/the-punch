@@ -251,6 +251,7 @@ export default function AdminPage() {
 // Submission card component
 // Editable foundry data form interface
 interface EditableFoundryData {
+  foundryName: string;
   founder: string;
   foundedYear: string;
   city: string;
@@ -261,6 +262,13 @@ interface EditableFoundryData {
   tier: string;
   positioningNote: string;
   notes: string;
+  socialInstagram: string;
+  socialTwitter: string;
+  screenshotUrl: string;
+  contentFeedType: string;
+  contentFeedUrl: string;
+  contentFeedRss: string;
+  contentFeedFrequency: string;
 }
 
 function SubmissionCard({
@@ -280,7 +288,9 @@ function SubmissionCard({
   const [aiAnalysis, setAiAnalysis] = useState(submission.ai_analysis);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [editData, setEditData] = useState<EditableFoundryData>({
+    foundryName: '',
     founder: '',
     foundedYear: '',
     city: '',
@@ -291,12 +301,20 @@ function SubmissionCard({
     tier: '3',
     positioningNote: '',
     notes: '',
+    socialInstagram: '',
+    socialTwitter: '',
+    screenshotUrl: '',
+    contentFeedType: '',
+    contentFeedUrl: '',
+    contentFeedRss: '',
+    contentFeedFrequency: '',
   });
 
   // Initialize edit form with AI analysis data when entering edit mode
   const startEditing = () => {
     const loc = submission.location?.split(',').map(s => s.trim()) || [];
     setEditData({
+      foundryName: aiAnalysis?.foundryNameOverride || submission.foundry_name || '',
       founder: aiAnalysis?.founderName || '',
       foundedYear: aiAnalysis?.foundedYear?.toString() || '',
       city: aiAnalysis?.location?.city || loc[0] || '',
@@ -307,6 +325,13 @@ function SubmissionCard({
       tier: (aiAnalysis?.tier || 3).toString(),
       positioningNote: aiAnalysis?.positioningNote || '',
       notes: aiAnalysis?.notes || submission.notes || '',
+      socialInstagram: aiAnalysis?.socialInstagram || scrapedData?.socialMedia?.instagram || '',
+      socialTwitter: aiAnalysis?.socialTwitter || scrapedData?.socialMedia?.twitter || '',
+      screenshotUrl: aiAnalysis?.screenshotUrl || scrapedData?.screenshot || '',
+      contentFeedType: aiAnalysis?.contentFeedType || '',
+      contentFeedUrl: aiAnalysis?.contentFeedUrl || '',
+      contentFeedRss: aiAnalysis?.contentFeedRss || '',
+      contentFeedFrequency: aiAnalysis?.contentFeedFrequency || '',
     });
     setIsEditing(true);
   };
@@ -317,6 +342,7 @@ function SubmissionCard({
     try {
       const updatedAnalysis = {
         ...aiAnalysis,
+        foundryNameOverride: editData.foundryName !== submission.foundry_name ? editData.foundryName : undefined,
         founderName: editData.founder || undefined,
         foundedYear: editData.foundedYear ? parseInt(editData.foundedYear) : undefined,
         location: {
@@ -329,6 +355,13 @@ function SubmissionCard({
         tier: parseInt(editData.tier) as 1 | 2 | 3 | 4,
         positioningNote: editData.positioningNote,
         notes: editData.notes,
+        socialInstagram: editData.socialInstagram || undefined,
+        socialTwitter: editData.socialTwitter || undefined,
+        screenshotUrl: editData.screenshotUrl || undefined,
+        contentFeedType: editData.contentFeedType || undefined,
+        contentFeedUrl: editData.contentFeedUrl || undefined,
+        contentFeedRss: editData.contentFeedRss || undefined,
+        contentFeedFrequency: editData.contentFeedFrequency || undefined,
       };
 
       const response = await fetch('/api/update-submission', {
@@ -449,6 +482,19 @@ function SubmissionCard({
     }
   };
 
+  const handleScreenshotDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDraggingOver(false);
+    const file = e.dataTransfer.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setScrapedData((prev: typeof scrapedData) => prev ? { ...prev, screenshot: base64 } : prev);
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div className="bg-white border border-neutral-200 rounded-lg p-6">
       <div className="flex items-start justify-between">
@@ -529,12 +575,27 @@ function SubmissionCard({
           <p className="text-sm font-medium text-blue-700">Auto-Scraped Data:</p>
 
           {scrapedData.screenshot && (
-            <div className="mt-2">
+            <div
+              className={`mt-2 relative cursor-pointer rounded border-2 border-dashed transition-colors ${
+                isDraggingOver
+                  ? 'border-blue-500 bg-blue-100'
+                  : 'border-blue-200 hover:border-blue-400'
+              }`}
+              onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
+              onDragLeave={() => setIsDraggingOver(false)}
+              onDrop={handleScreenshotDrop}
+            >
               <img
                 src={scrapedData.screenshot}
                 alt="Website screenshot"
-                className="w-full rounded border border-blue-200"
+                className={`w-full rounded transition-opacity ${isDraggingOver ? 'opacity-40' : ''}`}
               />
+              {isDraggingOver && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <p className="text-blue-700 font-medium text-sm">Drop image to replace screenshot</p>
+                </div>
+              )}
+              <p className="text-xs text-blue-500 text-center py-1">Drag & drop an image here to replace</p>
             </div>
           )}
 
@@ -742,13 +803,27 @@ function SubmissionCard({
         </div>
       )}
 
-      {/* Edit & Add to Directory (for approved submissions) */}
-      {submission.status === "approved" && (
+      {/* Edit Data & Add to Directory (for pending and approved submissions) */}
+      {(submission.status === "pending" || submission.status === "approved") && (
         <div className="mt-6 space-y-4">
           {isEditing ? (
             <div className="p-4 bg-amber-50 rounded border border-amber-200">
               <h4 className="text-sm font-medium text-amber-800 mb-4">Edit Foundry Data</h4>
               <div className="grid grid-cols-2 gap-4">
+                {/* Basic Info */}
+                <div className="col-span-2">
+                  <p className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">Basic Info</p>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Foundry Name</label>
+                  <input
+                    type="text"
+                    value={editData.foundryName}
+                    onChange={(e) => setEditData({ ...editData, foundryName: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="Foundry name (edit to fix typos)"
+                  />
+                </div>
                 <div>
                   <label className="block text-xs font-medium text-amber-700 mb-1">Founder</label>
                   <input
@@ -768,6 +843,11 @@ function SubmissionCard({
                     className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
                     placeholder="YYYY"
                   />
+                </div>
+
+                {/* Location */}
+                <div className="col-span-2 mt-2">
+                  <p className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">Location</p>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-amber-700 mb-1">City</label>
@@ -800,18 +880,10 @@ function SubmissionCard({
                     maxLength={2}
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-amber-700 mb-1">Tier (1-4)</label>
-                  <select
-                    value={editData.tier}
-                    onChange={(e) => setEditData({ ...editData, tier: e.target.value })}
-                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
-                  >
-                    <option value="1">1 - Legendary (Hoefler&Co)</option>
-                    <option value="2">2 - Major (Grilli Type)</option>
-                    <option value="3">3 - Established Indie</option>
-                    <option value="4">4 - Emerging</option>
-                  </select>
+
+                {/* Typography */}
+                <div className="col-span-2 mt-2">
+                  <p className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">Typography</p>
                 </div>
                 <div className="col-span-2">
                   <label className="block text-xs font-medium text-amber-700 mb-1">Notable Typefaces (comma-separated)</label>
@@ -833,6 +905,107 @@ function SubmissionCard({
                     placeholder="swiss, geometric, minimal"
                   />
                   <p className="text-xs text-amber-600 mt-1">Available: swiss, geometric, humanist, editorial, contemporary, modernist, brutalist, experimental, variable, display, playful, expressive, multilingual, minimal, grotesk, serif, etc.</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Tier (1-4)</label>
+                  <select
+                    value={editData.tier}
+                    onChange={(e) => setEditData({ ...editData, tier: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                  >
+                    <option value="1">1 - Legendary (Hoefler&Co)</option>
+                    <option value="2">2 - Major (Grilli Type)</option>
+                    <option value="3">3 - Established Indie</option>
+                    <option value="4">4 - Emerging</option>
+                  </select>
+                </div>
+
+                {/* Social & Web */}
+                <div className="col-span-2 mt-2">
+                  <p className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">Social & Web</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Instagram</label>
+                  <input
+                    type="text"
+                    value={editData.socialInstagram}
+                    onChange={(e) => setEditData({ ...editData, socialInstagram: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="https://instagram.com/foundry"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Twitter / X</label>
+                  <input
+                    type="text"
+                    value={editData.socialTwitter}
+                    onChange={(e) => setEditData({ ...editData, socialTwitter: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="https://twitter.com/foundry"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Screenshot URL</label>
+                  <input
+                    type="text"
+                    value={editData.screenshotUrl}
+                    onChange={(e) => setEditData({ ...editData, screenshotUrl: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="https://... (override auto-scraped screenshot)"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Content Feed Type</label>
+                  <select
+                    value={editData.contentFeedType}
+                    onChange={(e) => setEditData({ ...editData, contentFeedType: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                  >
+                    <option value="">None</option>
+                    <option value="blog">Blog</option>
+                    <option value="rss">RSS</option>
+                    <option value="newsletter">Newsletter</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Content Feed URL</label>
+                  <input
+                    type="text"
+                    value={editData.contentFeedUrl}
+                    onChange={(e) => setEditData({ ...editData, contentFeedUrl: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="https://foundry.com/blog"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Content Feed RSS</label>
+                  <input
+                    type="text"
+                    value={editData.contentFeedRss}
+                    onChange={(e) => setEditData({ ...editData, contentFeedRss: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                    placeholder="https://foundry.com/feed.xml"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-amber-700 mb-1">Content Feed Frequency</label>
+                  <select
+                    value={editData.contentFeedFrequency}
+                    onChange={(e) => setEditData({ ...editData, contentFeedFrequency: e.target.value })}
+                    className="w-full bg-white border border-amber-200 px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
+                  >
+                    <option value="">Unknown</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Biweekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="irregular">Irregular</option>
+                  </select>
+                </div>
+
+                {/* Notes */}
+                <div className="col-span-2 mt-2">
+                  <p className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">Notes</p>
                 </div>
                 <div className="col-span-2">
                   <label className="block text-xs font-medium text-amber-700 mb-1">Positioning (1-liner, max 15 words)</label>
@@ -879,17 +1052,21 @@ function SubmissionCard({
               >
                 Edit Data
               </button>
-              <button
-                onClick={handleAddToDirectory}
-                disabled={isAddingToDirectory}
-                className="bg-blue-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-blue-700 disabled:opacity-50 transition-colors"
-              >
-                {isAddingToDirectory ? 'Adding...' : '✨ Add to Directory'}
-              </button>
+              {submission.status === "approved" && (
+                <button
+                  onClick={handleAddToDirectory}
+                  disabled={isAddingToDirectory}
+                  className="bg-blue-600 text-white px-6 py-2 text-sm uppercase tracking-[0.1em] hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                >
+                  {isAddingToDirectory ? 'Adding...' : '✨ Add to Directory'}
+                </button>
+              )}
             </div>
           )}
           <p className="text-xs text-neutral-500">
-            Review and edit data before adding to directory. Changes will be saved to the submission.
+            {submission.status === "pending"
+              ? "Manually populate foundry data before or after scraping. Changes will be saved to the submission."
+              : "Review and edit data before adding to directory. Changes will be saved to the submission."}
           </p>
         </div>
       )}
