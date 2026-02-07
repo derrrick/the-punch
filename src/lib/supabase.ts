@@ -14,7 +14,7 @@ export interface FoundrySubmission {
   location?: string;
   submitter_email: string;
   notes?: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'published';
   reviewed_at?: string;
   reviewed_by?: string;
   rejection_reason?: string;

@@ -9,7 +9,7 @@ export default function AdminPage() {
   const [submissions, setSubmissions] = useState<FoundrySubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
+  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected" | "published">("pending");
 
   // Simple password check (we'll upgrade this later)
   const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "thepunch2026";
@@ -213,7 +213,7 @@ export default function AdminPage() {
 
         {/* Filter tabs */}
         <div className="flex gap-4 mb-8 border-b border-neutral-200">
-          {(["all", "pending", "approved", "rejected"] as const).map((status) => (
+          {(["all", "pending", "approved", "rejected", "published"] as const).map((status) => (
             <button
               key={status}
               onClick={() => setFilter(status)}
@@ -485,35 +485,44 @@ function SubmissionCard({
     }
   };
 
-  const handleScreenshotDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleScreenshotDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDraggingOver(false);
     const file = e.dataTransfer.files[0];
     if (!file || !file.type.startsWith('image/')) return;
+
+    // Show preview immediately using base64
     const reader = new FileReader();
-    reader.onload = async () => {
+    reader.onload = () => {
       const base64 = reader.result as string;
       setScrapedData((prev: typeof scrapedData) => prev ? { ...prev, screenshot: base64 } : prev);
-
-      // Persist to database via aiAnalysis.screenshotUrl so it carries through to Add to Directory
-      const updatedAnalysis = { ...aiAnalysis, screenshotUrl: base64 };
-      try {
-        const response = await fetch('/api/update-submission', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            submissionId: submission.id,
-            aiAnalysis: updatedAnalysis,
-          }),
-        });
-        if (!response.ok) throw new Error('Failed to save screenshot');
-        setAiAnalysis(updatedAnalysis);
-      } catch (err) {
-        console.error('Failed to persist screenshot:', err);
-        alert('Screenshot displayed but failed to save to database. Try using Edit Data to save manually.');
-      }
     };
     reader.readAsDataURL(file);
+
+    // Upload to Supabase Storage
+    try {
+      const formData = new FormData();
+      formData.append('password', sessionStorage.getItem('admin_password') || '');
+      formData.append('submissionId', submission.id);
+      formData.append('foundryName', submission.foundry_name);
+      formData.append('file', file);
+
+      const response = await fetch('/api/admin/upload-screenshot', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Failed to upload screenshot');
+
+      // Update local state with the storage URL
+      const updatedAnalysis = { ...aiAnalysis, screenshotUrl: result.url };
+      setAiAnalysis(updatedAnalysis);
+      setScrapedData((prev: typeof scrapedData) => prev ? { ...prev, screenshot: result.url } : prev);
+    } catch (err) {
+      console.error('Failed to upload screenshot:', err);
+      alert('Screenshot preview shown but upload failed: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    }
   };
 
   return (
@@ -530,6 +539,8 @@ function SubmissionCard({
                   ? "bg-yellow-100 text-yellow-800"
                   : submission.status === "approved"
                   ? "bg-green-100 text-green-800"
+                  : submission.status === "published"
+                  ? "bg-blue-100 text-blue-800"
                   : "bg-red-100 text-red-800"
               }`}
             >
@@ -595,30 +606,39 @@ function SubmissionCard({
         <div className="mt-4 p-4 bg-blue-50 rounded space-y-3">
           <p className="text-sm font-medium text-blue-700">Auto-Scraped Data:</p>
 
-          {scrapedData.screenshot && (
-            <div
-              className={`mt-2 relative cursor-pointer rounded border-2 border-dashed transition-colors ${
-                isDraggingOver
-                  ? 'border-blue-500 bg-blue-100'
-                  : 'border-blue-200 hover:border-blue-400'
-              }`}
-              onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
-              onDragLeave={() => setIsDraggingOver(false)}
-              onDrop={handleScreenshotDrop}
-            >
-              <img
-                src={scrapedData.screenshot}
-                alt="Website screenshot"
-                className={`w-full rounded transition-opacity ${isDraggingOver ? 'opacity-40' : ''}`}
-              />
-              {isDraggingOver && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="text-blue-700 font-medium text-sm">Drop image to replace screenshot</p>
-                </div>
-              )}
-              <p className="text-xs text-blue-500 text-center py-1">Drag & drop an image here to replace</p>
-            </div>
-          )}
+          <div
+            className={`mt-2 relative cursor-pointer rounded border-2 border-dashed transition-colors ${
+              isDraggingOver
+                ? 'border-blue-500 bg-blue-100'
+                : 'border-blue-200 hover:border-blue-400'
+            }`}
+            onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
+            onDragLeave={() => setIsDraggingOver(false)}
+            onDrop={handleScreenshotDrop}
+          >
+            {scrapedData.screenshot ? (
+              <>
+                <img
+                  src={scrapedData.screenshot}
+                  alt="Website screenshot"
+                  className={`w-full rounded transition-opacity ${isDraggingOver ? 'opacity-40' : ''}`}
+                />
+                {isDraggingOver && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <p className="text-blue-700 font-medium text-sm">Drop image to replace screenshot</p>
+                  </div>
+                )}
+                <p className="text-xs text-blue-500 text-center py-1">Drag & drop an image here to replace</p>
+              </>
+            ) : (
+              <div className={`py-8 flex flex-col items-center justify-center ${isDraggingOver ? 'bg-blue-100' : 'bg-blue-50'}`}>
+                <p className="text-blue-700 font-medium text-sm">
+                  {isDraggingOver ? 'Drop image here' : 'No screenshot available'}
+                </p>
+                <p className="text-xs text-blue-500 mt-1">Drag & drop an image to add a screenshot</p>
+              </div>
+            )}
+          </div>
 
           <div className="grid grid-cols-2 gap-2 text-xs">
             {scrapedData.title && (

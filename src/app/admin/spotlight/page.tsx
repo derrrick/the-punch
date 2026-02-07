@@ -99,10 +99,16 @@ export default function SpotlightAdminPage() {
     if (password.trim() === ADMIN_PASSWORD.trim()) {
       setIsAuthenticated(true);
       sessionStorage.setItem("admin_auth", "true");
+      sessionStorage.setItem("admin_password", password.trim());
       loadData();
     } else {
       setMessage({ type: "error", text: "Invalid password" });
     }
+  };
+
+  // Get the stored password for API calls
+  const getAdminPassword = () => {
+    return sessionStorage.getItem("admin_password") || ADMIN_PASSWORD;
   };
 
   const loadData = async () => {
@@ -209,7 +215,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          password: ADMIN_PASSWORD,
+          password: getAdminPassword(),
           settings: formState,
         }),
       });
@@ -257,7 +263,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          password: ADMIN_PASSWORD,
+          password: getAdminPassword(),
           foundryId: foundry.id,
           data: updateData,
         }),
@@ -294,7 +300,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            password: ADMIN_PASSWORD,
+            password: getAdminPassword(),
             foundryId: currentPrimary.id,
             data: { spotlight_is_primary: false },
           }),
@@ -307,7 +313,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          password: ADMIN_PASSWORD,
+          password: getAdminPassword(),
           foundryId: foundryId,
           data: { spotlight_is_primary: true },
         }),
@@ -340,7 +346,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
 
     try {
       const formData = new FormData();
-      formData.append("password", ADMIN_PASSWORD);
+      formData.append("password", getAdminPassword());
       formData.append("foundryId", foundryId);
       formData.append("foundrySlug", foundrySlug);
       formData.append("position", position);
@@ -402,7 +408,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            password: ADMIN_PASSWORD,
+            password: getAdminPassword(),
             foundryId: newOrder[i].id,
             data: { spotlight_order: i + 1 },
           }),
@@ -688,7 +694,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
-                        password: ADMIN_PASSWORD,
+                        password: getAdminPassword(),
                         settings: { ...formState, is_enabled: newEnabled },
                       }),
                     });
@@ -739,7 +745,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                          password: ADMIN_PASSWORD,
+                          password: getAdminPassword(),
                           settings: { ...formState, variant: newVariant },
                         }),
                       });
@@ -784,7 +790,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
-                        password: ADMIN_PASSWORD,
+                        password: getAdminPassword(),
                         settings: { ...formState, theme: newTheme },
                       }),
                     });

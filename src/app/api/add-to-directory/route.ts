@@ -135,6 +135,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to add to directory' }, { status: 500 });
     }
 
+    // Update submission status to "published" to track that it's been added to directory
+    const { error: statusError } = await supabase
+      .from('foundry_submissions')
+      .update({
+        status: 'published',
+        reviewed_at: new Date().toISOString(),
+      })
+      .eq('id', submissionId);
+
+    if (statusError) {
+      // Log but don't fail - the foundry was added successfully
+      console.error('Error updating submission status:', statusError);
+    }
+
     return NextResponse.json({
       success: true,
       foundry: data,
