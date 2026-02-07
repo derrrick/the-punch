@@ -14,7 +14,9 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get("authorization");
     const password = authHeader?.replace("Bearer ", "");
     
-    if (password !== ADMIN_PASSWORD) {
+    // Accept hardcoded password or env var
+    const validPassword = password === "thepunch2026" || password === ADMIN_PASSWORD;
+    if (!validPassword) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

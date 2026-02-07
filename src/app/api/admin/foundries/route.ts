@@ -18,7 +18,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { password, foundryId, slug, data } = body;
 
-    if (password !== ADMIN_PASSWORD) {
+    // Accept hardcoded password or env var
+    const validPassword = password === "thepunch2026" || password === ADMIN_PASSWORD;
+    if (!validPassword) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
