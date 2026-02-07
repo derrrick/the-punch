@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
 import type { FoundrySubmission } from "@/lib/supabase";
 
 export default function AdminPage() {
@@ -18,6 +17,7 @@ export default function AdminPage() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password.trim() === ADMIN_PASSWORD.trim()) {
+      sessionStorage.setItem("admin_password", password.trim());
       setIsAuthenticated(true);
       setError("");
       loadSubmissions();
@@ -29,19 +29,16 @@ export default function AdminPage() {
   const loadSubmissions = async () => {
     setLoading(true);
     try {
-      let query = supabase
-        .from("foundry_submissions")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const response = await fetch('/api/admin/submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password || sessionStorage.getItem("admin_password"), filter }),
+      });
 
-      if (filter !== "all") {
-        query = query.eq("status", filter);
-      }
+      const data = await response.json();
 
-      const { data, error } = await query;
-
-      if (error) throw error;
-      setSubmissions(data || []);
+      if (!response.ok) throw new Error(data.error || 'Failed to load');
+      setSubmissions(data.submissions || []);
     } catch (err) {
       console.error("Error loading submissions:", err);
       setError("Failed to load submissions");
@@ -52,17 +49,22 @@ export default function AdminPage() {
 
   const updateStatus = async (id: string, status: "approved" | "rejected", reason?: string) => {
     try {
-      const { error } = await supabase
-        .from("foundry_submissions")
-        .update({
+      const response = await fetch('/api/admin/submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: password || sessionStorage.getItem("admin_password"),
+          action: 'updateStatus',
+          id,
           status,
-          reviewed_at: new Date().toISOString(),
-          reviewed_by: "admin",
-          rejection_reason: reason || null,
-        })
-        .eq("id", id);
+          reason,
+        }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to update');
+      }
 
       // Reload submissions
       loadSubmissions();
@@ -129,6 +131,7 @@ export default function AdminPage() {
               setIsAuthenticated(false);
               setPassword("");
               sessionStorage.removeItem("admin_auth");
+              sessionStorage.removeItem("admin_password");
             }}
             className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
           >
