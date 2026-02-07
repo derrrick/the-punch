@@ -77,7 +77,9 @@ export default function SpotlightAdminPage() {
 
   useEffect(() => {
     const auth = sessionStorage.getItem("admin_auth");
-    if (auth === "true") {
+    const storedPassword = sessionStorage.getItem("admin_password");
+    // Require both auth flag AND stored password (password storage was added later)
+    if (auth === "true" && storedPassword) {
       setIsAuthenticated(true);
       loadData();
     } else {
@@ -605,6 +607,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
               <button
                 onClick={() => {
                   sessionStorage.removeItem("admin_auth");
+                  sessionStorage.removeItem("admin_password");
                   setIsAuthenticated(false);
                 }}
                 className="text-sm text-neutral-500 hover:text-neutral-900"
