@@ -49,6 +49,14 @@ export interface FoundrySubmission {
     tier?: 1 | 2 | 3 | 4;
     confidence?: 'high' | 'medium' | 'low';
     reasoning?: string;
+    foundryNameOverride?: string;
+    socialInstagram?: string;
+    socialTwitter?: string;
+    screenshotUrl?: string;
+    contentFeedType?: string;
+    contentFeedUrl?: string;
+    contentFeedRss?: string;
+    contentFeedFrequency?: string;
   };
   analyzed_at?: string;
 }

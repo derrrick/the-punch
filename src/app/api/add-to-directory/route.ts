@@ -29,6 +29,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Submission must be approved first' }, { status: 400 });
     }
 
+    // Get AI analysis data (if available)
+    const aiAnalysis = submission.ai_analysis || {};
+
     // Use name override from manual edits if available
     const foundryName = aiAnalysis.foundryNameOverride || submission.foundry_name;
 
@@ -48,9 +51,6 @@ export async function POST(request: NextRequest) {
     if (existing) {
       return NextResponse.json({ error: 'Foundry already exists in directory' }, { status: 400 });
     }
-
-    // Get AI analysis data (if available)
-    const aiAnalysis = submission.ai_analysis || {};
 
     // Parse location - prefer AI-extracted location over user-submitted
     let city = '';

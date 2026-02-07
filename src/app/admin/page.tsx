@@ -488,9 +488,27 @@ function SubmissionCard({
     const file = e.dataTransfer.files[0];
     if (!file || !file.type.startsWith('image/')) return;
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const base64 = reader.result as string;
       setScrapedData((prev: typeof scrapedData) => prev ? { ...prev, screenshot: base64 } : prev);
+
+      // Persist to database via aiAnalysis.screenshotUrl so it carries through to Add to Directory
+      const updatedAnalysis = { ...aiAnalysis, screenshotUrl: base64 };
+      try {
+        const response = await fetch('/api/update-submission', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            submissionId: submission.id,
+            aiAnalysis: updatedAnalysis,
+          }),
+        });
+        if (!response.ok) throw new Error('Failed to save screenshot');
+        setAiAnalysis(updatedAnalysis);
+      } catch (err) {
+        console.error('Failed to persist screenshot:', err);
+        alert('Screenshot displayed but failed to save to database. Try using Edit Data to save manually.');
+      }
     };
     reader.readAsDataURL(file);
   };
