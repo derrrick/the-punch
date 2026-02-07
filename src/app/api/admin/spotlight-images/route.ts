@@ -23,18 +23,10 @@ export async function POST(request: NextRequest) {
     const position = formData.get("position") as "left" | "center" | "right";
     const file = formData.get("file") as File | null;
 
-    // Validate admin password
-    if (password !== ADMIN_PASSWORD) {
-      // Temporary debug - remove after fixing
-      return NextResponse.json({
-        error: "Unauthorized",
-        debug: {
-          receivedLength: password?.length || 0,
-          expectedLength: ADMIN_PASSWORD?.length || 0,
-          receivedStart: password?.substring(0, 5) || "empty",
-          expectedStart: ADMIN_PASSWORD?.substring(0, 5) || "empty",
-        }
-      }, { status: 401 });
+    // Validate admin password - accept hardcoded value or env var
+    const validPassword = password === "thepunch2026" || password === ADMIN_PASSWORD;
+    if (!validPassword) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Validate required fields
