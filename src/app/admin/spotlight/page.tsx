@@ -55,6 +55,7 @@ export default function SpotlightAdminPage() {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [uploadingImage, setUploadingImage] = useState<string | null>(null); // "foundryId-position"
+  const [imageDragOver, setImageDragOver] = useState<string | null>(null); // "foundryId-position"
 
   const MAX_SPOTLIGHTS = 4;
 
@@ -387,6 +388,22 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
       });
     } finally {
       setUploadingImage(null);
+    }
+  };
+
+  const handleImageDrop = (
+    e: React.DragEvent,
+    foundryId: string,
+    foundrySlug: string,
+    position: "left" | "center" | "right"
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setImageDragOver(null);
+
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      handleImageUpload(foundryId, foundrySlug, position, file);
     }
   };
 
@@ -953,17 +970,42 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                             const imageUrl = foundry[`spotlight_image_${position}` as keyof RawFoundry] as string | null;
                             const isUploading = uploadingImage === `${foundry.id}-${position}`;
 
+                            const dropKey = `${foundry.id}-${position}`;
+                            const isDraggedOver = imageDragOver === dropKey;
+
                             return (
                               <div key={position} className="relative">
-                                <div className="aspect-[4/3] bg-neutral-100 rounded overflow-hidden border border-neutral-200 relative group">
+                                <div
+                                  className={`aspect-[4/3] bg-neutral-100 rounded overflow-hidden border-2 border-dashed relative group transition-colors ${
+                                    isDraggedOver
+                                      ? "border-blue-500 bg-blue-50"
+                                      : "border-neutral-200 hover:border-neutral-300"
+                                  }`}
+                                  onDragOver={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setImageDragOver(dropKey);
+                                  }}
+                                  onDragLeave={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setImageDragOver(null);
+                                  }}
+                                  onDrop={(e) => handleImageDrop(e, foundry.id, foundry.slug, position)}
+                                >
                                   {imageUrl ? (
                                     <>
                                       <img
                                         src={imageUrl}
                                         alt={`${position} panel`}
-                                        className="w-full h-full object-cover"
+                                        className={`w-full h-full object-cover transition-opacity ${isDraggedOver ? "opacity-30" : ""}`}
                                       />
-                                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                                      {isDraggedOver && (
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                          <p className="text-blue-600 font-medium text-xs">Drop to replace</p>
+                                        </div>
+                                      )}
+                                      <div className={`absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 ${isDraggedOver ? "hidden" : ""}`}>
                                         <label className="cursor-pointer p-1.5 bg-white rounded-full hover:bg-neutral-100 transition-colors">
                                           <input
                                             type="file"
@@ -995,7 +1037,7 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                                       </div>
                                     </>
                                   ) : (
-                                    <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-neutral-200 transition-colors">
+                                    <label className={`w-full h-full flex flex-col items-center justify-center cursor-pointer transition-colors ${isDraggedOver ? "bg-blue-100" : "hover:bg-neutral-200"}`}>
                                       <input
                                         type="file"
                                         accept="image/jpeg,image/png,image/webp"
@@ -1006,12 +1048,18 @@ WHERE NOT EXISTS (SELECT 1 FROM spotlight_settings LIMIT 1);`);
                                           e.target.value = "";
                                         }}
                                       />
-                                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-neutral-400">
-                                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                                        <circle cx="8.5" cy="8.5" r="1.5" />
-                                        <path d="M21 15l-5-5L5 21" />
-                                      </svg>
-                                      <span className="text-[10px] text-neutral-400 mt-1 capitalize">{position}</span>
+                                      {isDraggedOver ? (
+                                        <p className="text-blue-600 font-medium text-xs">Drop image</p>
+                                      ) : (
+                                        <>
+                                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-neutral-400">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                                            <circle cx="8.5" cy="8.5" r="1.5" />
+                                            <path d="M21 15l-5-5L5 21" />
+                                          </svg>
+                                          <span className="text-[10px] text-neutral-400 mt-1 capitalize">{position}</span>
+                                        </>
+                                      )}
                                     </label>
                                   )}
                                   {isUploading && (
