@@ -25,7 +25,16 @@ export async function POST(request: NextRequest) {
 
     // Validate admin password
     if (password !== ADMIN_PASSWORD) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      // Temporary debug - remove after fixing
+      return NextResponse.json({
+        error: "Unauthorized",
+        debug: {
+          receivedLength: password?.length || 0,
+          expectedLength: ADMIN_PASSWORD?.length || 0,
+          receivedStart: password?.substring(0, 5) || "empty",
+          expectedStart: ADMIN_PASSWORD?.substring(0, 5) || "empty",
+        }
+      }, { status: 401 });
     }
 
     // Validate required fields
